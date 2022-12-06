@@ -7,7 +7,7 @@ const expiration = "2h";
 
 // Import permissions
 const {
-	canGetUsers,
+	canGetTeam,
 	canCreateAccount,
 	canUpdateAccount,
 	canDeleteAccount,
@@ -41,8 +41,8 @@ module.exports = {
 		// Send to next endpoint
 		next();
 	},
-	// Authorisation middleware that verifies whether user has permissions to view all users
-	authGetUsers: function (req, res, next) {
+	// Authorisation middleware that verifies whether user has permissions to view the business' users
+	authGetTeam: function (req, res, next) {
 		// Allows token to be sent via req.query or headers
 		let token = req.query.token || req.headers.authorization;
 
@@ -52,7 +52,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canGetUsers(req.role)) {
+		if (!canGetTeam(req.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });

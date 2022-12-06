@@ -1,7 +1,7 @@
 // If role matches the specified permissions, return true
 
 module.exports = {
-	canGetUsers: function (role) {
+	canGetTeam: function (role) {
 		return role === "admin";
 	},
 	canCreateAccount: function (role) {

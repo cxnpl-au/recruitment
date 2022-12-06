@@ -10,6 +10,7 @@ const {
 	createAccount,
 	updateAccount,
 	deleteAccount,
+	getTeam,
 } = require("../../controllers/businessController");
 
 // Import authorisation middleware
@@ -19,6 +20,7 @@ const {
 	authUpdateAccount,
 	authDeleteAccount,
 	authDeleteBusiness,
+	authGetTeam,
 } = require("../../utils/auth");
 
 // /api/businesses
@@ -41,5 +43,8 @@ router
 	.route("/:businessId/accounts/:accountId")
 	.put(authUser, authUpdateAccount, updateAccount)
 	.delete(authUser, authDeleteAccount, deleteAccount);
+
+// /api/businesses/:businessId/admin
+router.route("/:businessId/admin").get(authUser, authGetTeam, getTeam);
 
 module.exports = router;
