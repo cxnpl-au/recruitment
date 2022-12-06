@@ -1,4 +1,4 @@
-// Import user model
+// Import User and Business models
 const { User, Business } = require("../models");
 // Import sign token function from auth
 const { signToken } = require("../utils/auth");
