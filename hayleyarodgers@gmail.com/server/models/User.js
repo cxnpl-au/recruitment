@@ -24,10 +24,9 @@ const userSchema = new Schema({
 		required: true,
 	},
 	// Role used to manage a user's permissions
-	// One-to-one relationshp
 	role: {
-		type: Schema.Types.ObjectId,
-		ref: "Role",
+		type: String,
+		enum: ["admin", "editor", "viewer"],
 	},
 	// Business the user is associated with
 	// One-to-one relationship
