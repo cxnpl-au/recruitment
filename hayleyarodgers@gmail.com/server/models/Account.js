@@ -9,7 +9,7 @@ const accountSchema = new Schema({
 	},
 	balance: {
 		type: Number,
-		required: "Your account needs a balance",
+		required: "Your account needs a balance.",
 	},
 });
 
