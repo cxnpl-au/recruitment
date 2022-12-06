@@ -11,6 +11,9 @@ const {
 	canCreateAccount,
 	canUpdateAccount,
 	canDeleteAccount,
+	canCreateUser,
+	canUpdateUser,
+	canDeleteUser,
 	canDeleteBusiness,
 } = require("./permissions");
 
@@ -113,6 +116,66 @@ module.exports = {
 		}
 
 		if (!canDeleteAccount(req.role)) {
+			return res
+				.status(403)
+				.json({ message: "You aren't authorised to make this request." });
+		}
+
+		// Send to next endpoint
+		next();
+	},
+	// Authorisation middleware that verifies whether user has permissions to create a new user
+	authCreateUser: function (req, res, next) {
+		// Allows token to be sent via req.query or headers
+		let token = req.query.token || req.headers.authorization;
+
+		// Split the token string into an array and return the actual token
+		// ["Bearer", "<tokenvalue>"]
+		if (req.headers.authorization) {
+			token = token.split(" ").pop().trim();
+		}
+
+		if (!canCreateUser(req.role)) {
+			return res
+				.status(403)
+				.json({ message: "You aren't authorised to make this request." });
+		}
+
+		// Send to next endpoint
+		next();
+	},
+	// Authorisation middleware that verifies whether user has permissions to update a user
+	authUpdateUser: function (req, res, next) {
+		// Allows token to be sent via req.query or headers
+		let token = req.query.token || req.headers.authorization;
+
+		// Split the token string into an array and return the actual token
+		// ["Bearer", "<tokenvalue>"]
+		if (req.headers.authorization) {
+			token = token.split(" ").pop().trim();
+		}
+
+		if (!canUpdateUser(req.role)) {
+			return res
+				.status(403)
+				.json({ message: "You aren't authorised to make this request." });
+		}
+
+		// Send to next endpoint
+		next();
+	},
+	// Authorisation middleware that verifies whether user has permissions to delete a user
+	authDeleteUser: function (req, res, next) {
+		// Allows token to be sent via req.query or headers
+		let token = req.query.token || req.headers.authorization;
+
+		// Split the token string into an array and return the actual token
+		// ["Bearer", "<tokenvalue>"]
+		if (req.headers.authorization) {
+			token = token.split(" ").pop().trim();
+		}
+
+		if (!canDeleteUser(req.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });

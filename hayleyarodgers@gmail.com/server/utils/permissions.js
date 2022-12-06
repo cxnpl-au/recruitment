@@ -13,6 +13,15 @@ module.exports = {
 	canDeleteAccount: function (role) {
 		return role === "admin";
 	},
+	canCreateUser: function (role) {
+		return role === "admin";
+	},
+	canUpdateUser: function (role) {
+		return role === "admin";
+	},
+	canDeleteUser: function (role) {
+		return role === "admin";
+	},
 	canDeleteBusiness: function (role) {
 		return role === "admin";
 	},

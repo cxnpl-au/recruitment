@@ -46,7 +46,8 @@ module.exports = {
 			res.status(500);
 		}
 	},
-	// During provisioning, admin creates user profiles for the people in the business
+
+	// During provisioning, admin can create user profiles for the people in the business
 	async createUser({ body }, res) {
 		try {
 			const user = await User.create(body);
@@ -69,6 +70,44 @@ module.exports = {
 			}
 
 			res.status(200).json(user);
+		} catch (err) {
+			console.error(err);
+			res.status(500);
+		}
+	},
+
+	// Admin can update users, eg. change their permissions
+	async updateUser({ body, params }, res) {
+		try {
+			const user = await User.findOneAndUpdate(
+				{ _id: params.userId },
+				{ $set: body },
+				{ runValidators: true, new: true }
+			);
+
+			if (!user) {
+				return res.status(400).json({ message: "Unable to update user." });
+			}
+
+			res.status(200).json(user);
+		} catch (err) {
+			console.error(err);
+			res.status(500);
+		}
+	},
+
+	// Admin can delete users, eg. if they leave the business
+	async deleteUser({ params }, res) {
+		try {
+			const user = await User.findOneAndDelete({
+				_id: params.userId,
+			});
+
+			if (!user) {
+				return res.status(400).json({ message: "Unable to delete user." });
+			}
+
+			res.status(200).json({ message: "User deleted." });
 		} catch (err) {
 			console.error(err);
 			res.status(500);
