@@ -9,8 +9,6 @@ const {
 } = require("../../controllers/userController");
 
 // Import authorisation middleware
-// authUser is used to verify that the user is logged in
-// authRole is used to verify that the user has a particular role
 const { authUser, authGetUsers } = require("../../utils/auth");
 
 // /api/users
