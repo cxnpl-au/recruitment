@@ -44,6 +44,7 @@ businessSchema.virtual("totalBalance").get(function () {
 	return totalBalance.reduce(getSum);
 });
 
+// Initialise User model
 const Business = model("Business", businessSchema);
 
 module.exports = Business;
