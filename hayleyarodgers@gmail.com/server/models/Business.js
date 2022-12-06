@@ -13,6 +13,7 @@ const businessSchema = new Schema(
 		// Array of account subdocuments
 		accounts: [accountSchema],
 		// Array of ids of people registered under the business
+		// One-to-many relationship
 		team: [
 			{
 				type: Schema.Types.ObjectId,
