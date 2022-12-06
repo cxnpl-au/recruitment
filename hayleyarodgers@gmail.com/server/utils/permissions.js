@@ -13,4 +13,7 @@ module.exports = {
 	canDeleteAccount: function (role) {
 		return role === "admin";
 	},
+	canDeleteBusiness: function (role) {
+		return role === "admin";
+	},
 };

@@ -11,6 +11,7 @@ const {
 	canCreateAccount,
 	canUpdateAccount,
 	canDeleteAccount,
+	canDeleteBusiness,
 } = require("./permissions");
 
 module.exports = {
@@ -112,6 +113,26 @@ module.exports = {
 		}
 
 		if (!canDeleteAccount(req.role)) {
+			return res
+				.status(403)
+				.json({ message: "You aren't authorised to make this request." });
+		}
+
+		// Send to next endpoint
+		next();
+	},
+	// Authorisation middleware that verifies whether user has permissions to delete a business, its accounts and users
+	authDeleteBusiness: function (req, res, next) {
+		// Allows token to be sent via req.query or headers
+		let token = req.query.token || req.headers.authorization;
+
+		// Split the token string into an array and return the actual token
+		// ["Bearer", "<tokenvalue>"]
+		if (req.headers.authorization) {
+			token = token.split(" ").pop().trim();
+		}
+
+		if (!canDeleteBusiness(req.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
