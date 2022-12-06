@@ -142,8 +142,8 @@ module.exports = {
 		next();
 	},
 	// Upon sign up or log in, generate and sign token to be used for authorisation
-	signToken: function ({ username, email, role, _id }) {
-		const payload = { username, email, role, _id };
+	signToken: function ({ username, email, role, business, _id }) {
+		const payload = { username, email, role, business, _id };
 
 		return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
 	},
