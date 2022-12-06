@@ -6,7 +6,6 @@ const {
 	getBusiness,
 	createBusiness,
 	deleteBusiness,
-	getAccounts,
 	createAccount,
 	updateAccount,
 	deleteAccount,
@@ -35,7 +34,6 @@ router
 // /api/businesses/:businessId/accounts
 router
 	.route("/:businessId/accounts")
-	.get(authUser, getAccounts)
 	.post(authUser, authCreateAccount, createAccount);
 
 // /api/businesses/:businessId/accounts/:accountId
