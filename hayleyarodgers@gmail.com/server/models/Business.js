@@ -12,6 +12,13 @@ const businessSchema = new Schema(
 		},
 		// Array of account subdocuments
 		accounts: [accountSchema],
+		// Array of ids of people registered under the business
+		team: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: "User",
+			},
+		],
 	},
 	// Allow use of virtuals below
 	{
