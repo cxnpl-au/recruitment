@@ -5,13 +5,13 @@ const router = require("express").Router();
 const {
 	signupUser,
 	loginUser,
-	getAllUsers,
+	getUsers,
 } = require("../../controllers/userController");
 
 // Import authorisation middleware
 // authUser is used to verify that the user is logged in
 // authRole is used to verify that the user has a particular role
-const { authUser, authRole } = require("../../utils/auth");
+const { authUser, authGetUsers } = require("../../utils/auth");
 
 // /api/users
 router.route("/").post(signupUser);
@@ -19,7 +19,7 @@ router.route("/").post(signupUser);
 // /api/users/login
 router.route("/login").post(loginUser);
 
-// /api/users/myprojects
-router.route("/myteam").get(authUser, authRole("admin"), getAllUsers);
+// /api/users/admin
+router.route("/admin").get(authUser, authGetUsers, getUsers);
 
 module.exports = router;
