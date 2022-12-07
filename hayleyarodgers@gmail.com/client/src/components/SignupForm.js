@@ -6,20 +6,25 @@ import { Form, Button, Alert } from "react-bootstrap";
 // Import API call, authentication token and saving user role to local storage functions
 import { signupUser, createBusiness } from "../utils/API";
 import Auth from "../utils/auth";
-import { saveUserRole } from "../utils/localStorage";
+import {
+  saveUserRole,
+  saveBusinessId,
+  getSavedBusinessId,
+} from "../utils/localStorage";
 
 const SignupForm = () => {
+  // Set initial business form state
+  const [businessFormData, setBusinessFormData] = useState({
+    name: "",
+  });
+
   // Set initial user form state
   const [userFormData, setUserFormData] = useState({
     username: "",
     email: "",
     password: "",
     role: "admin", // first user to sign up and create a business is an admin by default
-  });
-
-  // Set initial business form state
-  const [businessFormData, setBusinessFormData] = useState({
-    name: "",
+    businessId: getSavedBusinessId(), // business is created first so its id can be copied into newly created user
   });
 
   // Set state for form validation
@@ -28,19 +33,19 @@ const SignupForm = () => {
   // Set state for alert
   const [showAlert, setShowAlert] = useState(false);
 
-  // When the input of any user form field changes, set form data
-  const handleUserInputChange = (event) => {
-    const { name, value } = event.target;
-    setUserFormData({ ...userFormData, [name]: value });
-  };
-
   // When the input of business name field changes, set form data
   const handleBusinessInputChange = (event) => {
     const { name, value } = event.target;
     setBusinessFormData({ ...businessFormData, [name]: value });
   };
 
-  // Sign up user
+  // When the input of any user form field changes, set form data
+  const handleUserInputChange = (event) => {
+    const { name, value } = event.target;
+    setUserFormData({ ...userFormData, [name]: value });
+  };
+
+  // Create business and sign up user
   const handleFormSubmit = async (event) => {
     // Stop default page refresh
     event.preventDefault();
@@ -52,6 +57,22 @@ const SignupForm = () => {
       event.stopPropagation();
     }
 
+    // Since createBusiness is asynchronous, wrap in a `try...catch` to catch any network errors from throwing due to a failed request
+    try {
+      const response = await createBusiness(businessFormData);
+
+      if (!response.ok) {
+        throw new Error("Something went wrong during business creation.");
+      }
+
+      // Save business' id to local storage
+      const { business } = await response.json();
+      saveBusinessId(business._id);
+    } catch (err) {
+      console.error(err);
+      setShowAlert(true);
+    }
+
     // Since signupUser is asynchronous, wrap in a `try...catch` to catch any network errors from throwing due to a failed request
     try {
       const response = await signupUser(userFormData);
@@ -60,8 +81,8 @@ const SignupForm = () => {
         throw new Error("Something went wrong during sign up.");
       }
 
-      const { token, user } = await response.json();
       // Save user's role and token to local storage
+      const { token, user } = await response.json();
       saveUserRole(user.role);
       Auth.login(token);
     } catch (err) {
@@ -69,28 +90,17 @@ const SignupForm = () => {
       setShowAlert(true);
     }
 
-    // Since createBusiness is asynchronous, wrap in a `try...catch` to catch any network errors from throwing due to a failed request
-    try {
-      const response = await createBusiness(businessFormData);
-
-      if (!response.ok) {
-        throw new Error("Something went wrong during business creation.");
-      }
-    } catch (err) {
-      console.error(err);
-      setShowAlert(true);
-    }
-
     // Reset form data
+    setBusinessFormData({
+      name: "",
+    });
+
     setUserFormData({
       username: "",
       email: "",
       password: "",
       role: "admin",
-    });
-
-    setBusinessFormData({
-      name: "",
+      businessId: getSavedBusinessId(),
     });
   };
 

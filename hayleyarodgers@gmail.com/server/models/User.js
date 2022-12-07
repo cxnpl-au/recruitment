@@ -28,6 +28,12 @@ const userSchema = new Schema({
 		type: String,
 		enum: ["admin", "editor", "viewer"],
 	},
+	// Id of the business the user is registered under
+	// One-to-one relationship
+	businessId: {
+		type: Schema.Types.ObjectId,
+		ref: "Business",
+	},
 });
 
 // Use bcrypt to hash user's password

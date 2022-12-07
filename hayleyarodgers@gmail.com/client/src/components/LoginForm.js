@@ -6,7 +6,7 @@ import { Form, Button, Alert } from "react-bootstrap";
 // Import API call, authentication token and saving user role to local storage functions
 import { loginUser } from "../utils/API";
 import Auth from "../utils/auth";
-import { saveUserRole } from "../utils/localStorage";
+import { saveUserRole, saveBusinessId } from "../utils/localStorage";
 
 const LoginForm = () => {
   // Set initial form state
@@ -46,8 +46,9 @@ const LoginForm = () => {
       }
 
       const { token, user } = await response.json();
-      // Save user's role and token to local storage
+      // Save user's role, business id and token to local storage
       saveUserRole(user.role);
+      saveBusinessId(user.businessId);
       Auth.login(token);
     } catch (err) {
       console.error(err);
