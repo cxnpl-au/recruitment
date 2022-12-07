@@ -15,11 +15,14 @@ import "../styles/Nav.css";
 const AppNavbar = () => {
   return (
     <>
-      <Navbar className="nav mb-4" variant="dark" expand="lg">
+      <Navbar className="nav" variant="dark" expand="lg">
         <Container fluid>
-          <Navbar.Brand className="brandName" as={Link} to="/">
-            <h1 className="un">Site name</h1>
-          </Navbar.Brand>
+          <div className="d-flex flex-column">
+            <Navbar.Brand className="brandName" as={Link} to="/">
+              <h1 className="un">IM service</h1>
+            </Navbar.Brand>
+            <p>hayleyarodgers x cxnpl</p>
+          </div>
           <Navbar.Toggle aria-controls="navbar" />
           <Navbar.Collapse id="navbar">
             <Nav className="ml-auto">

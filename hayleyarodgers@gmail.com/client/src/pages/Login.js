@@ -1,5 +1,8 @@
 import React from "react";
 
+// Import Link component for all internal application hyperlinks
+import { Link } from "react-router-dom";
+
 // Import components
 import LoginForm from "../components/LoginForm";
 
@@ -10,6 +13,8 @@ const Login = () => {
       <h2>Log in</h2>
       {/* Form for logging in */}
       <LoginForm />
+      <p>Don't have an account?</p>
+      <Link to={`/signup`}>Click here to sign up instead.</Link>
     </main>
   );
 };

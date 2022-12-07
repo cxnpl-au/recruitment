@@ -76,10 +76,9 @@ const LoginForm = () => {
 
         {/* User username input */}
         <Form.Group>
-          <Form.Label htmlFor="username">Username</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Your username"
+            placeholder="Username"
             name="username"
             onChange={handleInputChange}
             value={userFormData.username}
@@ -92,15 +91,16 @@ const LoginForm = () => {
 
         {/* User password input */}
         <Form.Group>
-          <Form.Label htmlFor="password">Password</Form.Label>
           <Form.Control
             type="password"
-            placeholder="Your password"
+            placeholder="Password"
             name="password"
             onChange={handleInputChange}
             value={userFormData.password}
             required
           />
+          {/* Reset password */}
+          <p className="d-flex align-items-right">Forgot password?</p>
           <Form.Control.Feedback type="invalid">
             Please enter your password.
           </Form.Control.Feedback>
@@ -110,6 +110,7 @@ const LoginForm = () => {
         <Button type="submit" variant="success">
           Log in
         </Button>
+        <hr></hr>
       </Form>
     </>
   );

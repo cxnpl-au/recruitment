@@ -1,15 +1,12 @@
 .nav {
   background-color: var(--blue);
+  margin-bottom: 30px;
 }
 
-.nav a {
+.nav a, .nav p {
   color: white;
-  font-size: 2rem; 
-}
-
-h1:hover, 
-.nav-link:hover {
-  color: white;
+  font-size: 2rem;
+  text-decoration: none;
 }
 
 a:focus, 

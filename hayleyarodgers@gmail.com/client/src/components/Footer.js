@@ -13,12 +13,12 @@ const Footer = () => {
         <h4>&copy; {new Date().getFullYear()} - Hayley Rodgers</h4>
         <p>
           Made using Mongoose, Express.js, React.js, Node.js and a RESTful API
-          on Gadigal Land. To see the source code, click{" "}
+          on Gadigal Land.{" "}
           <a
             href="https://github.com/cxnpl-au/recruitment/tree/submission/hayleyarodgers%40gmail.com/hayleyarodgers%40gmail.com"
             target="_blank"
             rel="noopener noreferrer">
-            here
+            To see the source code, click here
           </a>
           .
         </p>

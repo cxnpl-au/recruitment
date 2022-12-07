@@ -1,4 +1,5 @@
 footer h4, footer p {
+  color: var(--blue);
   font-size: 1.4rem;
 }
 

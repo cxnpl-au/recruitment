@@ -107,12 +107,12 @@ const SignupForm = () => {
           Something went wrong with your sign up.
         </Alert>
 
+        <h3>Name your business</h3>
         {/* Business name input */}
         <Form.Group>
-          <Form.Label htmlFor="name">Business name</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Your business name"
+            placeholder="Business name"
             name="name"
             onChange={handleBusinessInputChange}
             value={businessFormData.name}
@@ -123,12 +123,12 @@ const SignupForm = () => {
           </Form.Control.Feedback>
         </Form.Group>
 
+        <h3>Add your details</h3>
         {/* User username input */}
         <Form.Group>
-          <Form.Label htmlFor="username">Username</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Your username"
+            placeholder="Username"
             name="username"
             onChange={handleUserInputChange}
             value={userFormData.username}
@@ -141,10 +141,9 @@ const SignupForm = () => {
 
         {/* User email input */}
         <Form.Group>
-          <Form.Label htmlFor="email">Email</Form.Label>
           <Form.Control
             type="email"
-            placeholder="Your email address"
+            placeholder="Email"
             name="email"
             onChange={handleUserInputChange}
             value={userFormData.email}
@@ -157,7 +156,6 @@ const SignupForm = () => {
 
         {/* User password input */}
         <Form.Group>
-          <Form.Label htmlFor="password">Password</Form.Label>
           <Form.Control
             type="password"
             placeholder="Your password"
@@ -175,6 +173,7 @@ const SignupForm = () => {
         <Button type="submit" variant="success">
           Sign up
         </Button>
+        <hr></hr>
       </Form>
     </>
   );
