@@ -1,6 +1,9 @@
 // Use to decode a token and get the user's information out of it
 import decode from "jwt-decode";
 
+// Import getting saved user role from local storage
+import { getSavedUserRole } from "./localStorage";
+
 // Create a new class to instantiate for a user
 class AuthService {
   // Upon login, save the user's token to localStorage
@@ -44,7 +47,7 @@ class AuthService {
   // Check if the user is an admin
   isAdmin() {
     // Gets saved user role from local storage
-    const role = localStorage.getItem("saved_user_role");
+    const role = getSavedUserRole();
 
     // If current user's role is admin, return true
     return role === "admin" ? true : false;
