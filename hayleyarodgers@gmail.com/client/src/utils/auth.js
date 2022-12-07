@@ -53,6 +53,15 @@ class AuthService {
     return role === "admin" ? true : false;
   }
 
+  // Check if the user is an editor
+  isEditor() {
+    // Gets saved user role from local storage
+    const role = getSavedUserRole();
+
+    // If current user's role is editor, return true
+    return role === "editor" ? true : false;
+  }
+
   // Upon logout, remove the user's token from localStorage
   logout() {
     localStorage.removeItem("id_token");
