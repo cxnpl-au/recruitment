@@ -56,6 +56,25 @@ module.exports = {
 		}
 	},
 
+	// Get an account by its id
+	async getAccount({ params }, res) {
+		try {
+			const businessData = await Business.findOne({ _id: params.businessId });
+			const account = businessData.accounts.id(params.accountId);
+
+			if (!account) {
+				return res
+					.status(400)
+					.json({ message: "No account found with that id." });
+			}
+
+			res.status(200).json(account);
+		} catch (err) {
+			console.error(err);
+			res.status(500);
+		}
+	},
+
 	// Add account to business
 	async createAccount({ body, params }, res) {
 		try {

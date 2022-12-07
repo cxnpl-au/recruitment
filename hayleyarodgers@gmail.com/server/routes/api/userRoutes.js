@@ -5,6 +5,7 @@ const router = require("express").Router();
 const {
 	signupUser,
 	loginUser,
+	getUser,
 	createUser,
 	updateUser,
 	deleteUser,
@@ -30,6 +31,7 @@ router.route("/manage").post(authUser, authCreateUser, createUser);
 // /api/users/manage/:userId
 router
 	.route("/manage/:userId")
+	.get(authUser, getUser)
 	.put(authUser, authUpdateUser, updateUser)
 	.delete(authUser, authDeleteUser, deleteUser);
 

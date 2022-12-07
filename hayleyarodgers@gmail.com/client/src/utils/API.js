@@ -22,6 +22,17 @@ export const loginUser = (userData) => {
   });
 };
 
+// Route to get user
+export const getUser = (userId, token) => {
+  return fetch(`/api/users/manage/${userId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`, // user must be signed in
+    },
+  });
+};
+
 // Route to create user
 // During provisioning, admin can create user profiles for the people in the business
 export const createUser = (userData, token) => {
@@ -108,6 +119,17 @@ export const deleteBusiness = (businessId, token) => {
 };
 
 /* --- ACCOUNT ROUTES ---*/
+
+// Route to get an account in a business
+export const getAccount = (businessId, accountId, token) => {
+  return fetch(`/api/businesses/${businessId}/accounts/${accountId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`, // user must be signed in
+    },
+  });
+};
 
 // Route to create account under a business
 export const createAccount = (businessId, accountData, token) => {

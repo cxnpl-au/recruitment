@@ -60,6 +60,27 @@ module.exports = {
 		}
 	},
 
+	// Get a user by their id
+	async getUser({ user = null, params }, res) {
+		try {
+			const foundUser = await User.findOne({
+				$or: [
+					{ _id: user ? user._id : params.id },
+					{ username: params.username },
+				],
+			});
+
+			if (!foundUser) {
+				return res.status(400).json({ message: "No user with that id." });
+			}
+
+			res.status(200).json(foundUser);
+		} catch (err) {
+			console.error(err);
+			res.status(500);
+		}
+	},
+
 	// During provisioning, admin can create user profiles for the people in the business
 	async createUser({ body }, res) {
 		try {
