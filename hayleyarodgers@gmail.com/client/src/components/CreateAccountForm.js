@@ -8,7 +8,7 @@ import { createAccount } from "../utils/API";
 import Auth from "../utils/auth";
 import { getSavedBusinessId } from "../utils/localStorage";
 
-const AccountForm = ({ handleModalClose }) => {
+const CreateAccountForm = ({ handleModalClose }) => {
   // Set initial form state
   const [accountFormData, setAccountFormData] = useState({
     name: "",
@@ -120,4 +120,4 @@ const AccountForm = ({ handleModalClose }) => {
   );
 };
 
-export default AccountForm;
+export default CreateAccountForm;

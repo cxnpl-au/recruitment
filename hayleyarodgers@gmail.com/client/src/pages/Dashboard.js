@@ -10,7 +10,8 @@ import React, { useState } from "react";
 import { Tab, Modal, Button } from "react-bootstrap";
 
 // Import components
-import AccountForm from "../components/CreateAccountForm";
+import CreateAccountForm from "../components/CreateAccountForm";
+import AccountList from "../components/AccountList";
 
 const Dashboard = () => {
   // Set modal display state
@@ -25,7 +26,8 @@ const Dashboard = () => {
           +
         </Button>
       </div>
-
+      {/* List of accounts */}
+      <AccountList />
       {/* Modal to create new account */}
       <Modal
         centered
@@ -33,13 +35,12 @@ const Dashboard = () => {
         show={showModal}
         onHide={() => setShowModal(false)}
         aria-labelledby="create-account-modal">
-        {/* Tab container to show either signup or login component */}
         <Tab.Container>
           <Modal.Header closeButton>
             <h3>Create an account</h3>
           </Modal.Header>
           <Modal.Body>
-            <AccountForm handleModalClose={() => setShowModal(false)} />
+            <CreateAccountForm handleModalClose={() => setShowModal(false)} />
           </Modal.Body>
         </Tab.Container>
       </Modal>
