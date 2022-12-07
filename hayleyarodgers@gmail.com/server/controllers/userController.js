@@ -20,8 +20,6 @@ module.exports = {
 				{ new: true }
 			);
 
-			console.log(business);
-
 			if (!business) {
 				return res
 					.status(400)
