@@ -14,7 +14,7 @@ const Login = () => {
       {/* Form for logging in */}
       <LoginForm />
       <p>Don't have an account?</p>
-      <Link to={`/signup`}>Click here to sign up instead.</Link>
+      <Link to={`/getstarted`}>Click here to sign up instead.</Link>
     </main>
   );
 };
