@@ -60,6 +60,8 @@ const CreateAccountForm = ({ handleModalClose }) => {
         name: "",
         balance: 0,
       });
+
+      window.location.assign("/dashboard");
     } catch (err) {
       console.error(err);
       setShowAlert(true);
