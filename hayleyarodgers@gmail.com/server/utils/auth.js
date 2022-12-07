@@ -55,7 +55,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canGetTeam(req.role)) {
+		if (!canGetTeam(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -75,7 +75,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canCreateAccount(req.role)) {
+		if (!canCreateAccount(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -95,7 +95,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canUpdateAccount(req.role)) {
+		if (!canUpdateAccount(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -115,7 +115,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canDeleteAccount(req.role)) {
+		if (!canDeleteAccount(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -135,7 +135,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canCreateUser(req.role)) {
+		if (!canCreateUser(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -155,7 +155,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canUpdateUser(req.role)) {
+		if (!canUpdateUser(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -175,7 +175,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canDeleteUser(req.role)) {
+		if (!canDeleteUser(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
@@ -195,7 +195,7 @@ module.exports = {
 			token = token.split(" ").pop().trim();
 		}
 
-		if (!canDeleteBusiness(req.role)) {
+		if (!canDeleteBusiness(req.user.role)) {
 			return res
 				.status(403)
 				.json({ message: "You aren't authorised to make this request." });
