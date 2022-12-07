@@ -27,12 +27,6 @@ module.exports = {
 		try {
 			const business = await Business.create(body);
 
-			// Add admin who created the business to the business' team
-			business.update(
-				{ $addToSet: { team: body.user._id } },
-				{ runValidators: true, new: true }
-			);
-
 			if (!business) {
 				return res.status(400).json({ message: "Unable to create business." });
 			}

@@ -13,6 +13,21 @@ module.exports = {
 				return res.status(400).json({ message: "Unable to create new user." });
 			}
 
+			// Add user to list of those registered under the business
+			const business = await Business.findOneAndUpdate(
+				{ _id: user.businessId },
+				{ $addToSet: { team: user._id } },
+				{ new: true }
+			);
+
+			console.log(business);
+
+			if (!business) {
+				return res
+					.status(400)
+					.json({ message: "User created but not linked to business." });
+			}
+
 			const token = signToken(user);
 			res.status(200).json({ token, user });
 		} catch (err) {
@@ -58,7 +73,7 @@ module.exports = {
 
 			// Add user to list of those registered under the business
 			const business = await Business.findOneAndUpdate(
-				{ _id: body.business },
+				{ _id: user.businessId },
 				{ $addToSet: { team: user._id } },
 				{ new: true }
 			);
