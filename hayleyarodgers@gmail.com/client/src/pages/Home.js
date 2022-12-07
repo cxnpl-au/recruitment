@@ -18,7 +18,7 @@ const Home = () => {
         <></>
       ) : (
         <div className="d-flex justify-content-between">
-          <Link className="btn mx-3" to={`/signup`}>
+          <Link className="btn mx-3" to={`/getstarted`}>
             Create a new business account
           </Link>
           <Link className="btn mx-3" to={`/login`}>
