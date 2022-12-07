@@ -41,6 +41,15 @@ class AuthService {
     return !!token && !this.isTokenExpired(token) ? true : false;
   }
 
+  // Check if the user is an admin
+  isAdmin() {
+    // Gets saved user role from local storage
+    const role = localStorage.getItem("saved_user_role");
+
+    // If current user's role is admin, return true
+    return role === "admin" ? true : false;
+  }
+
   // Upon logout, remove the user's token from localStorage
   logout() {
     localStorage.removeItem("id_token");

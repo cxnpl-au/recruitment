@@ -1,7 +1,7 @@
 // Landing page
 // Anyone can see this page
 
-import React, { useState } from "react";
+import React from "react";
 
 // Import Link component for all internal application hyperlinks
 import { Link } from "react-router-dom";
