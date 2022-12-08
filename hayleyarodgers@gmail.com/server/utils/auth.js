@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 // Use dotenv to store secret
 const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 // Set token secret and expiration date
 const secret = process.env.JWT_SECRET;
