@@ -13,7 +13,7 @@ import {
   Button,
 } from "react-bootstrap";
 
-// Import API call, authentication token and saving user role to local storage functions
+// Import API call, authentication token and getting business id from local storage functions
 import {
   getBusiness,
   getAccount,
