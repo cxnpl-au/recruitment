@@ -1,8 +1,12 @@
 // Use JSON web tokens for authentication
 const jwt = require("jsonwebtoken");
 
+// Use dotenv to store secret
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
 // Set token secret and expiration date
-const secret = "mysecretsshhhhh"; // replace with .env variable in the future
+const secret = process.env.JWT_SECRET;
 const expiration = "2h";
 
 // Import permissions
