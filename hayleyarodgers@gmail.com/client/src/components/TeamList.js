@@ -70,7 +70,6 @@ const TeamList = () => {
 
   // Show update modal
   const handleShowModal = async (userId) => {
-    console.log(userId);
     // Check token before proceeding
     const token = Auth.loggedIn() ? Auth.getToken() : null;
 
@@ -86,7 +85,7 @@ const TeamList = () => {
     }
 
     const user = await response.json();
-    console.log(user);
+
     setUserFormData(user);
     setUserIdData(userId);
 
