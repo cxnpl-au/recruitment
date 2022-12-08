@@ -21,7 +21,16 @@ const AppNavbar = () => {
             <Navbar.Brand className="brandName" as={Link} to="/">
               <h1 className="un">IM service</h1>
             </Navbar.Brand>
-            <p>hayleyarodgers x cxnpl</p>
+            <p>
+              <a
+                href="https://github.com/hayleyarodgers"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="un">
+                hayleyarodgers
+              </a>{" "}
+              x cxnpl
+            </p>
           </div>
           <Navbar.Toggle aria-controls="navbar" />
           <Navbar.Collapse id="navbar">
