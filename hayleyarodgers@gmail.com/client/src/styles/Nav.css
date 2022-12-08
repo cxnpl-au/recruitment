@@ -1,6 +1,5 @@
 .nav {
   background-color: var(--blue);
-  margin-bottom: 30px;
 }
 
 .nav a, .nav p {
@@ -12,4 +11,13 @@
 a:focus, 
 .nav-link:focus {
   color: white;
+}
+
+.role {
+  background-color: var(--yellow);
+  margin-bottom: 30px;
+}
+
+.role p {
+  padding: 10px;
 }

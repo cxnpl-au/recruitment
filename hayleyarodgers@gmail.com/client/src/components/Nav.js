@@ -9,10 +9,15 @@ import { Link } from "react-router-dom";
 // Import authentication token function
 import Auth from "../utils/auth";
 
+// Import getting saved user role from local storage
+import { getSavedUserRole } from "../utils/localStorage";
+
 // Import custom styles
 import "../styles/Nav.css";
 
 const AppNavbar = () => {
+  const role = getSavedUserRole();
+
   return (
     <>
       <Navbar className="nav" variant="dark" expand="lg">
@@ -65,6 +70,13 @@ const AppNavbar = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      {/* Show role for demonstration purposes */}
+      <div className="role">
+        <p>
+          You are currently viewing the site as {role === "viewer" ? "a" : "an"}{" "}
+          <b>{role}</b>.
+        </p>
+      </div>
     </>
   );
 };
