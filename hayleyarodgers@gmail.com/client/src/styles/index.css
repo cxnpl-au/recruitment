@@ -119,6 +119,7 @@ a:hover {
 .form-select,
 .card {
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.08);
+  width: 100%;
 }
 
 .card, 
@@ -126,8 +127,19 @@ a:hover {
   min-width: fit-content;
 }
 
-.card:hover {
-  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+.user h3, 
+.user p {
+  margin-bottom: 0px;
+  margin: 0;
+}
+
+.width-controller {
+  width: 100px;
+}
+
+.width-controller h3 {
+  text-align: left;
+  padding-left: 10px;
 }
 
 /* Custom button styling */
@@ -137,7 +149,7 @@ a:hover {
   color: white;
   background-color: var(--blue);
   border: var(--blue);
-  margin: 10px 0;
+  margin: 10px;
 }
 
 .btn.btn-important {
@@ -163,7 +175,7 @@ a:hover {
 .btn:hover,
 a.btn-create:hover {
   color: white;
-  background-color: var(--yellow)
+  background-color: var(--yellow);
 }
 
 /* Viewport response on small smartphones - reduce text size */

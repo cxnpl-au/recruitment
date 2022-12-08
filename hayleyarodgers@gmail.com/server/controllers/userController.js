@@ -61,20 +61,15 @@ module.exports = {
 	},
 
 	// Get a user by their id
-	async getUser({ user = null, params }, res) {
+	async getUser({ params }, res) {
 		try {
-			const foundUser = await User.findOne({
-				$or: [
-					{ _id: user ? user._id : params.id },
-					{ username: params.username },
-				],
-			});
+			const user = await User.findOne({ _id: params.userId });
 
-			if (!foundUser) {
+			if (!user) {
 				return res.status(400).json({ message: "No user with that id." });
 			}
 
-			res.status(200).json(foundUser);
+			res.status(200).json(user);
 		} catch (err) {
 			console.error(err);
 			res.status(500);

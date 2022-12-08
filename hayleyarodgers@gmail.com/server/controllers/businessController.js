@@ -146,7 +146,11 @@ module.exports = {
 	// Get all users registered as part of a business
 	async getTeam({ params }, res) {
 		try {
-			const business = await Business.findOne({ _id: params.businessId });
+			const business = await Business.findOne({
+				_id: params.businessId,
+			}).populate({
+				path: "team",
+			});
 			const team = business.team;
 
 			if (!team) {
