@@ -269,11 +269,10 @@ const AccountList = () => {
         aria-labelledby="update-account-modal">
         <Tab.Container>
           <Modal.Header closeButton>
-            <h3>Update an account</h3>
+            <h3>Update {accountFormData.name} account</h3>
           </Modal.Header>
           <Modal.Body>
             <Form
-              handleModalClose={() => setShowModal(false)}
               noValidate
               validated={validated}
               onSubmit={handleUpdateFormSubmit}>
