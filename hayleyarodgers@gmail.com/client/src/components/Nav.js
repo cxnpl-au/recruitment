@@ -70,13 +70,17 @@ const AppNavbar = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* Show role for demonstration purposes */}
-      <div className="role">
-        <p>
-          You are currently viewing the site as {role === "viewer" ? "a" : "an"}{" "}
-          <b>{role}</b>.
-        </p>
-      </div>
+      {/* If user is logged in, show role for demonstration purposes */}
+      {Auth.loggedIn() ? (
+        <div className="role">
+          <p>
+            You are currently viewing the site as{" "}
+            {role === "viewer" ? "a" : "an"} <b>{role}</b>.
+          </p>
+        </div>
+      ) : (
+        <br></br>
+      )}
     </>
   );
 };
