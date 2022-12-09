@@ -12,6 +12,9 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
+import RequestPasswordReset from "./pages/RequestPasswordReset";
+import RequestPasswordResetReceived from "./pages/RequestPasswordResetReceived";
+import PasswordReset from "./pages/PasswordReset";
 import NoMatch from "./pages/NoMatch";
 
 function App() {
@@ -26,6 +29,17 @@ function App() {
           <Route exact path="/login" component={Login} />
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/admin" component={Admin} />
+          <Route
+            exact
+            path="/requestpasswordreset"
+            component={RequestPasswordReset}
+          />
+          <Route
+            exact
+            path="/requestpasswordresetreceived"
+            component={RequestPasswordResetReceived}
+          />
+          <Route path="/passwordreset" component={PasswordReset} />
           <Route path="*" component={NoMatch} />
         </Switch>
         <Footer />

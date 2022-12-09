@@ -165,3 +165,24 @@ export const deleteAccount = (businessId, accountId, token) => {
     },
   });
 };
+
+/* --- PASSWORD RESET ROUTES ---*/
+export const requestResetPassword = (formData) => {
+  return fetch("/api/resetpassword/request", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+};
+
+export const resetPassword = (formData) => {
+  return fetch("/api/resetpassword", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+};

@@ -3,6 +3,9 @@ import React, { useState } from "react";
 // Import bootstrap components
 import { Form, Button, Alert } from "react-bootstrap";
 
+// Import Link component for all internal application hyperlinks
+import { Link } from "react-router-dom";
+
 // Import API call, authentication token and saving user role to local storage functions
 import { loginUser } from "../utils/API";
 import Auth from "../utils/auth";
@@ -101,7 +104,11 @@ const LoginForm = () => {
             required
           />
           {/* Reset password */}
-          <p className="d-flex align-items-right">Forgot password?</p>
+          <Link
+            to={`/requestpasswordreset`}
+            className="d-flex align-items-right">
+            Forgot password?
+          </Link>
           <Form.Control.Feedback type="invalid">
             Please enter your password.
           </Form.Control.Feedback>
