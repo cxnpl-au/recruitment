@@ -28,6 +28,7 @@ class AuthService {
       if (decoded.exp < Date.now() / 1000) {
         localStorage.removeItem("id_token");
         localStorage.removeItem("saved_user_role");
+        localStorage.removeItem("saved_user_businessId");
         return true;
       } else return false;
     } catch (err) {
@@ -66,6 +67,7 @@ class AuthService {
   logout() {
     localStorage.removeItem("id_token");
     localStorage.removeItem("saved_user_role");
+    localStorage.removeItem("saved_user_businessId");
 
     // Reload the page and reset the state of the application
     window.location.assign("/");

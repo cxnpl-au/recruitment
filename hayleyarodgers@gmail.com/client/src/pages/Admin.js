@@ -10,15 +10,51 @@ import { Tab, Modal, Button } from "react-bootstrap";
 import CreateUserForm from "../components/CreateUserForm";
 import TeamList from "../components/TeamList";
 
+// Import Link component for all internal application hyperlinks
+import { Link } from "react-router-dom";
+
+// Import authentication token function
+import Auth from "../utils/auth";
+
 const Admin = () => {
   // Set modal display state
   const [showModal, setShowModal] = useState(false);
+
+  // If user isn't logged in and stumbles across url, don't render page
+  if (!Auth.loggedIn()) {
+    return (
+      <main className="d-flex justify-content-between align-items-top">
+        <div>
+          <h2>Oops!</h2>
+          <p>You need to log in to view this page.</p>
+          <Link className="btn" variant="success" to={`/login`}>
+            Go to log in page
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  // If user isn't an admin and stumbles across url, don't render page
+  if (!Auth.isAdmin()) {
+    return (
+      <main className="d-flex justify-content-between align-items-top">
+        <div>
+          <h2>Oops!</h2>
+          <p>You don't have the permissions to view this page.</p>
+          <Link className="btn" variant="success" to={`/dashboard`}>
+            Go to dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main>
       {/* Page title */}
       <div className="d-flex align-items-center mb-3">
-        <h2>Team</h2>
+        <h2 className="marginless">Team</h2>
         <Button className="btn btn-link" onClick={() => setShowModal(true)}>
           +
         </Button>

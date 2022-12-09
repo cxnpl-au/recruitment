@@ -96,12 +96,11 @@ export const getBusiness = (businessId, token) => {
 };
 
 // Route to create business
-export const createBusiness = (businessData, token) => {
+export const createBusiness = (businessData) => {
   return fetch("/api/businesses", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`, // user must be signed in
     },
     body: JSON.stringify(businessData),
   });

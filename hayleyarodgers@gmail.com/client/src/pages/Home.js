@@ -16,8 +16,25 @@ const Home = () => {
   return (
     <main>
       <h2>Identity Management (IM) Service</h2>
-      <p>Explanation</p>
+      <h3>Description</h3>
+      <p>
+        My goal for this project was to build an identity management (IM) system
+        and API to manage users and their permissions. This application achieves
+        this by allowing a user to log in to their business and CRUD its
+        accounts and users (depending on whether they are an "admin", "editor"
+        or "viewer" as determined by an admin).
+      </p>
+      <p>
+        {" "}
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://github.com/cxnpl-au/recruitment/tree/submission/hayleyarodgers%40gmail.com/hayleyarodgers%40gmail.com">
+          To read more about this application and how it works, see here.
+        </a>
+      </p>
       <br></br>
+      {/* If user is already logged in, don't show them log in and sign up options */}
       {Auth.loggedIn() ? (
         <></>
       ) : (
