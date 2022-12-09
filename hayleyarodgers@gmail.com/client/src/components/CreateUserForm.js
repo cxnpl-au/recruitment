@@ -14,7 +14,7 @@ const CreateUserForm = ({ handleModalClose }) => {
   const [userFormData, setUserFormData] = useState({
     username: "",
     email: "",
-    password: generateRandomPassword(),
+    password: generateRandomPassword(), // generate random first password, user will then reset and create their own later
     role: "",
     businessId: getSavedBusinessId(),
   });
@@ -37,7 +37,7 @@ const CreateUserForm = ({ handleModalClose }) => {
     event.preventDefault();
 
     // Check token before proceeding
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    const token = Auth.loggedIn() && Auth.isAdmin() ? Auth.getToken() : null;
 
     if (!token) {
       return false;

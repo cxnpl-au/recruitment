@@ -34,7 +34,7 @@ const TeamList = () => {
   useEffect(() => {
     const getTeamData = async () => {
       // Check token before proceeding
-      const token = Auth.loggedIn() ? Auth.getToken() : null;
+      const token = Auth.loggedIn() && Auth.isAdmin() ? Auth.getToken() : null;
 
       if (!token) {
         return false;
@@ -71,7 +71,7 @@ const TeamList = () => {
   // Show update modal
   const handleShowModal = async (userId) => {
     // Check token before proceeding
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    const token = Auth.loggedIn() && Auth.isAdmin() ? Auth.getToken() : null;
 
     if (!token) {
       return false;
@@ -105,7 +105,7 @@ const TeamList = () => {
     event.preventDefault();
 
     // Check token before proceeding
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    const token = Auth.loggedIn() && Auth.isAdmin() ? Auth.getToken() : null;
 
     if (!token) {
       return false;
@@ -153,7 +153,7 @@ const TeamList = () => {
   // Handle delete user
   const handleDeleteUser = async (userId) => {
     // Check token before proceeding
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    const token = Auth.loggedIn() && Auth.isAdmin() ? Auth.getToken() : null;
 
     if (!token) {
       return false;

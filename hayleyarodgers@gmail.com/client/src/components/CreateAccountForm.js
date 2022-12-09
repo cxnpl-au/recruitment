@@ -33,7 +33,7 @@ const CreateAccountForm = ({ handleModalClose }) => {
     event.preventDefault();
 
     // Check token before proceeding
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    const token = Auth.loggedIn() && Auth.isAdmin() ? Auth.getToken() : null;
 
     if (!token) {
       return false;

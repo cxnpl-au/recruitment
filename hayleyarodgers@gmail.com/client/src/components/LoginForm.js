@@ -17,8 +17,10 @@ const LoginForm = () => {
     username: "",
     password: "",
   });
+
   // Set state for form validation
   const [validated] = useState(false);
+
   // Set state for alert
   const [showAlert, setShowAlert] = useState(false);
 
