@@ -207,6 +207,7 @@ const AccountList = () => {
   return (
     <>
       {/* Display sum of accounts */}
+      <h3>{businessData.name}</h3>
       <p>
         {businessData.accounts.length
           ? `Total balance: $${businessData.totalBalance}`
@@ -322,7 +323,7 @@ const AccountList = () => {
 
               {/* On form submit, update account */}
               <Button type="submit" variant="success">
-                Create
+                Update
               </Button>
             </Form>
           </Modal.Body>

@@ -13,6 +13,9 @@ import { Tab, Modal, Button } from "react-bootstrap";
 import CreateAccountForm from "../components/CreateAccountForm";
 import AccountList from "../components/AccountList";
 
+// Import authentication token function
+import Auth from "../utils/auth";
+
 const Dashboard = () => {
   // Set modal display state
   const [showModal, setShowModal] = useState(false);
@@ -22,9 +25,13 @@ const Dashboard = () => {
       {/* Page title */}
       <div className="d-flex align-items-center mb-3">
         <h2>Accounts</h2>
-        <Button className="btn btn-link" onClick={() => setShowModal(true)}>
-          +
-        </Button>
+        {Auth.isAdmin() ? (
+          <Button className="btn btn-link" onClick={() => setShowModal(true)}>
+            +
+          </Button>
+        ) : (
+          " "
+        )}
       </div>
       {/* List of accounts */}
       <AccountList />

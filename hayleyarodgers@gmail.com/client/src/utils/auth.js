@@ -62,9 +62,11 @@ class AuthService {
     return role === "editor" ? true : false;
   }
 
-  // Upon logout, remove the user's token from localStorage
+  // Upon logout, remove the user's token and role from localStorage
   logout() {
     localStorage.removeItem("id_token");
+    localStorage.removeItem("saved_user_role");
+
     // Reload the page and reset the state of the application
     window.location.assign("/");
   }

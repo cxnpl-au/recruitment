@@ -24,7 +24,7 @@ const AppNavbar = () => {
         <Container fluid>
           <div className="d-flex flex-column">
             <Navbar.Brand className="brandName" as={Link} to="/">
-              <h1 className="un">IM service</h1>
+              <h1 className="un">IM Service</h1>
             </Navbar.Brand>
             <p>
               <a

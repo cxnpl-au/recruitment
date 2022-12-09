@@ -11,6 +11,7 @@ const Signup = () => {
     <main>
       {/* Page title */}
       <h2>Sign up</h2>
+      <p>All you'll need is a unique username, email and password.</p>
       {/* Form for signing up */}
       <SignupForm />
       <p>Already have an account?</p>
