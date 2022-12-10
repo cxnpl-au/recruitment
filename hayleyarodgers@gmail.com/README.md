@@ -5,10 +5,10 @@
 - [Description](#description)
 - [Scope](#scope)
 - [Decisions](#decisions)
+- [Improvements](#improvements)
 - [Access](#access)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Improvements](#improvements)
 - [Credits](#credits)
 
 ## Description
