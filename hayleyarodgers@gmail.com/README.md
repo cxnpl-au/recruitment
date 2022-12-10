@@ -151,11 +151,10 @@ npm i
 To use the application from the command line (after installing dependencies):
 
 1. Open the **root directory** of the repository in your terminal or bash.
-2. Create a .env file in the format of [.env.EXAMPLE](./.env.EXAMPLE). You'll need:
+2. Create a .env file in the format of [.env.EXAMPLE](./.env.EXAMPLE).
 
-- A JWT secret (JWT_SECRET), that is a random 32-bit character string.
-- A gmail username (MAIL_USERNAME) and password (MAIL_PASSWORD) to send the forgot password emails from.
-- OAuth credentials (OAUTH_CLIENTID, OAUTH_CLIENT_SECRET and OAUTH_REFRESH_TOKEN). For information on how to create these, [see here](https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/).
+- You'll need a JWT secret (JWT_SECRET): a random 32-bit character string to enable authorisation.
+- If you want to see the email functionality when the a "forgot password" request is submitted, you'll need a gmail username (MAIL_USERNAME) and password (MAIL_PASSWORD) to send the forgot password emails from, in addition to OAuth credentials (OAUTH_CLIENTID, OAUTH_CLIENT_SECRET and OAUTH_REFRESH_TOKEN). For information on how to create these, [see here](https://www.freecodecamp.org/news/use-nodemailer-to-send-emails-from-your-node-js-server/).
 
 3. To interact with the complete application, enter `npm run develop` in the command line and go to port 3000 on your local host. Alternatively, to interact with the server, enter `npm run start`.
 4. To deploy the application yourself, enter `npm run build` and deploy to your platform of choice.
