@@ -8,7 +8,7 @@
 - [Access](#access)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Improvements](#improvement)
+- [Improvements](#improvements)
 - [Credits](#credits)
 
 ## Description
