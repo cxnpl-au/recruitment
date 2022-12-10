@@ -1,5 +1,4 @@
 // Use Express router
-//
 const router = require("express").Router();
 
 // Get logic to execute routes
