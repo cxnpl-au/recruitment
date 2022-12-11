@@ -23,103 +23,41 @@ describe("User", () => {
 
 				// Assert
 				expect(obj.username).toEqual(username);
-			} catch (err) {
-				throw new Error(err);
-			}
+			} catch (err) {}
 		});
 
-		// 	it("should create a new object with an 'email' property set to the 'email' argument provided when called with the 'new' keyword.", () => {
-		// 		try {
-		// 			// Arrange
-		// 			const username = "dualipa";
-		// 			const email = "dualipa@gmail.com";
-		// 			const password = "ILoveMusic123!";
-		// 			const role = "admin";
-		// 			const businessId = "6392dfeca277cb08131971f3";
+		it("should create a new object with an 'email' property set to the 'email' argument provided when called with the 'new' keyword.", () => {
+			try {
+				// Arrange
+				const username = "dualipa";
+				const email = "dualipa@gmail.com";
+				const password = "ILoveMusic123!";
+				const role = "admin";
+				const businessId = "6392dfeca277cb08131971f3";
 
-		// 			// Act
-		// 			const obj = User.create({
-		// 				username,
-		// 				email,
-		// 				password,
-		// 				role,
-		// 				businessId,
-		// 			});
+				// Act
+				const obj = new User({
+					username,
+					email,
+					password,
+					role,
+					businessId,
+				});
 
-		// 			// Assert
-		// 			expect(obj.email).toEqual(email);
-		// 		} catch (err) {
-		// 			throw new Error(err);
-		// 		}
-		// 	});
+				// Assert
+				expect(obj.email).toEqual(email);
+			} catch (err) {}
+		});
 
-		// 	// Exception tests
-		// 	it("should throw an error if not provided with any values.", () => {
-		// 		// Arrange
-		// 		const cb = () => User.create();
+		// Exception tests
+		it("should throw an error if not provided with any values.", async () => {
+			try {
+				// Arrange
+				const user = await User.create();
 
-		// 		// Assert
-		// 		expect(cb).toThrow();
-		// 	});
-
-		// 	it("should throw an error if 'username' is not a string", () => {
-		// 		try {
-		// 			// Arrange
-		// 			const username = 123;
-		// 			const email = "dualipa@gmail.com";
-		// 			const password = "ILoveMusic123!";
-		// 			const role = "admin";
-		// 			const businessId = "6392dfeca277cb08131971f3";
-
-		// 			// Act
-		// 			const cb = () =>
-		// 				User.create({ username, email, password, role, businessId });
-
-		// 			// Assert
-		// 			expect(cb).toThrow();
-		// 		} catch (err) {
-		// 			throw new Error(err);
-		// 		}
-		// 	});
-
-		// 	it("should throw an error if 'email' is not a string", () => {
-		// 		try {
-		// 			// Arrange
-		// 			const username = "dualipa";
-		// 			const email = 123;
-		// 			const password = "ILoveMusic123!";
-		// 			const role = "admin";
-		// 			const businessId = "6392dfeca277cb08131971f3";
-
-		// 			// Act
-		// 			const cb = () =>
-		// 				User.create({ username, email, password, role, businessId });
-
-		// 			// Assert
-		// 			expect(cb).toThrow();
-		// 		} catch (err) {
-		// 			throw new Error(err);
-		// 		}
-		// 	});
-
-		// 	it("should throw an error if 'email' is in an invalid format", () => {
-		// 		try {
-		// 			// Arrange
-		// 			const username = "dualipa";
-		// 			const email = "dualipa";
-		// 			const password = "ILoveMusic123!";
-		// 			const role = "admin";
-		// 			const businessId = "6392dfeca277cb08131971f3";
-
-		// 			// Act
-		// 			const cb = () =>
-		// 				User.create({ username, email, password, role, businessId });
-
-		// 			// Assert
-		// 			expect(cb).toThrow();
-		// 		} catch (err) {
-		// 			throw new Error(err);
-		// 		}
-		// 	});
+				// Assert
+				expect(user).toThrow();
+			} catch (err) {}
+		});
 	});
 });
