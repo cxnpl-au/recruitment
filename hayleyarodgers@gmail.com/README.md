@@ -9,6 +9,7 @@
 - [Access](#access)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Tests](#tests)
 - [Credits](#credits)
 
 ## Description
