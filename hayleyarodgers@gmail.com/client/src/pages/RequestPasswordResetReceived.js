@@ -8,7 +8,10 @@ const RequestPasswordResetReceived = () => {
     <main>
       {/* Page title */}
       <h2>Reset password request received</h2>
-      <p>Please check your email for a link to reset your password.</p>
+      <p>
+        Please check your email for a link to reset your password. It might be
+        in spam, so please check there too!
+      </p>
       <Link className="btn mx-3" to={`/login`}>
         Go back to log in page
       </Link>
