@@ -44,7 +44,12 @@ const LoginForm = () => {
 
     // Since loginUser is asynchronous, wrap in a `try...catch` to catch any network errors from throwing due to a failed request
     try {
+      // If log in isn't successful, code won't make it past line 49
+      setShowAlert(true);
       const response = await loginUser(userFormData);
+
+      // If log in is successful, alert will show up momentarily and then disappear
+      setShowAlert(false);
 
       if (!response.ok) {
         throw new Error("Something went wrong during log in.");

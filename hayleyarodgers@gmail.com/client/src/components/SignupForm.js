@@ -44,7 +44,12 @@ const SignupForm = () => {
 
     // Since signupUser is asynchronous, wrap in a `try...catch` to catch any network errors from throwing due to a failed request
     try {
+      // If sign up isn't successful, code won't make it past line 49
+      setShowAlert(true);
       const response = await signupUser(userFormData);
+
+      // If sign up is successful, alert will show up momentarily and then disappear
+      setShowAlert(false);
 
       if (!response.ok) {
         throw new Error("Something went wrong during sign up.");
