@@ -143,11 +143,15 @@ npm i
 
 ## Usage
 
-To use the application from the command line (after installing dependencies):
+To run this application without Docker, you'll need to install and use [MongoDB Compass](https://docs.mongodb.com/compass/current/install/). Note that I created this application using Node version 16.15.1.
 
 1. Open the [root directory of this repository](./) in your terminal or bash.
-2. To interact with the server, enter `npm run start` in your command line.
-3. To interact with the full stack application, enter `npm run develop` in your command line.
+2. To interact with the server, enter `npm run start` in your command line. In Compass, connect to the default connection at `127.0.0.1:27017` by clicking on the `Connect` button under `New Connection` at the center of the screen.
+3. To interact with the end-to-end application, enter `npm run develop` in your command line.
+
+Alternatively, you can view a live deployment of the application [here on Heroku](https://hayleyarodgers-cxnpl.herokuapp.com/). Unfortunately though, the "forgot password" emails don't work on this deployment due to third-party authorisation issues.
+
+I also worked extensively to try and Dockerize this application. Although I could serve the client folder, MongoDB refused to connect with my application and requests could not be proxied. To see a version of this repo with my Dockerfile attempts, [see here](https://github.com/hayleyarodgers/cxnpl-docker-attempt)
 
 ## Tests
 
