@@ -151,7 +151,7 @@ To run this application without Docker, you'll need to install and use [MongoDB 
 
 Alternatively, you can view a live deployment of the application [here on Heroku](https://hayleyarodgers-cxnpl.herokuapp.com/). Unfortunately though, the "forgot password" emails don't work on this deployment due to third-party authorisation issues.
 
-I also worked extensively to try and Dockerize this application. Although I could serve the client folder, MongoDB refused to connect with my application and requests could not be proxied. To see a version of this repo with my Dockerfile attempts, [see here](https://github.com/hayleyarodgers/cxnpl-docker-attempt)
+I also worked extensively to try and Dockerize this application. Although I could serve the client folder, MongoDB refused to connect with my application and requests could not be proxied. To see a version of this repo with my Dockerfile attempts, [see here](https://github.com/hayleyarodgers/cxnpl-docker-attempt).
 
 ## Tests
 
