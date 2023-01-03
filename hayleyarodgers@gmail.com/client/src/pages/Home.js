@@ -24,15 +24,6 @@ const Home = () => {
         accounts and users (depending on whether they are an "admin", "editor"
         or "viewer" as determined by an admin).
       </p>
-      <p>
-        {" "}
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/cxnpl-au/recruitment/tree/submission/hayleyarodgers%40gmail.com/hayleyarodgers%40gmail.com">
-          To read more about this application and how it works, see here.
-        </a>
-      </p>
       <br></br>
       {/* If user is already logged in, don't show them log in and sign up options */}
       {Auth.loggedIn() ? (

@@ -34,7 +34,7 @@ const AppNavbar = () => {
                 className="un">
                 hayleyarodgers
               </a>{" "}
-              x cxnpl
+              technical assessment
             </p>
           </div>
           <Navbar.Toggle aria-controls="navbar" />

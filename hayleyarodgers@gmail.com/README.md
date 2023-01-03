@@ -1,4 +1,4 @@
-# hayleyarodgers x cxnpl technical assessment
+# hayleyarodgers technical assessment
 
 ## Table of Contents
 
@@ -6,7 +6,6 @@
 - [Scope](#scope)
 - [Decisions](#decisions)
 - [Improvements](#improvements)
-- [Access](#access)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Tests](#tests)
@@ -72,7 +71,7 @@ To a video walkthrough of this project, [click here](./assets/walkthrough/walkth
 
 ### Wireframes of Application
 
-To see the wireframes for this project, [click here](./assets/wireframes/hayleyarodgers-x-cxnpl-assessment-wireframe.pdf).
+To see the wireframes for this project, [click here](./assets/wireframes/hayleyarodgers-wireframe.pdf).
 
 ## Decisions
 
@@ -129,10 +128,6 @@ Some areas for improvement include:
 - Adding multi-factor authentication to log in.
 - Adding SSO to sign up and log in.
 
-## Access
-
-The repository where the code is saved is on Github. To access it, click [here](https://github.com/cxnpl-au/recruitment).
-
 ## Installation
 
 To install the necessary dependencies, open the [root directory of this repository](./) in your terminal or bash and run the following command:
@@ -146,12 +141,11 @@ npm i
 To run this application without Docker, you'll need to install and use [MongoDB Compass](https://docs.mongodb.com/compass/current/install/). Note that I created this application using Node version 16.15.1.
 
 1. Open the [root directory of this repository](./) in your terminal or bash.
-2. To interact with the server, enter `npm run start` in your command line. In Compass, connect to the default connection at `127.0.0.1:27017` by clicking on the `Connect` button under `New Connection` at the center of the screen.
-3. To interact with the end-to-end application, enter `npm run develop` in your command line.
+2. Create an env file in the format of [env.EXAMPLE](./.env.example), where the JWT secret is a random string, the client URL is the host for where you're running the application, and the email username and password are for the email you're using to send the forgot password emails from.
+3. To interact with the server, enter `npm run start` in your command line. In Compass, connect to the default connection at `127.0.0.1:27017` by clicking on the `Connect` button under `New Connection` at the center of the screen.
+4. To interact with the end-to-end application, enter `npm run develop` in your command line.
 
-Alternatively, you can view a live deployment of the application [here on Heroku](https://hayleyarodgers-cxnpl.herokuapp.com/). Unfortunately though, the "forgot password" emails don't work on this deployment due to third-party authorisation issues.
-
-I also worked extensively to try and Dockerize this application. Although I could serve the client folder, MongoDB refused to connect with my application and requests could not be proxied. To see a version of this repo with my Dockerfile attempts, [see here](https://github.com/hayleyarodgers/cxnpl-docker-attempt).
+Alternatively, you can view a live deployment of the application [here on Heroku](https://hayleyarodgers-technical.herokuapp.com/). Unfortunately though, the "forgot password" emails don't work on this deployment due to third-party authorisation issues.
 
 ## Tests
 

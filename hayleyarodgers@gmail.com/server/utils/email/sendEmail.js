@@ -33,7 +33,7 @@ const resetPasswordEmail = async (email, name, link) => {
 	const mailOptions = {
 		from: process.env.MAIL_USERNAME,
 		to: email,
-		subject: "Reset password for hayleyarodgers x cxnpl technical assessment",
+		subject: "Reset password for hayleyarodgers technical assessment",
 		template: "requestResetPassword",
 		context: {
 			name: name,
