@@ -1,0 +1,218 @@
+/* Custom global styling */
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&family=Ubuntu:wght@700&display=swap');
+
+:root {
+  font-size: 62.5%;
+  --font-heading: 'Ubuntu', sans-serif;
+  --font-main: 'Nanum Gothic', sans-serif;
+  --black: #000814;
+  --blackblue: #001D3D;
+  --blue: #003566;
+  --blueshade: #00356627;
+  --yellow: #FFC300;
+  --lightyellow: #FFD60A;
+  --grey: #f3f3f5;
+}
+
+body {
+  color: var(--blue);
+  background-color: white;
+  font-family: var(--font-main);
+  font-weight: 400;
+  font-size: 1.65rem;
+  line-height: 1.7;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--grey);
+}
+
+main {
+  padding: 0 5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Custom text styling */
+p {
+  font-size: 1.65rem;
+  color: var(--blue);
+}
+
+h1,
+h2,
+h3,
+.form-label {
+  font-family: var(--font-heading);
+}
+
+h1 {
+  font-size: 6rem;
+}
+
+h2 {
+  color: var(--blue);
+  font-size: 4.5rem;
+  margin-bottom: 30px;
+}
+
+h2.marginless {
+  margin-bottom: 0px;
+}
+
+h3 {
+  color: var(--blue);
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+hr {
+  margin: 30px 0;
+  width: 66%;
+  align-self: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 40vw;
+  padding: 20px 20px;
+}
+
+form .form-control, 
+form p {
+  margin-bottom: 20px;
+}
+
+.modal-content h3 {
+  margin-bottom: 0px;
+}
+
+a, 
+.btn-link,
+a:hover {
+  color: var(--blue);
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+.form-control, 
+.form-select {
+  font-size: 1.65rem;
+  border: none;
+}
+
+.un {
+  display: inline-block;
+  padding-bottom: 2px;
+  background-image: linear-gradient(rgb(255, 255, 255) 0 0);
+  background-position: 0 100%;
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  transition:
+      background-size 0.3s,
+      background-position 0s 0.3s;
+}
+
+.parent-hover:hover .un, 
+.un:hover {
+  background-position: 100% 100%; 
+  background-size: 100% 2px;
+}
+
+/* Custom card styling */
+.form-control, 
+.form-select,
+.card {
+  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.08);
+  width: 100%;
+}
+
+.card:hover {
+  box-shadow: 0px 0 30px var(--blueshade);
+}
+
+.card, 
+.modal-content {
+  min-width: fit-content;
+}
+
+.card.home {
+  width: 33vw;
+}
+
+.user h3, 
+.user p {
+  margin-bottom: 0px;
+  margin: 0;
+}
+
+.width-controller {
+  width: 200px;
+}
+
+.width-controller h3 {
+  text-align: left;
+  padding-left: 10px;
+}
+
+/* Custom button styling */
+.btn, 
+.btn.btn-primary {
+  font-size: 1.65rem;
+  color: white;
+  background-color: var(--blue);
+  border: var(--blue);
+  margin: 10px;
+}
+
+form .btn {
+  margin: 10px 0px;
+}
+
+.btn.btn-important {
+  background-color: var(--yellow);
+  border: var(--yellow);
+}
+
+.btn.btn-link {
+  margin: 20px;
+  border-radius: 50%;
+  background-color: white;
+  color: var(--blue);
+  text-align: center;
+  font-size: 4rem;
+  width: 50px;
+  height: 50px;
+  line-height: 0.7; 
+}
+
+.btn.btn-link:hover,
+.nav-link.active,
+.btn.btn-success:active,
+.btn:hover,
+a.btn-create:hover {
+  color: white;
+  background-color: var(--yellow);
+}
+
+/* Viewport response on small smartphones - reduce text size */
+@media screen and (max-width: 768px) {
+  :root {
+    font-size: 50%;
+  }
+
+  h1,
+  h2 {
+    font-size: 3rem;
+  }
+
+  form {
+    width: 66vw
+  }
+}
