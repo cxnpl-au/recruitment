@@ -1,8 +1,15 @@
 const router = require('express').Router();
+const cors = require('cors');
 const { User, Permission } = require('../model/user');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
-const { registerValidation, loginValidation } = require('../validation')
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const { registerValidation, loginValidation } = require('../validation');
+
+dotenv.config();
+
+router.use(cors());
+
 
 router.post('/register', async (req, res) => {
     //Validate register data
@@ -49,17 +56,33 @@ router.post('/login', async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message);
    
     //Check if user is already in the database
-    const user = await User.findOne({ email: req.body.email });
-    if(!user) return res.status(400).send('Email not found');
+    let user;
+    try {
+        user = await User.findOne({ email: req.body.email });
+        if(!user) return res.status(400).send('Email not found');
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+  
 
     //Check if passwords match
-    const validPass = await bcrypt.compare(req.body.password, user.password);
-    if(!validPass) return res.status(400).send('Invalid password');
+    try {
+        const validPass = await bcrypt.compare(req.body.password, user.password);
+        if(!validPass) return res.status(400).send('Invalid password');
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+
 
     //Create and assign web token
     //JWT - JSON web tokens, make requests as a logged in user
-    const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
-    res.header('auth-token', token).send(token);
+    try {
+        const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
+        res.header('auth-token', token).send(token);
+    } catch (err) {
+        res.status(400).send(err.message);
+    }
+    
 })
 
 router.get("/", (req, res) => res.send("Server is up and running"));
