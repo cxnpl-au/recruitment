@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 //Import Routes
 const authRoute = require('./routes/auth');
-const permissionsRoute = require('./routes/permissions');
+const userPermissionRoute = require('./routes/permissions');
 
 
 dotenv.config();
@@ -23,7 +23,7 @@ app.use(express.json());
 
 //Route Middlewares
 app.use('/api/user', authRoute);
-app.use('/api/user', permissionsRoute);
+app.use('/api/user', userPermissionRoute);
 
 
 app.listen(3000, () => console.log('Server Started'));

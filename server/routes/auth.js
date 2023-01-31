@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const cors = require('cors');
-const { User, Permission } = require('../model/user');
+const User = require('../model/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
@@ -24,18 +24,11 @@ router.post('/register', async (req, res) => {
     const salt = await bcrypt.genSalt(10); //Generate salt, number in genSalt() function sets how complex(?) salt is
     const hashedPassword = await bcrypt.hash(req.body.password, salt); //Use salt to generate a hashed password
 
-    //Default permission
-    const permission = new Permission({
-        typeI: false,
-        typeII: false,
-        typeIII: false
-    })
     //Creates a new user
     const user = new User({
         name: req.body.name,
         email: req.body.email,
-        password: hashedPassword,
-        permission: permission
+        password: hashedPassword
     });
 
     try {

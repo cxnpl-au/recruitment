@@ -9,3 +9,11 @@ content-type: application/json
 
 ###
 GET http://localhost:3000/api/user
+
+###
+GET http://localhost:3000/api/user/permissions
+content-type: application/json
+
+{
+    "userId": "63d799c20ae9b06e3c37c519"
+}
