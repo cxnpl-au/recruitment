@@ -3,7 +3,7 @@
     width: 100vw;
     height: 100vh;
     grid-template-columns: 20% auto 20%;
-    grid-template-rows: 1fr 8fr 2fr;
+    grid-template-rows: 1fr 8fr 1fr;
    
 }
 
@@ -12,24 +12,27 @@
     grid-column:  2 / 3;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
+    font-size: 30px;
 
 }
 
 .home {
     grid-column: 1 / 2;
+    display:flex;
     justify-content: center;
     align-items: center;
-
-}
-
-.details {
-    grid-column: 2 / 3;
 }
 
 .login {
     grid-column: 3 / 4;
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .signup {
     grid-column: 4 / 5;
+    display:flex;
+    justify-content: center;
+    align-items: center;
 }

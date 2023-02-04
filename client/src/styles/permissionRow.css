@@ -1,0 +1,38 @@
+.permissionRow {
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border: solid;
+    border-width: 1px;
+    border-color: grey;
+    margin-bottom: 2px;
+}
+
+.resourceName {
+    grid-column: 1/2;
+    border: solid;
+    border-width: 1px;
+    border-color: grey;
+    padding: 5px;
+
+
+}   
+
+.ownerId {
+    grid-column: 2/3;
+    border: solid;
+    border-width: 1px;
+    border-color: grey;
+    padding: 5px;
+
+
+
+}
+
+.permissionLevel {
+    grid-column: 3/4;
+    border: solid;
+    border-width: 1px; 
+    border-color: grey;
+    padding: 5px;
+
+}

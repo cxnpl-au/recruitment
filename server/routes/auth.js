@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const cors = require('cors');
+
 const User = require('../model/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -34,11 +35,13 @@ router.post('/register', async (req, res) => {
     try {
         const savedUser = await user.save();
         res.status(200).send({ user: user._id });
+        const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET);
+        console.log(token);
+        res.header('auth-token', token).send(token);
 
     } catch (err) {
         res.status(400).send(err.message);
     }
-    
 
 });
 
