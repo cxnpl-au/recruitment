@@ -79,8 +79,37 @@ const upsertPermission = async (
   }
 };
 
+const deletePermissionsForResource = async (userId, resourceId) => {
+  const permission = await UserPermission.findOne({
+    userId,
+    resourceId,
+  });
+
+  if (!permission) {
+    throw new Error("Permission not found");
+  }
+
+  if (permission.permission !== Permissions.MANAGE) {
+    throw new Error("user does not have permission to delete this resource");
+  }
+
+  try {
+    const deletedPermissions = await UserPermission.deleteMany({
+      resourceId,
+    });
+    return {
+      message: "Resource and all its permissions successfully deleted",
+      resource: deletedResource,
+      permissions: deletedPermissions,
+    };
+  } catch (err) {
+    throw new err.message();
+  }
+};
+
 module.exports = {
   getAllPermissionsForUser,
   getPermissionForResource,
   upsertPermission,
+  deletePermissionsForResource,
 };
