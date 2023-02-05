@@ -48,7 +48,9 @@ function App() {
 
         <div
           style={{ gridRow: "1/2", gridColumn: "1/2", background: "#0067C8" }}
-        />
+        >
+          <p>{user.userId}</p>
+        </div>
         <div
           style={{ gridRow: "1/2", gridColumn: "3/4", background: "#0067C8" }}
         />

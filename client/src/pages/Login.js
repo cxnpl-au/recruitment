@@ -29,7 +29,7 @@ function Login() {
       // Handle the response from backend here
       .then((res) => {
         console.log(res.data);
-        setUser({ token: res.data });
+        setUser({ token: res.data.token, userId: res.data.userId });
         navigate("/dashboard");
       })
 

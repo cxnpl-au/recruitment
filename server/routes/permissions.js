@@ -2,6 +2,7 @@ const router = require("express").Router();
 const verify = require("./verifyToken");
 const Resource = require("../model/resource");
 const UserPermission = require("../model/userPermission");
+const { Permissions } = require("../enums/permissions");
 
 //Get user permissions (display all of them)
 router.get("/", verify, async (req, res) => {
@@ -40,50 +41,47 @@ router.get("/:resourceId", verify, async (req, res) => {
   }
 });
 
-//TODO, create front end for this, dropdown menu to select which level of permission
-//switched to upsert, update permission for certain resource IF it exists, insert it if it does not.
-router.post("/upsertPermission", verify, async (req, res) => {
+//Register permission for a user
+router.post("/:resourceId", verify, async (req, res) => {
   //User should only be able to register permissions for resources they own
-  //Check if user owns resource - this doesnt work
-  const resource = await Resource.findOne({
-    resourceId: req.body.resourceId,
-    ownerId: req.user._id,
+  //Check if user owns resource
+  const viewerUserPermission = await UserPermission.findOne({
+    userId: req.user._id,
+    resourceId: req.params.resourceId,
   });
 
   //If user does not own resource, return status 400 with message ("cannot register permission, user does not own resource")
-  if (!resource) {
+  if (
+    !viewerUserPermission ||
+    viewerUserPermission.permission != Permissions.MANAGE
+  ) {
     return res
       .status(400)
       .send("Cannot register permission, user does not own resource");
   }
 
-  const userPermission = await UserPermission.findOne({
-    userId: req.user._id,
-    resourceId: req.body.resourceId,
-  });
+  //validate userId and resourceId are available
 
-  // Update the existing user permission
-  if (userPermission) {
-    userPermission.permission = req.body.permission;
-    try {
-      const savedUserPermission = await userPermission.save();
-      res.status(200).send(userPermission);
-    } catch (err) {
-      res.status(400).send(err.message);
-    }
-  } else {
-    // Create a new user permission
-    const newUserPermission = new UserPermission({
-      userId: req.user._id,
-      permission: req.body.permission,
-      resourceId: req.body.resourceId,
-    });
-    try {
-      const savedUserPermission = await newUserPermission.save();
-      res.status(200).send(newUserPermission);
-    } catch (err) {
-      res.status(400).send(err.message);
-    }
+  try {
+    const savedUserPermission = await UserPermission.findOneAndUpdate(
+      {
+        userId: req.body.userId,
+        resourceId: req.params.resourceId,
+      },
+      {
+        userId: req.body.userId,
+        permission: req.body.permission,
+        resourceId: req.params.resourceId,
+      },
+      {
+        upsert: true,
+        new: true,
+      }
+    );
+    console.log(savedUserPermission);
+    res.status(200).send(savedUserPermission);
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 });
 

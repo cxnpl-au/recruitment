@@ -14,29 +14,26 @@ export function RegisterResource({ addResource }) {
     setResourceName(e.target.value);
   };
 
-  const handleRegisterResource = () => {
-    axios({
-      // Endpoint to send files
-      url: "http://localhost:8080/api/resource/registerResource",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": user.token,
-      },
-      data: {
-        resourceName: resourceName,
-      },
-    })
-      // Handle the response from backend here
-      .then((res) => {
-        console.log(user.token);
-        addResource(res.data);
-      })
-
-      // Catch errors if any
-      .catch((err) => {
-        console.log(err);
+  const handleRegisterResource = async () => {
+    try {
+      let newResource = await axios({
+        // Endpoint to send files
+        url: "http://localhost:8080/api/resources/",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": user.token,
+        },
+        data: {
+          resourceName: resourceName,
+        },
       });
+      //add to state
+      addResource(newResource.data);
+      setRegisterForm(!registerForm);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
