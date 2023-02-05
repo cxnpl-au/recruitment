@@ -37,7 +37,7 @@ export function RegisterResource({ addResource }) {
   };
 
   return (
-    <div>
+    <div className="registerResourceContainer">
       {registerForm ? (
         <div>
           <input

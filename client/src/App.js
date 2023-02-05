@@ -23,9 +23,6 @@ function App() {
     <Router>
       <div className="container">
         <nav className="header">
-          <div className="home">
-            <Link to="/">Home</Link>
-          </div>
           {user.token === "" ? (
             <>
               <div className="login">

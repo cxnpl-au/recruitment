@@ -47,6 +47,19 @@ function Dashboard() {
     setResources([...resources, newResource]);
   };
 
+  const deleteResource = (deletedResource) => {
+    console.log(resources);
+    let filteredResources = resources.filter(
+      (resource) => resource._id == deletedResource._id
+    );
+    console.log("filtered resources");
+    console.log(filteredResources);
+
+    setResources(
+      resources.filter((resource) => resource._id != deletedResource._id)
+    );
+  };
+
   return (
     <div>
       {user && <RegisterResource addResource={addResource} />}
@@ -54,7 +67,11 @@ function Dashboard() {
       {resources.map((resource) => {
         return (
           <div>
-            <ResourceRow key={resource._id} resource={resource} />
+            <ResourceRow
+              key={resource._id}
+              resource={resource}
+              deleteResource={deleteResource}
+            />
           </div>
         );
       })}

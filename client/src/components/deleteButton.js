@@ -1,9 +1,7 @@
-import { useState } from "react";
-
-export function AssignPermissionButton({ permission, handleClick }) {
+export function DeleteButton({ permission, handleClick }) {
   return (
     <div
-      className="inviteButton"
+      className="deleteButton"
       onClick={
         permission === "manage"
           ? handleClick
@@ -12,7 +10,7 @@ export function AssignPermissionButton({ permission, handleClick }) {
             }
       }
     >
-      +
+      -
     </div>
   );
 }

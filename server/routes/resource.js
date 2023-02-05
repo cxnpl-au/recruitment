@@ -4,6 +4,10 @@ const Resource = require("../model/resource");
 const UserPermission = require("../model/userPermission");
 const resource = require("../model/resource");
 const { Permissions } = require("../enums/permissions");
+const {
+  upsertPermission: registerPermission,
+  getAllPermissionsForUser,
+} = require("../controllers/permissions");
 
 //Create new resource
 router.post("/", verify, async (req, res) => {
@@ -39,7 +43,7 @@ router.post("/", verify, async (req, res) => {
 //Get all resources (anything you have access to)
 router.get("/", verify, async (req, res) => {
   // [{resourceId: 1, userId: 1, type: read}, {resourceId: 2, userId: 1, type: write}, ]
-  const permissions = await UserPermission.find({ userId: req.user._id });
+  const permissions = await getAllPermissionsForUser(req.user._id);
   // [1, 2]
   const resourceIds = permissions.map((permission) => permission.resourceId);
 
@@ -100,6 +104,59 @@ router.post("/:resourceId", verify, async (req, res) => {
     res.status(200).send(savedResource);
   } catch (err) {
     res.status(400).send(err.message);
+  }
+});
+
+//Delete a resource and all its associated permissions
+router.delete("/:resourceId", verify, async (req, res) => {
+  const resource = await Resource.findOne({
+    _id: req.params.resourceId,
+  });
+
+  if (!resource) {
+    return res.status(404).send("Resource not found");
+  }
+
+  const permission = await UserPermission.findOne({
+    userId: req.user._id,
+    resourceId: req.params.resourceId,
+  });
+
+  if (!permission) {
+    return res.status(404).send("Permission not found");
+  }
+
+  if (permission.permission !== Permissions.MANAGE) {
+    return res
+      .status(400)
+      .send("user does not have permission to delete this resource");
+  }
+
+  try {
+    const deletedResource = await resource.remove();
+    const deletedPermissions = await UserPermission.deleteMany({
+      resourceId: req.params.resourceId,
+    });
+    res.status(200).send({
+      message: "Resource and all its permissions successfully deleted",
+      resource: deletedResource,
+      permissions: deletedPermissions,
+    });
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
+
+router.post("/:resourceId/permissions", verify, async (req, res) => {
+  try {
+    const permission = await registerPermission(
+      req.user._id,
+      req.params.resourceId,
+      req.body.permission
+    );
+    res.status(200).send(permission);
+  } catch (err) {
+    res.status(400).send(err);
   }
 });
 

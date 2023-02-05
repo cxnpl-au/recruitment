@@ -1,12 +1,13 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { UserContext } from "../context/userContext";
-
-import "../styles/resourceRow.css";
 import { AssignPermissionButton } from "./assignPermissionButton";
 import { EditButton } from "./editButton";
 
-export function ResourceRow({ resource }) {
+import "../styles/resourceRow.css";
+import { DeleteButton } from "./deleteButton";
+
+export function ResourceRow({ resource, deleteResource }) {
   const [userId, setUserId] = useState("");
   const [editable, setEditable] = useState(false);
   const [resourceName, setResourceName] = useState(resource.resourceName);
@@ -14,6 +15,7 @@ export function ResourceRow({ resource }) {
 
   const [expandInvite, setExpandInvite] = useState(false);
   const { user } = useContext(UserContext);
+
   const handleAssignPermission = async () => {
     try {
       let newResource = await axios({
@@ -30,10 +32,12 @@ export function ResourceRow({ resource }) {
         },
       });
       console.log(newResource);
+      setExpandInvite(false);
     } catch (error) {
       console.log(error);
     }
   };
+
   const handleEditResource = async () => {
     try {
       let newResource = await axios({
@@ -49,6 +53,25 @@ export function ResourceRow({ resource }) {
         },
       });
       console.log(newResource);
+      setEditable(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDeleteResource = async () => {
+    try {
+      let deletedResources = await axios({
+        // Endpoint to send files
+        url: `http://localhost:8080/api/resources/${resource._id}`,
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": user.token,
+        },
+      });
+      console.log(deletedResources);
+      setEditable(false);
     } catch (error) {
       console.log(error);
     }
@@ -56,23 +79,26 @@ export function ResourceRow({ resource }) {
 
   const handleUserIdInput = (e) => {
     setUserId(e.target.value);
-    console.log(userId);
   };
   const handlePermissionLevelInput = (e) => {
     setPermissionLevel(e.target.value);
-    console.log(permissionLevel);
-  };
-
-  const handleAssignPermissionClick = () => {
-    setExpandInvite(!expandInvite);
   };
 
   const handleResourceNameChange = (e) => {
     setResourceName(e.target.value);
   };
 
+  const handleAssignPermissionClick = () => {
+    setExpandInvite(!expandInvite);
+  };
+
   const handleEditClick = () => {
     setEditable(!editable);
+  };
+
+  const handleDeleteClick = () => {
+    handleDeleteResource();
+    deleteResource(resource);
   };
 
   return (
@@ -96,6 +122,10 @@ export function ResourceRow({ resource }) {
         <AssignPermissionButton
           permission={resource.permission}
           handleClick={handleAssignPermissionClick}
+        />
+        <DeleteButton
+          permission={resource.permission}
+          handleClick={handleDeleteClick}
         />
       </div>
       {expandInvite ? (

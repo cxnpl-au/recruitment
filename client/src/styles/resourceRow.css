@@ -1,6 +1,6 @@
 .permissionRow {
     display:grid;
-    grid-template-columns: 3fr 3fr 3fr 1fr 20px 30px;
+    grid-template-columns: 3fr 3fr 3fr 1fr 20px 30px 30px;
     border: solid;
     border-width: 1px;
     border-color: grey;
@@ -48,6 +48,20 @@
 
 .inviteButton {
     grid-column: 6/7;
+    background-color: #0067C8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: aliceblue;
+    font-weight: bolder;
+    font-size: larger;
+    border: solid;
+    border-width: 1px; 
+    border-color: grey;
+}
+
+.deleteButton {
+    grid-column: 7/8;
     background-color: #0067C8;
     display: flex;
     justify-content: center;
