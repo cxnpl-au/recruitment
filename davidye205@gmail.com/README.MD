@@ -2,10 +2,10 @@
 
 ## Table of Contents
 
-- [Overview](#overView)
+- [Overview](#overview)
 - [Demo](#demo)
-- [Detailed Design](#detailedDesign)
-- [Future Work](#futureWork)
+- [Detailed Design](#detailed-design)
+- [Future Work](#future-work)
 
 
 ## Overview
@@ -25,27 +25,45 @@ Finally, we have a custom UI built using ReactJS to test the different component
 
 ## Demo
 ### Installation
-To install the required dependencies, run this command in both the client and server directories:
+To install the required dependencies, run this command in both the [client](./client) and [server](./server) directories:
 ```
-npm i
+npm install
 ```
+You also need to install and use MongoDB Compass to properly run the server 
 
 ### Usage
-Create an .env file in the server folder containing the following variables
+Create an .env file in the [server directory](./server) containing the following variables:
 ```
 LOCAL_URI = <yourLocalMongoUri>
 TOKEN_SECRET = <jwtSecret>
 SERVER_URL = <yourLocalServer>
 ```
 
-Navigate to the [server directory](./) in a terminal and run
+To start the server, navigate to the [server directory](./server) in a terminal and run:
 ```
 npm start
 ```
-Navigate to client directory in a second terminal and run
+To start the front-end application, navigate to [client directory](./client) in a terminal and run:
 ```
 npm start
 ```
+
+### Demo Application (React Frontend)
+The Homepage offers two options for users: Login or Signup.
+- To register as a new user, select Signup and provide a name, email, and password. Once registered, the user will be redirected to the Dashboard.
+- Existing users can Login using their email and password, and they too will be redirected to the Dashboard.
+
+The Dashboard displays all available resources, ie any resource the user has read, write or manage permission on. This is displayed in a tabled format. The user can also add a new resource by clicking the "Add Resource" button.
+
+Based on the level of permission, users have the option to:
+
+- Edit a resource by clicking the ":" button and changing the resource name.
+- Assign permissions to a resource by clicking the "+" button and entering a UserID and ResourceID.
+- Delete a resource by clicking the "-" button and confirming the deletion.
+
+Greyed out buttons indicate that the user does not have permission to perform that action.
+
+Users can sign out at any time by clicking the Sign Out button, which will redirect them back to the Homepage.
 
 ## Detailed Design
 ### Auth
@@ -93,9 +111,6 @@ With this new design, we have decoupled the Permission system from the resources
 
 †: Since the Resources API and Permissions API are hosted on the same server, we simulate a network request from the Resource API to the Permissions API using an internal function call. 
 
-### Demo Application (React Frontend)
-
-
 ## Future Work
 ### Group Support
 For our IAM system to be productionizable, we would need to allow setting Permissions for different groups, where each group represents a client of our system. For example, Constantinople would use the "cxnpl" group, while another notetaking app would use the "notes" group. Permissions are created, checked and deleted or a per-group basis. Resource ids would also then only need to be unique on a per-group basis (i.e both Constantinople and a note taking app could have permissions for a resource with id `123` that don't interfere with each other). 
@@ -108,6 +123,6 @@ Additionally, we would also have to support some more permission functionality t
 As mentioned above, I prioritized more on the 'permission' side of the project spec, rather than the 'user' side. The proposed system has great per-resource access controls, but practically zero per-user access controls. There's no way to give one user higher access than another user (i.e so they can delete the other users account). If given more time, I would have added better support here.  
 
 ### Flexible role types 
-There's nothing requiring us to have only 'read', 'write' and 'manage' permissions. As mentioned in the 'Permissions' section, permissions are just arbitrary strings that are stored in our system. It's up to the client to determine their semantics. The only permission that our system cares about is 'manage' since it's used to determine whether a user can grant permissions for a resource to another user. 
+There's nothing requiring us to have only 'read', 'write' and 'manage' permissions. As mentioned in the 'Permissions' section, permissions are just arbitrary strings that are stored in our system. It's up to the client to determine they actually do. The only permission that our system cares about is 'manage' since it's used to determine whether a user can grant permissions for a resource to another user. 
 
 If we implement the 'better user access controls' above and introduce 'admin' accounts, we can grant admins the capability to create additional permissions for their group (assuming 'group support' above is implemented too). Each group could be initialized with just the 'manage' role which the 'admin' user would have by default. Then, the admin would be able to call a new API that would allow them to introduce a new role for their group. All other non admin users can then use this role in our existing write APIs. For example, some clients may choose to use the term 'view' for their 'read' permission. 
