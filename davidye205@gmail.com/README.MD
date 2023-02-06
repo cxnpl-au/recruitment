@@ -61,16 +61,30 @@ npm start
 
 The Homepage offers two options for users: Login or Signup.
 
-- To register as a new user, select Signup and provide a name, email, and password. Once registered, the user will be redirected to the Dashboard.
-- Existing users can Login using their email and password, and they too will be redirected to the Dashboard.
+![HomePage Screenshot](./assets/demo-home-page.png)
+
+To register as a new user, select Signup and provide a name, email, and password. Once registered, the user will be redirected to the Dashboard.
+
+![SignUp Page Screenshot](./assets/demo-signup-page.png)
+
+Existing users can Login using their email and password, and they too will be redirected to the Dashboard.
+
+![Login Page Screenshot](./assets/demo-login-page.png)
+
 
 The Dashboard displays all available resources, ie any resource the user has read, write or manage permission on. This is displayed in a tabled format. The user can also add a new resource by clicking the "Add Resource" button.
+
+![Dashboard Page Screenshot](./assets/demo-dashboard-page.png)
 
 Based on the level of permission, users have the option to:
 
 - Edit a resource by clicking the ":" button and changing the resource name.
 - Assign permissions to a resource by clicking the "+" button and entering a UserID and ResourceID.
 - Delete a resource by clicking the "-" button and confirming the deletion.
+
+![Dashboard Edit Examples Screenshot](./assets/demo-dashboard-resource-edit-examples.png)
+
+
 
 Greyed out buttons indicate that the user does not have permission to perform that action.
 
