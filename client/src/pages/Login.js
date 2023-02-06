@@ -47,20 +47,24 @@ function Login() {
 
   return (
     <div className="loginContainer">
-      <input
-        className="input"
-        placeholder="email"
-        onChange={handleEmailInput}
-      />
-      <input
-        className="input"
-        placeholder="password"
-        onChange={handlePasswordInput}
-      />
+      <div className="inputContainer">
+        Email
+        <input
+          className="input"
+          placeholder="email"
+          onChange={handleEmailInput}
+        />
+      </div>
+      <div className="inputContainer">
+        Password
+        <input
+          className="input"
+          placeholder="password"
+          type="password"
+          onChange={handlePasswordInput}
+        />
+      </div>
       <button onClick={login}>Login</button>
-      <p>davidye205@gmail.com</p>
-      <p>test@gmail.com</p>
-      <p>qwerty1234</p>
     </div>
   );
 }

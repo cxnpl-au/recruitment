@@ -1,0 +1,34 @@
+.headerRow {
+    display:grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
+    border: solid;
+    border-width: 2px;
+    border-color: grey;
+    margin-bottom: 2px;
+    font-weight: bold;
+    border-radius: 2px;
+}
+
+.resourceNameHeader {
+    grid-column: 1/2;
+    padding: 5px;
+    overflow:hidden;
+    white-space:nowrap;
+    width:300px;
+}  
+.resourceIdHeader {
+    grid-column: 2/3;
+    padding: 5px;
+}    
+
+.ownerIdHeader {
+    grid-column: 3/4;
+    padding: 5px;
+}
+
+.permissionLevelHeader {
+    grid-column: 4/5;
+    padding: 5px;
+
+}
+

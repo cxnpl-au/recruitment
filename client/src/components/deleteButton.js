@@ -1,9 +1,13 @@
 export function DeleteButton({ permission, handleClick }) {
+  const canDelete = permission === "manage";
+  let backgroundColor = canDelete ? "#0067C8" : "grey";
+
   return (
     <div
       className="deleteButton"
+      style={{ backgroundColor: backgroundColor }}
       onClick={
-        permission === "manage"
+        canDelete
           ? handleClick
           : () => {
               console.log("dont have permission!");

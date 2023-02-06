@@ -4,6 +4,7 @@ import { useState, useContext, useEffect } from "react";
 import { RegisterResource } from "../components/registerResource";
 import { UserContext } from "../context/userContext";
 import { ResourceRow } from "../components/resourceRow";
+import { ResourceRowHeader } from "../components/resourceRowHeader";
 
 function Dashboard() {
   const [resources, setResources] = useState([]);
@@ -64,6 +65,7 @@ function Dashboard() {
     <div>
       {user && <RegisterResource addResource={addResource} />}
       <h1>Resources</h1>
+      <ResourceRowHeader />
       {resources.map((resource) => {
         return (
           <div>

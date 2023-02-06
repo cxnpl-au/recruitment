@@ -1,3 +1,7 @@
+* {
+    font-family:Arial, Helvetica, sans-serif
+}
+
 .container {
     display: grid;
     width: 100vw;

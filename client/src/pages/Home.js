@@ -1,10 +1,14 @@
+import "../styles/Home.css";
+import "../styles/earth.css";
+
 function Home() {
   return (
     <div className="homeContainer">
-      <img
-        alt="testImage"
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/640px-PNG_transparency_demonstration_1.png"
-      />
+      <div id="box" />
+      <div>
+        <h1>IAMDavid -</h1>
+        <h2>A planet scale authentication and permission system</h2>
+      </div>
     </div>
   );
 }

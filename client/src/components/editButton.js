@@ -1,14 +1,15 @@
-import { useState } from "react";
-
 export function EditButton({ permission, handleClick }) {
+  const canEdit = permission === "write" || permission === "manage";
+  let backgroundColor = canEdit ? "#0067C8" : "grey";
   return (
     <div
       className="editButton"
+      style={{ backgroundColor: backgroundColor }}
       onClick={
-        permission === "write" || permission === "manage"
+        canEdit
           ? handleClick
           : () => {
-              console.log("dont have permission!");
+              console.log("You dont have permission to edit!");
             }
       }
     >

@@ -45,6 +45,13 @@ export function RegisterResource({ addResource }) {
             onChange={handleResourceNameInput}
           />
           <button onClick={handleRegisterResource}>Register</button>
+          <button
+            onClick={() => {
+              setRegisterForm(!registerForm);
+            }}
+          >
+            Cancel
+          </button>
         </div>
       ) : (
         <div>

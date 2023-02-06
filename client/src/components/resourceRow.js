@@ -108,8 +108,7 @@ export function ResourceRow({ resource, deleteResource }) {
 
   return (
     <>
-      <div className="permissionRow">
-        <div className="resourceId">{resource._id}</div>
+      <div className="resourceRow">
         {editable ? (
           <div className="resourceName">
             <input value={resourceName} onChange={handleResourceNameChange} />
@@ -118,20 +117,23 @@ export function ResourceRow({ resource, deleteResource }) {
         ) : (
           <div className="resourceName">{resourceName}</div>
         )}
+        <div className="resourceId">{resource._id}</div>
         <div className="ownerId">{resource.ownerId}</div>
-        <div className="permissionLevel">{resource.permission}</div>
-        <EditButton
-          permission={resource.permission}
-          handleClick={handleEditClick}
-        />
-        <AssignPermissionButton
-          permission={resource.permission}
-          handleClick={handleAssignPermissionClick}
-        />
-        <DeleteButton
-          permission={resource.permission}
-          handleClick={handleDeleteClick}
-        />
+        <div className="permissionContainer">
+          <div className="permissionLevel">{resource.permission}</div>
+          <EditButton
+            permission={resource.permission}
+            handleClick={handleEditClick}
+          />
+          <AssignPermissionButton
+            permission={resource.permission}
+            handleClick={handleAssignPermissionClick}
+          />
+          <DeleteButton
+            permission={resource.permission}
+            handleClick={handleDeleteClick}
+          />
+        </div>
       </div>
       {expandInvite ? (
         <div className="permissionRow">

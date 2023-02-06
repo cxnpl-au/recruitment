@@ -52,21 +52,31 @@ function Signup() {
 
   return (
     <div className="signupContainer">
-      <input
-        className="input"
-        placeholder="name"
-        onChange={handleNameInput}
-      ></input>
-      <input
-        className="input"
-        placeholder="email"
-        onChange={handleEmailInput}
-      ></input>
-      <input
-        className="input"
-        placeholder="password"
-        onChange={handlePasswordInput}
-      ></input>
+      <div className="inputContainer">
+        Name
+        <input
+          className="input"
+          placeholder="name"
+          onChange={handleNameInput}
+        />
+      </div>
+      <div className="inputContainer">
+        Email
+        <input
+          className="input"
+          placeholder="email"
+          onChange={handleEmailInput}
+        />
+      </div>
+      <div className="inputContainer">
+        Password
+        <input
+          className="input"
+          placeholder="password"
+          type="password"
+          onChange={handlePasswordInput}
+        />
+      </div>
 
       <button onClick={signup}>Signup</button>
     </div>

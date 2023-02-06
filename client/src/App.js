@@ -42,24 +42,6 @@ function App() {
             </>
           )}
         </nav>
-
-        <div
-          style={{ gridRow: "1/2", gridColumn: "1/2", background: "#0067C8" }}
-        >
-          <p>{user.userId}</p>
-        </div>
-        <div
-          style={{ gridRow: "1/2", gridColumn: "3/4", background: "#0067C8" }}
-        />
-        <div
-          style={{ gridRow: "3/4", gridColumn: "1/2", background: "#0067C8" }}
-        />
-        <div
-          style={{ gridRow: "3/4", gridColumn: "3/4", background: "#0067C8" }}
-        />
-
-        {/* A <Switch> looks through its children <Route>s and
-                renders the first one that matches the current URL. */}
         <div style={{ gridRow: "2/3", gridColumn: "2/3" }}>
           <Routes>
             <Route exact path="/" element={<Home />} />

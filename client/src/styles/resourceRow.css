@@ -1,43 +1,50 @@
-.permissionRow {
+.resourceRow {
     display:grid;
-    grid-template-columns: 3fr 3fr 3fr 1fr 20px 30px 30px;
+    grid-template-columns: 3fr 1fr 1fr 1fr;
     border: solid;
-    border-width: 1px;
+    border-width: 2px;
     border-color: grey;
     margin-bottom: 2px;
+    border-radius: 2px;
+}
+
+.permissionContainer {
+    display:grid;
+    grid-template-columns: 8fr 1fr 2fr 2fr;
 }
 
 .resourceName {
-    grid-column: 2/3;
+    grid-column: 1/2;
     padding: 5px;
     overflow:hidden;
     white-space:nowrap;
-    width:100px;
+    width:400px;
 }  
 .resourceId {
-    grid-column: 1/2;
-
+    grid-column: 2/3;
     padding: 5px;
+    font-size:x-small;
 }    
 
 .ownerId {
     grid-column: 3/4;
-
     padding: 5px;
+    font-size:x-small;
 }
 
 .permissionLevel {
-    grid-column: 4/5;
+    grid-column: 1/2;
     border: solid;
     border-width: 1px; 
+    border-left-width: 2px;
     border-color: grey;
     padding: 5px;
 
 }
 
+
 .editButton {
-    grid-column: 5/6;
-    background-color: #0067C8;
+    grid-column: 2/3;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -46,12 +53,12 @@
     font-size: larger;
     border: solid;
     border-width: 1px; 
+    border-left-width: 2px;
     border-color: grey;
 }
 
 .inviteButton {
-    grid-column: 6/7;
-    background-color: #0067C8;
+    grid-column: 3/4;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,8 +71,7 @@
 }
 
 .deleteButton {
-    grid-column: 7/8;
-    background-color: #0067C8;
+    grid-column: 4/5;
     display: flex;
     justify-content: center;
     align-items: center;
