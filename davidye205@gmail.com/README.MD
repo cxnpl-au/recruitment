@@ -38,7 +38,7 @@ TOKEN_SECRET = <jwtSecret>
 SERVER_URL = <yourLocalServer>
 ```
 
-Navigate to the [server directory](./davidye205@gmail.com/server) in a terminal and run
+Navigate to the [server directory](./) in a terminal and run
 ```
 npm start
 ```
