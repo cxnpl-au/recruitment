@@ -6,7 +6,7 @@ function Home() {
     <div className="homeContainer">
       <div id="box" />
       <div>
-        <h1>IAMDavid -</h1>
+        <h1>IAMDavid</h1>
         <h2>A planet scale authentication and permission system</h2>
       </div>
     </div>

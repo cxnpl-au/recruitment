@@ -1,5 +1,5 @@
 export function AssignPermissionButton({ permission, handleClick }) {
-  const canAssign = permission === "manage";
+  const canAssign = permission == "manage";
   let backgroundColor = canAssign ? "#0067C8" : "grey";
   return (
     <div

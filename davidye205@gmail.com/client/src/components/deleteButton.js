@@ -1,5 +1,5 @@
 export function DeleteButton({ permission, handleClick }) {
-  const canDelete = permission === "manage";
+  const canDelete = permission == "manage";
   let backgroundColor = canDelete ? "#0067C8" : "grey";
 
   return (

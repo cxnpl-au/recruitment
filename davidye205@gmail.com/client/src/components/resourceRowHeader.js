@@ -1,6 +1,6 @@
 import "../styles/resourceRowHeader.css";
 
-export function ResourceRowHeader({ resource, deleteResource }) {
+export function ResourceRowHeader() {
   return (
     <>
       <div className="headerRow">

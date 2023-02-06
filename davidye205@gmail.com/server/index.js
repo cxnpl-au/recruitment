@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,11 +7,14 @@ const authRoute = require("./routes/auth");
 const userPermissionRoute = require("./routes/permissions");
 const resourceRoute = require("./routes/resource");
 
+const app = express();
+const PORT = process.env.PORT || 8080;
+
 dotenv.config();
 
 //Connect to DB
 mongoose
-  .connect(process.env.LOCAL_URI, {
+  .connect(process.env.MONGODB_URI || process.env.LOCAL_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -28,4 +30,8 @@ app.use("/api/users", authRoute);
 app.use("/api/permissions", userPermissionRoute);
 app.use("/api/resources", resourceRoute);
 
-app.listen(8080, () => console.log("Server Started"));
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static("../client/build"));
+}
+
+app.listen(PORT, () => console.log(`Server Started at ${PORT}`));

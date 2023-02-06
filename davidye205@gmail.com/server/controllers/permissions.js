@@ -106,7 +106,7 @@ const deletePermissionsForResource = async (userId, resourceId) => {
     throw new Error("Permission not found");
   }
 
-  if (permission.permission !== Permissions.MANAGE) {
+  if (permission.permission != Permissions.MANAGE) {
     throw new Error("user does not have permission to delete this resource");
   }
 

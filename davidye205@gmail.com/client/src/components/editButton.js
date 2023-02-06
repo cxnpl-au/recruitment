@@ -1,5 +1,5 @@
 export function EditButton({ permission, handleClick }) {
-  const canEdit = permission === "write" || permission === "manage";
+  const canEdit = permission == "write" || permission == "manage";
   let backgroundColor = canEdit ? "#0067C8" : "grey";
   return (
     <div

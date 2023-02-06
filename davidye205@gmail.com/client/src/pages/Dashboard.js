@@ -13,7 +13,7 @@ function Dashboard() {
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (user.token === "") {
+    if (user.token == "") {
       navigate("/");
     }
   }, []);
