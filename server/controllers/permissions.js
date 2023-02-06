@@ -1,6 +1,7 @@
 const { Permissions } = require("../enums/permissions");
 const UserPermission = require("../model/userPermission");
 
+//Get all permissions for a user
 const getAllPermissionsForUser = async (userId) => {
   try {
     const permissionsForUser = await UserPermission.find({
@@ -16,22 +17,24 @@ const getAllPermissionsForUser = async (userId) => {
   }
 };
 
-const getPermissionForResource = async (userId, resourceId) => {
+//Gets boolean for whether user has specified permission for resource
+const getPermissionForResource = async (userId, resourceId, permission) => {
   try {
     const userPermission = await UserPermission.findOne({
       resourceId,
       userId,
     });
     if (!userPermission) {
-      throw new Error("resource is not available for user");
+      return false;
     }
-    const { permission } = userPermission;
-    return { userId, permission, resourceId };
+    console.log(userPermission.permission == permission);
+    return userPermission.permission == permission;
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
+//Split into post and update permissions
 const upsertPermission = async (
   viewerUserId,
   targetUserId,
@@ -39,19 +42,32 @@ const upsertPermission = async (
   permission
 ) => {
   //User should only be able to register permissions for resources they own
-  //Check if user owns resource
+  //Check if any user has permissions for this resource - if no, then user is creating the resource, and should be assigned to manage the resource
+  const resourcePermissions = await UserPermission.findOne({
+    resourceId,
+  });
+
+  if (!resourcePermissions) {
+    const userPermission = new UserPermission({
+      userId: viewerUserId,
+      resourceId,
+      permission,
+    });
+
+    try {
+      const savedUserPermission = await userPermission.save();
+      return savedUserPermission;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
   const viewerUserPermission = await UserPermission.findOne({
     userId: viewerUserId,
     resourceId,
   });
-
-  console.log(viewerUserPermission);
-
   //If user does not own resource, return status 400 with message ("cannot register permission, user does not own resource")
-  if (
-    !viewerUserPermission ||
-    viewerUserPermission.permission != Permissions.MANAGE
-  ) {
+  if (viewerUserPermission.permission != Permissions.MANAGE) {
     throw new Error("Cannot register permission, user does not own resource");
   }
 
@@ -79,6 +95,7 @@ const upsertPermission = async (
   }
 };
 
+//Deletes all permissions by resourceId
 const deletePermissionsForResource = async (userId, resourceId) => {
   const permission = await UserPermission.findOne({
     userId,
@@ -97,13 +114,9 @@ const deletePermissionsForResource = async (userId, resourceId) => {
     const deletedPermissions = await UserPermission.deleteMany({
       resourceId,
     });
-    return {
-      message: "Resource and all its permissions successfully deleted",
-      resource: deletedResource,
-      permissions: deletedPermissions,
-    };
+    return deletedPermissions;
   } catch (err) {
-    throw new err.message();
+    throw new Error(err);
   }
 };
 

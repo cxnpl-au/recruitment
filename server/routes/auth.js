@@ -11,6 +11,7 @@ dotenv.config();
 
 router.use(cors());
 
+//Register new user
 router.post("/register", async (req, res) => {
   //Validate register data
   const { error } = registerValidation(req.body);
@@ -33,9 +34,8 @@ router.post("/register", async (req, res) => {
 
   try {
     const savedUser = await user.save();
-    res.status(200).send({ user: user._id });
+    res.status(200).send({ user: savedUser._id });
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-    console.log(token);
     res.header("auth-token", token).send(token);
   } catch (err) {
     res.status(400).send(err.message);
@@ -74,9 +74,5 @@ router.post("/login", async (req, res) => {
     res.status(400).send(err.message);
   }
 });
-
-router.get("/", (req, res) => res.send("Server is up and running"));
-
-//TODO - create permissions array in user schema, create protected get route for user details/permissions
 
 module.exports = router;
