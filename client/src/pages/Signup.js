@@ -20,7 +20,6 @@ function Signup() {
       headers: {
         "Content-Type": "application/json",
       },
-
       // Attaching the form data
       data: {
         name: name,

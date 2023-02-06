@@ -19,7 +19,6 @@ function Login() {
       headers: {
         "Content-Type": "application/json",
       },
-
       // Attaching the form data
       data: {
         email: email,

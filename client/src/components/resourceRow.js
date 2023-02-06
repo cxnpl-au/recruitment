@@ -14,13 +14,15 @@ export function ResourceRow({ resource, deleteResource }) {
   const [permissionLevel, setPermissionLevel] = useState("");
 
   const [expandInvite, setExpandInvite] = useState(false);
+  const [expandDelete, setExpandDelete] = useState(false);
+
   const { user } = useContext(UserContext);
 
   const handleAssignPermission = async () => {
     try {
       let newResource = await axios({
         // Endpoint to send files
-        url: `http://localhost:8080/api/permissions/${resource._id}`,
+        url: `http://localhost:8080/api/resources/${resource._id}/permissions`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -97,6 +99,9 @@ export function ResourceRow({ resource, deleteResource }) {
   };
 
   const handleDeleteClick = () => {
+    setExpandDelete(!expandDelete);
+  };
+  const handleConfirmDeleteClick = () => {
     handleDeleteResource();
     deleteResource(resource);
   };
@@ -136,6 +141,15 @@ export function ResourceRow({ resource, deleteResource }) {
             onChange={handlePermissionLevelInput}
           />
           <button onClick={handleAssignPermission}>Assign permission</button>
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {expandDelete ? (
+        <div className="permissionRow">
+          <div>are you sure you want to delete?</div>
+          <button onClick={handleConfirmDeleteClick}>delete</button>
         </div>
       ) : (
         <></>
