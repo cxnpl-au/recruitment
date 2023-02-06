@@ -1,10 +1,9 @@
 export function EditButton({ permission, handleClick }) {
   const canEdit = permission == "write" || permission == "manage";
-  let backgroundColor = canEdit ? "#0067C8" : "grey";
   return (
     <div
       className="editButton"
-      style={{ backgroundColor: backgroundColor }}
+      style={{ backgroundColor: !canEdit && "grey" }}
       onClick={
         canEdit
           ? handleClick

@@ -8,6 +8,10 @@
     border-radius: 2px;
 }
 
+.resourceInput {
+    width:300px
+}
+
 .permissionContainer {
     display:grid;
     grid-template-columns: 8fr 1fr 2fr 2fr;
@@ -55,6 +59,12 @@
     border-width: 1px; 
     border-left-width: 2px;
     border-color: grey;
+    cursor: pointer;
+    background-color: #0067C8;
+}
+
+.editButton:hover {
+    background-color: #8dc6fc;
 }
 
 .inviteButton {
@@ -68,6 +78,12 @@
     border: solid;
     border-width: 1px; 
     border-color: grey;
+    cursor: pointer;
+    background-color: #0067C8;
+}
+
+.inviteButton:hover {
+    background-color: #8dc6fc;
 }
 
 .deleteButton {
@@ -81,4 +97,23 @@
     border: solid;
     border-width: 1px; 
     border-color: grey;
+    cursor: pointer;
+    background-color: #0067C8;
+}
+
+
+.deleteButton:hover {
+    background-color: #8dc6fc;
+}
+
+.assignPermission {
+    display:flex;
+    justify-content: end;
+    margin: 10px;
+}
+
+.deleteResource {
+    display:flex;
+    justify-content: end;
+    margin: 10px;
 }

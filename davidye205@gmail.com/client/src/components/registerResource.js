@@ -42,9 +42,15 @@ export function RegisterResource({ addResource }) {
         <div>
           <input
             placeholder="Resource name"
+            style={{ marginRight: "10px" }}
             onChange={handleResourceNameInput}
           />
-          <button onClick={handleRegisterResource}>Register</button>
+          <button
+            style={{ marginRight: "10px" }}
+            onClick={handleRegisterResource}
+          >
+            Register
+          </button>
           <button
             onClick={() => {
               setRegisterForm(!registerForm);

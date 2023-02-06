@@ -3,8 +3,8 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cors = require("cors");
 //Import Routes
-const authRoute = require("./routes/auth");
-const userPermissionRoute = require("./routes/permissions");
+const userRoute = require("./routes/user");
+const userPermissionRoute = require("./routes/permission");
 const resourceRoute = require("./routes/resource");
 
 const app = express();
@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(cors());
 
 //Route Middlewares
-app.use("/api/users", authRoute);
+app.use("/api/users", userRoute);
 app.use("/api/permissions", userPermissionRoute);
 app.use("/api/resources", resourceRoute);
 
