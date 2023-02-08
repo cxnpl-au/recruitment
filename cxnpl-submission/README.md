@@ -9,7 +9,7 @@
 
 ## Scope
 
-The following IAM system is designed with the Constantinople business case in mind. An exhaustive list of business context are as follows:
+Constance is designed with the Constantinople business case in mind. An exhaustive list of business context are as follows:
 
 - Constantinople’s current target market is SME banks.
 - These SME banks can have businesses sign up for accounts
