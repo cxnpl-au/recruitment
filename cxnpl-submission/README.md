@@ -36,7 +36,7 @@ As a result of the above, the high level scope of Constance includes SME support
 
 ### Overview
 
-As a finance related IAM, authentication and authorization must be secure and grant permissions. A CXNPL platform is likely to have users with varying degrees of permission including master users, administrators, and users. Furthermore, each company that utilizes our services is likely to be hosted on different servers and databases, utilizing a tenanted approach to system design which is discussed further in the Future Works section.
+As a finance related IAM, authentication and authorization must be secure and grant permissions. Constance is likely to have users with varying degrees of permission including master users, administrators, and users. Furthermore, each company that utilizes our services is likely to be hosted on different servers and databases, utilizing a tenanted approach to system design which is discussed further in the Future Works section.
 
 # High level features
 
@@ -48,7 +48,7 @@ As a finance related IAM, authentication and authorization must be secure and gr
 
 For the purposes of this project, a single database houses all data for companies and users. Permissions are granted in one of two ways: role-based and group-based authorization. The system backend can be
 
-The system incorporates a REST APIs built on a Django server using, currently connected to a sqlite database. A simple custom UI has been built using NextJS written in typescript. Additionally, the NextAuth library is used as an external authentication library to allow social logins for ease of use for company owners.
+The system incorporates a REST APIs built on a Django server using, currently connected to a sqlite database. A simple custom UI has been built using NextJS written in typescript with TailwindCSS styling. Additionally, the NextAuth library is used as an external authentication library to allow social logins for ease of use for company owners.
 
 Both the client and servers are hosted publicly on Railway linked here: [https://cxnpl-client-production.up.railway.app/]
 

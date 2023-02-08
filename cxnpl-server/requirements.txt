@@ -1,9 +1,0 @@
--i https://pypi.org/simple
-Django==4.0.5
-djangorestframework==3.13.1
-django-cors-headers==3.13.0
-dj-rest-auth==2.2.4
-django-allauth==0.51.0
-djangorestframework-simplejwt==5.2.0
-PyJWT==1.7.1
-gunicorn==20.1.0

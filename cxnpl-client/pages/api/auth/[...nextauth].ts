@@ -54,7 +54,8 @@ const authOptions: NextAuthOptions = {
     },
 
     async redirect({url}) {
-      url = `${process.env.NEXTAUTH_URL}`
+      url = `https://cxnpl-client-production.up.railway.app/`
+      // url = `http://127.0.0.1:3000`
       return url
     },
 

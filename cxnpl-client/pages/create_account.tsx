@@ -132,7 +132,8 @@ export default function Company() {
     {status === "authenticated" && session && (
         <>
         Signed in as {session?.user?.email} <br/>
-        <button onClick={() => signOut( {callbackUrl: `${process.env.NEXTAUTH_URL}/`})}>Sign out</button>
+        <button onClick={() => signOut( {callbackUrl: `https://cxnpl-client-production.up.railway.app/`})}>Sign out</button>
+        {/* <button onClick={() => signOut( {callbackUrl: `http://127.0.0.1:3000/`})}>Sign out</button> */}
         </>
     )}
     </>

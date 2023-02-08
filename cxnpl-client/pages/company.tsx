@@ -121,71 +121,102 @@ export default function Company() {
 
     if (companyData && companyData.company_name === "No Company") return (
         <>
-        <p> No company data, fill out this form to create a company:</p>
-        <form onSubmit={handleSubmit}>
-            <label >Company Name: </label>
-            <input value={companyNameData} onChange={(e) => setCompanyNameData(e.target.value)} type="text"/>
-
-            <label>Company ID: </label>
-            <input value={companyReadableID} onChange={(e) => setCompanyReadableID(e.target.value)} type="text"/>
-
-            <label>Owner: </label>
-            <input defaultValue={userData!!.username} onChange={(e) => setOwner(e.target.value)} type="text"/>
-            <button type="submit">Submit</button>
-        </form>
-
-        <button><Link href="/">Back to dashboard</Link></button>
-        </>
-        ) 
-
-    return (
-        <>
-        <div>
-            <h1>Authentication status: {status}</h1>
-            <h2>Username {userData?.username}</h2>
-            <h2>Company: {userData?.company}</h2>
-            <h2>Role: {userData?.role}</h2>
-            <h2>Bank funds: {companyData?.account_funds}</h2>
-
+        <div className="flex h-screen ">
+            <div className="m-auto w-full max-w-xs ">
+                <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
+                <div className="mb-4">
+                No company data, fill out this form to create a company:
+                </div>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Company Name
+                    </label>
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={companyNameData} onChange={(e) => setCompanyNameData(e.target.value)} type="text"/>
+                </div>
+                <div className="mb-6">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="company_id">
+                    Company ID
+                    </label>
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" value={companyReadableID} onChange={(e) => setCompanyReadableID(e.target.value)} type="text"/>
+                </div>
+                <div className="mb-6">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="owner">
+                    Owner
+                    </label>
+                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" defaultValue={userData!!.username} onChange={(e) => setOwner(e.target.value)}/>
+                    <p className="text-red-500 text-xs italic">You are the default owner</p>
+                </div>
+                <div className="flex items-center justify-between">
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" onClick={handleSubmit}>
+                    Create Company
+                    </button>
+                </div>
+                </form>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><Link href="/">Back to dashboard</Link></button>
         </div>
 
-    <div>
-        {/* Only company owners and admins will be allowed to create a user  */}
-        {/* Currently this is client security only, however this should be 
-        implemented server-side to improve security */}
-        {(userData?.role === "owner" || userData?.role === "company_admin") && session && (
-            <Link href="/create_account"><button>Create accounts for employees</button></Link>
-        )}
+      </div>
+        </>
+        ) 
+        
+        return (
+            <>
+        <div className="flex h-screen">
+            <div className="m-auto text-center text-3xl bold">
+                <h1 className="font-bold">Authentication status:</h1>
+                <h1 className="font-bold">{status}</h1> 
+                <h2 className="font-bold">Username: </h2>{userData?.username}
+                <h2 className="font-bold">Company: </h2>{userData?.company}
+                <h2 className="font-bold">Role: </h2>{userData?.role}
+                <h2 className="font-bold">Bank funds: </h2>{companyData?.account_funds}
+                <br/>
 
-    </div>
-    
+            <div className="m-auto text-center">
+                {/* Only company owners and admins will be allowed to create a user  */}
+                {/* Currently this is client security only, however this should be 
+                implemented server-side to improve security */}
+                {(userData?.role === "owner" || userData?.role === "company_admin") && session && (
+                    <Link href="/create_account"><button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Create accounts for employees</button></Link>
+                    )}
+
+            </div>
+            <br/>
     {/* Lists out all employees in a users current company. Owners and company administrators
     should be able to delete users */}
+
+
     <div>Here is a list of all employees in your organization:
-    
-        <ul>
+        <ul className="list-decimal list-outside">
             {allUserData?.map((currUser, index) =>(
                 <li key = {index}>
                 {(userData?.role === "owner" || userData?.role === "company_admin") && session && (
                     <>
                     <label>{currUser}</label>
-                    <button onClick={() => handleDeleteUser(currUser)} type="submit">Delete User</button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteUser(currUser)} type="submit">Delete User</button>
                     </>
                 )}
                 </li>
             ))}
         </ul>
     </div>
-
-    {status === "authenticated" && session && (
-        <>
-        Signed in as {session?.user?.email} <br/>
-        <button onClick={() => signOut( {callbackUrl: `${process.env.NEXTAUTH_URL}/`})}>Sign out</button>
-        </>
-    )}
+    
+    
+    
+    <br/>
+    
+        {status === "authenticated" && session && (
+            <div className="m-auto text-center grid grid-rows-2 gap-3">
+                Signed in as {session?.user?.email} <br/>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => signOut( {callbackUrl: `https://cxnpl-client-production.up.railway.app/`})}>Sign out</button>
+                {/* <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => signOut( {callbackUrl: `http://127.0.0.1:3000/`})}>Sign out</button> */}
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><Link href="/">Back to dashboard</Link></button>
+            </div>
+        )}
+    </div>
+    </div>
     </>
     )
 
-
+    
 }
 
