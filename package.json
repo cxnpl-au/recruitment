@@ -1,16 +1,21 @@
 {
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "express": "^4.17.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.13.0",
     "mongoose": "^6.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.9"
   },
   "name": "cxnpl-im",
   "description": "Given the increased scrutiny on cyber-security, and upcoming regulatory crackdown, we’d rather not leak our user’s data.",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node ./server/connect.js",
+    "start": "nodemon ./server/connect.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
