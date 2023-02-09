@@ -12,7 +12,7 @@ app.get("/users", async (req, response) => {
   const resp = await User.find({})
     .then((users) => {
       console.log("getting users");
-    //   console.log(users);
+      //   console.log(users);
       response.status(200).send(users);
     })
     .catch((error) => {
@@ -82,28 +82,28 @@ app.post(`/login`, (req, response) => {
   const password = req.body.password;
   console.log(`attempt login ${email}`);
 
-  const user = User.findOne({ email: email })
+  const resp = User.findOne({ email: email })
     .then((user) => {
       console.log(user);
       bcrypt
-        .compare(user.password, password)
+        .compare(password, user.password)
         .then((res) => {
-          console.log(res);
+          console.log("comparing password", res);
           if (!res) {
             return response.status(401).send({
               message: "Invalid password",
               error: error,
             });
           }
-          //   const token = jwt.sign(
-          //     {
-          //       userId: user._id,
-          //       userEmail: user.email,
-          //     },
-          //     "TOKEN",
-          //     { expiresIn: "8h" }
-          //   );
-          //   console.log(token);
+            const token = jwt.sign(
+              {
+                userId: user._id,
+                userEmail: user.email,
+              },
+              "TOKEN",
+              { expiresIn: "8h" }
+            );
+            console.log(token);
           response.status(200).send({
             message: "Login successful",
             email: user.email,
@@ -120,7 +120,7 @@ app.post(`/login`, (req, response) => {
       response.status(401).send({ message: "Invalid email", error: error });
     });
 
-  return user;
+  return resp;
 });
 
 module.exports = app;
