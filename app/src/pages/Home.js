@@ -11,44 +11,9 @@ export default function Home() {
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
 
-  const handleLogin = async () => {
-    // axiosConfig
-    //   .post("/users/login", {
-    //     email: email,
-    //     password: password,
-    //   })
-    //   .then((result) => {
-    //     console.log(result);
-    //     localStorage.setItem("token", result.data.token);
-    //     navigate("/users");
-    //     // localStorage.setItem("refresh", result.data.refresh);
-    //     // console.log("CREATED REFRESH TOKEN: ", result.data.refresh);
-    //     // setRefresh(result.data.refresh);
-    //     // setUser(result.data.userId);
-    //     // setToken(result.data.token);
-    //     // success();
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     // clear();
-    //     // failure();
-    //   });
-    const resp = await auth.login(email, password);
-    console.log(resp);
-    // navigate("/users");
-    // auth
-    //   .login({
-    //     email: email,
-    //     password: password,
-    //   })
-    //   .then((res) => {
-    //     if (res?.status === 200) {
-    //       // add usecontext
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+  const handleLogin = () => {
+    auth.login(email, password);
+    navigate("/users");
   };
 
   return (

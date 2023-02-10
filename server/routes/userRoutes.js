@@ -2,13 +2,14 @@ const express = require("express");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const auth = require("../auth");
 
 app = express();
 
 // todo user auth??
 
 // get users
-app.get("/users", async (req, response) => {
+app.get("/users", auth, async (req, response) => {
   const resp = await User.find({})
     .then((users) => {
       console.log("getting users");
@@ -22,7 +23,7 @@ app.get("/users", async (req, response) => {
 });
 
 // create users
-app.post("/users", async (req, response) => {
+app.post("/users", auth, async (req, response) => {
   bcrypt
     .hash(req.body.password, 10)
     .then((hashedPassword) => {
@@ -95,17 +96,18 @@ app.post(`/login`, (req, response) => {
               error: error,
             });
           }
-            const token = jwt.sign(
-              {
-                userId: user._id,
-                userEmail: user.email,
-              },
-              "TOKEN",
-              { expiresIn: "8h" }
-            );
-            console.log(token);
+          const token = jwt.sign(
+            {
+              userId: user._id,
+              userEmail: user.email,
+            },
+            "TOKEN",
+            { expiresIn: "8h" }
+          );
+          console.log(token);
           response.status(200).send({
             message: "Login successful",
+            id: user._id,
             email: user.email,
             token,
           });
@@ -113,7 +115,7 @@ app.post(`/login`, (req, response) => {
         .catch((error) => {
           response
             .status(401)
-            .send({ message: "Invalid password2", error: error });
+            .send({ message: "Invalid password", error: error });
         });
     })
     .catch((error) => {

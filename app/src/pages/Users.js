@@ -5,19 +5,21 @@ import axiosConfig from "../services/axiosConfig";
 // import { Link } from "react-router-dom";
 import Card from "../components/Card";
 import Header from "../components/Header";
+import useAuth from "../services/useAuth";
 
+export default function Users() {
+  const [userList, setuserList] = useState(null);
+  const [isLoading, setLoading] = useState(false);
+  const [isError, setError] = useState(false);
 
-const Users = () => {
-  let [userList, setuserList] = useState(null);
-  let [isLoading, setLoading] = useState(false);
-  let [isError, setError] = useState(false);
+  const auth = useAuth();
 
   // fetch user accounts from database
   // check whether admin
   useEffect(() => {
     axiosConfig
       .get(`/users`, {
-        // headers: { Authorization: "Bearer " + auth.token },
+        headers: { Authorization: "Bearer " + auth.token },
       })
       .then((result) => {
         console.log(result);
@@ -30,7 +32,7 @@ const Users = () => {
         setLoading(false);
         setError(true);
       });
-  }, []);
+  }, [auth.token]);
 
   console.log(userList);
 
@@ -50,6 +52,4 @@ const Users = () => {
       </div>
     </div>
   );
-};
-
-export default Users;
+}

@@ -2,10 +2,10 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import axiosConfig from "../services/axiosConfig";
-import { useAuth } from "../services/useAuth";
+import useAuth from "../services/useAuth";
 import { Link } from "react-router-dom";
 
-const SignUp = () => {
+export default function SignUp() {
   const navigate = useNavigate();
   const [role, setRole] = useState(null);
   const [name, setName] = useState(null);
@@ -16,13 +16,8 @@ const SignUp = () => {
 
   //   signup
   const handleSignup = () => {
-    const resp = auth.signup(role, name, email, password);
-    // console.log(resp);
-    if (resp.status === 201) {
-      navigate("/users");
-    } else {
-      // throw error on fields
-    }
+    auth.signup(role, name, email, password);
+    navigate("/users");
   };
 
   // potentially update to "create new user instead of letting users just sign up"
@@ -82,13 +77,13 @@ const SignUp = () => {
               <span class="font-semibold text-gray-600 mb-3 mr-1 text-center">
                 Already have an account?
               </span>
-              <Link to="/" class="underline text-blue-600">Login</Link>
+              <Link to="/" class="underline text-blue-600">
+                Login
+              </Link>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default SignUp;
+}

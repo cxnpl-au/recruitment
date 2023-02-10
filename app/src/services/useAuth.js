@@ -10,9 +10,9 @@ export function ProvideAuth({ children }) {
   return <authContext.Provider value={auth}>{children}</authContext.Provider>;
 }
 
-export const useAuth = () => {
+export default function useAuth() {
   return useContext(authContext);
-};
+}
 
 function useProvideAuth() {
   const tokenStorage = localStorage.getItem("token")
@@ -70,20 +70,22 @@ function useProvideAuth() {
         password: password,
       })
       .then((result) => {
-        console.log(result.data)
-        return result;
-        // localStorage.setItem("token", result.data.token);
+        console.log(result);
+        const token = result.data?.token;
+        const userId = result.data?.id;
+        localStorage.setItem("token", token);
         // localStorage.setItem("refresh", result.data.refresh);
         // console.log("CREATED REFRESH TOKEN: ", result.data.refresh);
         // setRefresh(result.data.refresh);
-        // setUser(result.data.userId);
-        // setToken(result.data.token);
+        setUser(userId);
+        setToken(token);
         // success();
+        return result;
       })
       .catch((err) => {
-        return err;
         // clear();
         // failure();
+        console.log(err);
       });
 
     // return user;
@@ -108,12 +110,15 @@ function useProvideAuth() {
       })
       .then((result) => {
         console.log(result);
-        // localStorage.setItem("token", result.data.token);
+        const token = result.data?.token;
+        const userId = result.data?.id;
+        localStorage.setItem("token", token);
         // localStorage.setItem("refresh", result.data.refresh);
         // setRefresh(result.data.refresh);
-        // setUser(result.data.userId);
-        // setToken(result.data.token);
+        setUser(userId);
+        setToken(token);
         // success();
+        return result;
       })
       .catch((err) => {
         console.log(err);
@@ -193,5 +198,3 @@ function useProvideAuth() {
 
   return { user, login, signup, logout, token };
 }
-
-export default useAuth;
