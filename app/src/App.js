@@ -4,8 +4,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProvideAuth } from "./services/useAuth";
 import Home from "./pages/Home";
 import Users from "./pages/Users";
+import Login from "./pages/Login";
 import SignUp from "./pages/Signup";
 import Settings from "./pages/Settings";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -13,10 +15,38 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
-          <Route path="/users" element={<Users />} />
-          <Route path="/settings" element={<Settings />} />
+          {/* protected routes */}
+          {/* <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          /> */}
+          <Route
+            path="/users"
+            element={
+              <PrivateRoute>
+                <Users />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <PrivateRoute
+                element={
+                  <PrivateRoute>
+                    <Settings />
+                  </PrivateRoute>
+                }
+              />
+            }
+          />
         </Routes>
       </BrowserRouter>
     </ProvideAuth>
