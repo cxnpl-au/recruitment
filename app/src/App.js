@@ -38,13 +38,9 @@ function App() {
           <Route
             path="/settings"
             element={
-              <PrivateRoute
-                element={
-                  <PrivateRoute>
-                    <Settings />
-                  </PrivateRoute>
-                }
-              />
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
             }
           />
         </Routes>

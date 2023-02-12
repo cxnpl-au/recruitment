@@ -27,6 +27,16 @@ export default function Header(props) {
               <li class="nav-item">
                 <a
                   class="nav-link block pr-2 lg:px-2 py-2 text-gray-600 hover:text-gray-700 focus:text-gray-700"
+                  href="/users"
+                  data-mdb-ripple="true"
+                  data-mdb-ripple-color="light"
+                >
+                  Users
+                </a>
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link block pr-2 lg:px-2 py-2 text-gray-600 hover:text-gray-700 focus:text-gray-700"
                   href="/settings"
                   data-mdb-ripple="true"
                   data-mdb-ripple-color="light"

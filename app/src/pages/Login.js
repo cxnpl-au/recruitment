@@ -13,13 +13,13 @@ export default function Login() {
 
   useEffect(() => {
     if (auth.user) {
-      navigate("/users");
+      navigate("/");
     }
   });
 
   const handleLogin = () => {
     auth.login(email, password);
-    navigate("/users");
+    navigate("/");
   };
 
   return (

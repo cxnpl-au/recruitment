@@ -1,26 +1,6 @@
 import React from "react";
 
 export default function UserTable(props) {
-  const buildTable = () => {
-    props.users?.map((user) => {
-      return (
-        <tr class="bg-white border-b">
-          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-            {user._id}
-          </td>
-          <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-            {user.name}
-          </td>
-          <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-            {user.email}
-          </td>
-          <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-            {user.role}
-          </td>
-        </tr>
-      );
-    });
-  };
 
   return (
     <div class="flex flex-col">
@@ -34,7 +14,7 @@ export default function UserTable(props) {
                     scope="col"
                     class="text-sm font-medium text-white px-6 py-4"
                   >
-                    #
+                    id
                   </th>
                   <th
                     scope="col"
@@ -56,7 +36,7 @@ export default function UserTable(props) {
                   </th>
                 </tr>
               </thead>
-              <tbody>{buildTable}</tbody>
+              <tbody> {props.users?.map((user) => tableRow(user))} </tbody>
             </table>
           </div>
         </div>
@@ -64,3 +44,22 @@ export default function UserTable(props) {
     </div>
   );
 }
+
+const tableRow = (user) => {
+  return (
+    <tr class="bg-white border-b">
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        {user._id}
+      </td>
+      <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+        {user.name}
+      </td>
+      <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+        {user.email}
+      </td>
+      <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+        {user.role}
+      </td>
+    </tr>
+  );
+};
