@@ -23,7 +23,7 @@ app.get("/users", auth, async (req, response) => {
 });
 
 // create users
-app.post("/users", auth, async (req, response) => {
+app.post("/users", async (req, response) => {
   bcrypt
     .hash(req.body.password, 10)
     .then((hashedPassword) => {

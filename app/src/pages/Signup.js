@@ -15,7 +15,8 @@ export default function SignUp() {
   const auth = useAuth();
 
   //   signup
-  const handleSignup = () => {
+  const handleSignup = (e) => {
+    e.preventDefault();
     auth.signup(role, name, email, password);
     navigate("/users");
   };
@@ -28,7 +29,7 @@ export default function SignUp() {
           <h1 class="font-bold text-center text-2xl mb-5">Identity Manager</h1>
           <div class="bg-white shadow w-full space-y-2 rounded-lg divide-y divide-solid">
             <div class="px-5 py-5">
-              <label class="font-semibold text-gray-600 block">User role</label>
+              <label class="font-semibold text-gray-600 block">Role</label>
               <select
                 onChange={(e) => setRole(e.target.value)}
                 class="block appearance-none w-full border border-gray-200 text-gray-700 rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -66,7 +67,7 @@ export default function SignUp() {
                 class="border border-gray-200 rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
               <button
-                onClick={handleSignup}
+                onClick={e => handleSignup(e)}
                 type="button"
                 class="ml-auto transition duration-200 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg w-full font-semibold text-center inline-block"
               >
