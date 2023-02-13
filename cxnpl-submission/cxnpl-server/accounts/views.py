@@ -39,7 +39,8 @@ class GoogleLoginView(SocialLoginView):
     authentication_classes = []
     adapter_class = GoogleOAuth2Adapter
     callback_url = (
-        "http://127.0.0.1:3000/api/auth/callback/google"  # To be changed in prod
+        # "http://127.0.0.1:3000/api/auth/callback/google"  # To be changed in prod
+        "https://cxnpl-server-production.up.railway.app/api/social/login/google/"
     )
     client_class = OAuth2Client
 

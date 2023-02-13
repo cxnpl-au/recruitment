@@ -70,8 +70,8 @@ export default function Company() {
                             <p className="col-start-2 col-end-3">
                             Signed in as {session?.user?.email} <br/>
                             </p>
-                        {/* <button onClick={() => signOut( {callbackUrl: `https://cxnpl-client-production.up.railway.app/`})}>Sign out</button> */}
-                            <button className=" col-start-2 col-end-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => signOut( {callbackUrl: `http://127.0.0.1:3000`})}>Sign out</button>
+                        <button className=" col-start-2 col-end-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => signOut( {callbackUrl: `https://cxnpl-client-production.up.railway.app/`})}>Sign out</button>
+                            {/* <button className=" col-start-2 col-end-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => signOut( {callbackUrl: `http://127.0.0.1:3000`})}>Sign out</button> */}
                             <br/>
                             <button className="col-start-2 col-end-3 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><Link href="/">Back to dashboard</Link></button>
                         </div>

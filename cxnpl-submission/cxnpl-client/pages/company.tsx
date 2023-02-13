@@ -21,7 +21,6 @@ export type CompanyDataType = {
 export default function Company() {
     const [companyData, setCompanyData] = useState<CompanyDataType>()
     const [userData, setUserData] = useState<UserDataType>()
-    const [companyNameData, setCompanyNameData] = useState<string>()
     const [companyReadableID, setCompanyReadableID] = useState<string>()
     const [owner, setOwner] = useState<string>()
     const [newState, setNewState] = useState(false)
@@ -84,7 +83,7 @@ export default function Company() {
         event.preventDefault()
 
         const data = {
-            company_name:companyNameData,
+            company_name:companyReadableID,
             company_readable_id:companyReadableID,
             owner:owner,
         }
@@ -103,12 +102,15 @@ export default function Company() {
         }
 
         const response = await fetch(endpoint, options)
+        .then( response => {
+            if (!response.ok) {
+                alert("There was an error in company creation")
+            } else {
+                alert("Company created successfully")
+                setNewState(true)
+            }
+        })
 
-        const result = await response.json()
-        if (response.status === 200) {
-            setNewState(true)
-        }
-        alert("Company created successfully")
 
     }
 
@@ -126,12 +128,6 @@ export default function Company() {
                 <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit}>
                 <div className="mb-4">
                 No company data, fill out this form to create a company:
-                </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Company Name
-                    </label>
-                    <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" value={companyNameData} onChange={(e) => setCompanyNameData(e.target.value)} type="text"/>
                 </div>
                 <div className="mb-6">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="company_id">
@@ -192,7 +188,10 @@ export default function Company() {
                 {(userData?.role === "owner" || userData?.role === "company_admin") && session && (
                     <>
                     <label>{currUser}</label>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteUser(currUser)} type="submit">Delete User</button>
+                    {(currUser != owner && session && (
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteUser(currUser)} type="submit">Delete User</button>
+                    ))}
+                    
                     </>
                 )}
                 </li>

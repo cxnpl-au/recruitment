@@ -55,6 +55,7 @@ class CustomCompanyModelSerializer(serializers.ModelSerializer):
         # a superuser
         user.is_superuser = True
         user.company = company
+        user.role = "owner"
         user.save()
         return company
 
