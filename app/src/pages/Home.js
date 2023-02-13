@@ -32,7 +32,7 @@ export default function Home() {
       <div class="flex mx-5 my-5 justify-center">
         <div class="sm:container">
           <div class="grid grid-cols-1 max-w-700">
-            {accounts
+            {accounts?.length > 0
               ? accounts?.map((acc) => {
                   return <AccountCard account={acc} />;
                 })

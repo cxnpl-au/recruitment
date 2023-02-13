@@ -104,7 +104,7 @@ function useProvideAuth() {
       });
   };
 
-  const signup = (role, name, email, password) => {
+  const signup = (role, name, email, password, organisation) => {
     // set user to server
 
     setUser(null);
@@ -117,6 +117,7 @@ function useProvideAuth() {
         name: name,
         email: email,
         password: password,
+        organisation: organisation,
       })
       .then((result) => {
         const token = result.data?.token;

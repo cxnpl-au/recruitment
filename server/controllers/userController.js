@@ -53,6 +53,34 @@ exports.getUserById = async (req, response) => {
 };
 
 exports.createUser = async (req, response) => {
+  // check if organisation exists
+  console.log("creating user");
+  let orgId = "";
+  if (req.body.organisation) {
+    const org = await Organisation.findOne({ name: req.body.organisation });
+    console.log(org);
+    if (!org) {
+      const newOrg = new Organisation({
+        name: req.body.organisation,
+      });
+
+      newOrg
+        .save()
+        .then((res) => {
+          console.log("Org created");
+        })
+        .catch((error) => {
+          response.status(500).send({
+            message: "Error creating organisation",
+            error,
+          });
+        });
+      console.log("New org created");
+    } else {
+      orgId = org._id;
+    }
+  }
+
   bcrypt
     .hash(req.body.password, 10)
     .then((hashedPassword) => {
@@ -61,7 +89,7 @@ exports.createUser = async (req, response) => {
         email: req.body.email,
         password: hashedPassword,
         name: req.body.name,
-        organisation: req.body.organisation,
+        organisation: orgId,
       });
 
       user

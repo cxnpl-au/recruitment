@@ -11,13 +11,14 @@ export default function SignUp() {
   const [name, setName] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const [organisation, setOrganisation] = useState(null);
 
   const auth = useAuth();
 
   //   signup
   const handleSignup = (e) => {
     e.preventDefault();
-    auth.signup(role, name, email, password);
+    auth.signup(role, name, email, password, organisation);
     navigate("/users");
   };
 
@@ -66,8 +67,15 @@ export default function SignUp() {
                 type="password"
                 class="border border-gray-200 rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
               />
+              <label class="font-semibold text-gray-600 block">Organisation</label>
+              <div class="text-xs text-gray-500">Join your existing organisation or enter a new name to create an new organisation.</div>
+              <input
+                onChange={(e) => setOrganisation(e.target.value)}
+                type="text"
+                class="border border-gray-200 rounded-lg px-3 py-2 mt-1 mb-5 text-sm w-full"
+              />
               <button
-                onClick={e => handleSignup(e)}
+                onClick={(e) => handleSignup(e)}
                 type="button"
                 class="ml-auto transition duration-200 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg w-full font-semibold text-center inline-block"
               >
