@@ -9,6 +9,8 @@ app = express();
 
 app.get("/users", UserController.auth, UserController.getUsers);
 
+app.get("/users/:id", UserController.auth, UserController.getUserById);
+
 app.post("/users", UserController.createUser);
 
 app.post(`/users/delete/:id`, UserController.auth, UserController.deleteUser);

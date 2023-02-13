@@ -62,6 +62,7 @@ exports.createUser = async (req, response) => {
         email: req.body.email,
         password: hashedPassword,
         name: req.body.name,
+        organisation: req.body.organisation,
       });
 
       user
