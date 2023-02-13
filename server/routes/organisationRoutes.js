@@ -4,12 +4,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 const UserController = require("../controllers/userController");
-
 const OrganisationController = require("../controllers/organisationController");
 
 app = express();
 
-// app.get("/orgs", auth, OrganisationController.getOrgs);
+// todo protect route
+app.get("/orgs", UserController.auth, OrganisationController.getOrgs);
 
 app.post("/orgs", OrganisationController.createOrg);
 

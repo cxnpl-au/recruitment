@@ -11,10 +11,10 @@ app.get("/users", UserController.auth, UserController.getUsers);
 
 app.post("/users", UserController.createUser);
 
-app.post(`/delete/:id`, UserController.auth, UserController.deleteUser);
+app.post(`/users/delete/:id`, UserController.auth, UserController.deleteUser);
 
 // todo update user
-app.post(`/update/:id`, UserController.auth, UserController.updateUser);
+app.post(`/users/update/:id`, UserController.auth, UserController.updateUser);
 
 app.post(`/login`, UserController.login);
 

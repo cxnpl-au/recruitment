@@ -1,20 +1,31 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
 exports.getUsers = async (req, response) => {
-  console.log(req);
-  const resp = await User.find({})
-    .then((users) => {
-      console.log("getting users");
-      //   console.log(users);
-      response.status(200).send(users);
-    })
-    .catch((error) => {
-      console.log(error);
-      response.status(500).send(error);
-    });
+  console.log(req.user);
+  const userId = mongoose.Types.ObjectId(req.user.userId);
+  const user = await User.findById(userId);
+
+  const org = user.organisation.toString();
+  console.log("org: ", org);
+
+  if (org != null) {
+    const resp = await User.find({ organisation: org })
+      .then((users) => {
+        console.log("getting users in org");
+        //   console.log(users);
+        response.status(200).send(users);
+      })
+      .catch((error) => {
+        console.log(error);
+        response.status(500).send(error);
+      });
+  } else {
+    response.status(404).send("No users in org");
+  }
 };
 
 exports.createUser = async (req, response) => {
@@ -69,11 +80,25 @@ exports.deleteUser = async (req, response) => {
 };
 
 exports.updateUser = async (req, response) => {
-  const id = req.params.id;
-
-  // check response for what field to update
-  // get user from db
-  // update role
+  const userId = mongoose.Types.ObjectId(req.params?.id);
+  if (userId) {
+    const user = await User.findByIdAndUpdate(userId, {
+      name: req.body.name,
+      role: req.body.role,
+      organisation: req.body.organisation,
+      email: req.body.email,
+    })
+      .then((res) => {
+        response.status(200).send("User updated");
+      })
+      .catch((error) => {
+        response
+          .status(500)
+          .send({ message: "User could not be updated", error });
+      });
+  } else {
+    response.status(500).send({ message: "Please specify a user", error });
+  }
 };
 
 exports.login = async (req, response) => {
