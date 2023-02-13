@@ -13,7 +13,6 @@ exports.getAccounts = async (req, response) => {
   const user = await User.findById(mongoose.Types.ObjectId(req.user.userId));
   // get user org id
   const org = user.organisation.toString();
-  console.log("accountorg", org);
   if (org != null) {
     const result = await Account.find({ organisation: org })
       .then((res) => {

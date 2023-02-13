@@ -24,7 +24,7 @@ exports.getUsers = async (req, response) => {
   if (org != null) {
     const result = await User.find({ organisation: org })
       .then((users) => {
-        console.log("Getting users in org");
+        // getting users
         response.status(200).send(users);
       })
       .catch((error) => {
@@ -40,7 +40,6 @@ exports.getUserById = async (req, response) => {
   const result = await getCurrentUser(req.params.id);
   const org = await getOrgName(result.organisation);
 
-  console.log("org", org);
   if (result) {
     response.status(200).send({
       email: result.email,
@@ -130,11 +129,10 @@ exports.updateUser = async (req, response) => {
 exports.login = async (req, response) => {
   const email = req.body.email;
   const password = req.body.password;
-  console.log(`attempt login ${email}`);
+  console.log(`login ${email}`);
 
   const resp = User.findOne({ email: email })
     .then((user) => {
-      console.log(user);
       bcrypt
         .compare(password, user.password)
         .then((res) => {
@@ -142,7 +140,6 @@ exports.login = async (req, response) => {
             userId: user._id,
             userEmail: user.email,
           };
-          console.log("Comparing password", res);
           if (!res) {
             return response.status(401).send({
               message: "Invalid password",
@@ -150,7 +147,6 @@ exports.login = async (req, response) => {
             });
           }
           const token = jwt.sign(payload, "TOKEN", { expiresIn: "1h" });
-          console.log(token);
           response.status(200).send({
             message: "Login successful",
             id: user._id,

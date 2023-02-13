@@ -25,7 +25,6 @@ export default function Users() {
         headers: { Authorization: "Bearer " + auth.token },
       })
       .then((result) => {
-        console.log("userlist", result);
         setUserList(result.data);
         setLoading(false);
         setError(false);

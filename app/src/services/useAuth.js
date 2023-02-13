@@ -34,16 +34,13 @@ function useProvideAuth() {
       console.log("Decoded: ", decodedToken);
       let currentDate = new Date();
 
-      if (decodedToken.exp * 1000 < currentDate.getTime()) {
-        console.log("Token expired");
-        logout();
-        return true;
-      } else {
+      if (decodedToken.exp * 1000 > currentDate.getTime()) {
         console.log("Token valid");
-        return false;
+        return;
       }
     }
-    return true;
+    console.log("Token expired");
+    logout();
   };
 
   //   const checkToken = () => {
@@ -80,10 +77,6 @@ function useProvideAuth() {
   //     // return true;
   //   };
 
-  //   useEffect(() => {
-  //     checkToken();
-  //   });
-
   const clear = () => {
     setUser(null);
     setToken(null);
@@ -98,23 +91,17 @@ function useProvideAuth() {
         password: password,
       })
       .then((result) => {
-        console.log(result);
         const token = result.data?.token;
         const userId = result.data?.id;
         localStorage.setItem("token", token);
         setUser(userId);
         setToken(token);
-
-        // success();
         return result;
       })
       .catch((err) => {
         // clear();
-        // failure();
         console.log(err);
       });
-
-    // return user;
   };
 
   const signup = (role, name, email, password) => {
@@ -132,33 +119,26 @@ function useProvideAuth() {
         password: password,
       })
       .then((result) => {
-        console.log(result);
         const token = result.data?.token;
         const userId = result.data?.id;
         localStorage.setItem("token", token);
         setUser(userId);
         setToken(token);
-
-        // success();
         return result;
       })
       .catch((err) => {
         console.log(err);
         // clear();
-        // failure();
       });
   };
 
   const logout = (cb) => {
-    // setUser(false);
     clear();
     if (cb) {
       cb();
     } else {
       window.location.href = "/";
     }
-
-    // cb();
   };
 
   return { user, login, signup, logout, token, checkToken };

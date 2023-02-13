@@ -16,7 +16,6 @@ export default function Settings() {
           headers: { Authorization: "Bearer " + auth.token },
         })
         .then((res) => {
-          console.log("res: ", res.data);
           setCurrentUser(res.data);
         })
         .catch((err) => {

@@ -19,7 +19,6 @@ export default function Home() {
         headers: { Authorization: "Bearer " + auth.token },
       })
       .then((res) => {
-        console.log(res.data);
         setAccounts(res.data);
       })
       .catch((err) => {
