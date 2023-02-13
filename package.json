@@ -15,7 +15,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./server/connect.js",
+    "start": "nodemon ./server/connect.js & (cd app && npm start)",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

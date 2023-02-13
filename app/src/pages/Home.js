@@ -27,15 +27,17 @@ export default function Home() {
   }, [auth.token]);
 
   return (
-    <div class="w-full">
+    <div class="w-full ">
       <Header />
-      <div class=" mx-5 my-5">
-        <div class="grid gap-4 grid-cols-3">
-          {accounts
-            ? accounts?.map((acc) => {
-                return <AccountCard account={acc} />;
-              })
-            : "No accounts"}
+      <div class="flex mx-5 my-5 justify-center">
+        <div class="sm:container">
+          <div class="grid grid-cols-1 max-w-700">
+            {accounts
+              ? accounts?.map((acc) => {
+                  return <AccountCard account={acc} />;
+                })
+              : "No accounts"}
+          </div>
         </div>
       </div>
     </div>

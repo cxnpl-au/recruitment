@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 
 const AccountSchema = new mongoose.Schema({
-  // add id
   organisation: {
     type: Schema.Types.ObjectId,
     ref: "Organisation",
@@ -16,6 +15,5 @@ const AccountSchema = new mongoose.Schema({
     default: 0,
   },
 });
-// can add validation here too
 
 module.exports = mongoose.model("Account", AccountSchema);
