@@ -14,19 +14,18 @@ function App() {
     <ProvideAuth>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* protected routes */}
-          {/* <Route
+          <Route
             path="/"
             element={
               <PrivateRoute>
                 <Home />
               </PrivateRoute>
             }
-          /> */}
+          />
           <Route
             path="/users"
             element={

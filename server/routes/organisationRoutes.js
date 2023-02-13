@@ -13,9 +13,17 @@ app.get("/orgs", UserController.auth, OrganisationController.getOrgs);
 
 app.post("/orgs", OrganisationController.createOrg);
 
-app.post(`/delete/:id`, UserController.auth, OrganisationController.deleteOrg);
+app.post(
+  `/orgs/delete/:id`,
+  UserController.auth,
+  OrganisationController.deleteOrg
+);
 
 // todo update user
-app.post(`/update/:id`, UserController.auth, OrganisationController.updateOrg);
+app.post(
+  `/orgs/update/:id`,
+  UserController.auth,
+  OrganisationController.updateOrg
+);
 
 module.exports = app;

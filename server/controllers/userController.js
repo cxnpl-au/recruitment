@@ -4,19 +4,27 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
+const Organisation = require("../models/organisation");
+
+const getCurrentUser = async (userId) => {
+  return await User.findById(mongoose.Types.ObjectId(userId));
+};
+
+const getUserOrg = async (userId) => {
+  const user = await getCurrentUser(userId);
+  return user.organisation?.toString();
+};
+
+const getOrgName = async (orgId) => {
+  return await Organisation.findById(mongoose.Types.ObjectId(orgId));
+};
+
 exports.getUsers = async (req, response) => {
-  console.log(req.user);
-  const userId = mongoose.Types.ObjectId(req.user.userId);
-  const user = await User.findById(userId);
-
-  const org = user.organisation.toString();
-  console.log("org: ", org);
-
+  const org = await getUserOrg(req.user.userId);
   if (org != null) {
-    const resp = await User.find({ organisation: org })
+    const result = await User.find({ organisation: org })
       .then((users) => {
-        console.log("getting users in org");
-        //   console.log(users);
+        console.log("Getting users in org");
         response.status(200).send(users);
       })
       .catch((error) => {
@@ -24,7 +32,24 @@ exports.getUsers = async (req, response) => {
         response.status(500).send(error);
       });
   } else {
-    response.status(404).send("No users in org");
+    response.status(404).send("User not in organisation");
+  }
+};
+
+exports.getUserById = async (req, response) => {
+  const result = await getCurrentUser(req.params.id);
+  const org = await getOrgName(result.organisation);
+
+  console.log("org", org);
+  if (result) {
+    response.status(200).send({
+      email: result.email,
+      name: result.name,
+      organisation: org.name,
+      role: result.role,
+    });
+  } else {
+    response.status(500).send("User not found");
   }
 };
 

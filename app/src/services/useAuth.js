@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import axiosConfig from "./axiosConfig";
 import jwt_decode from "jwt-decode";
@@ -34,9 +34,7 @@ function useProvideAuth() {
       console.log("Decoded: ", decodedToken);
       let currentDate = new Date();
 
-      if (
-        decodedToken.exp * 1000 < currentDate.getTime()
-      ) {
+      if (decodedToken.exp * 1000 < currentDate.getTime()) {
         console.log("Token expired");
         logout();
         return true;
@@ -48,44 +46,43 @@ function useProvideAuth() {
     return true;
   };
 
+  //   const checkToken = () => {
+  //     console.log("check token", token);
+  //     if (token != null) {
+  //       axiosConfig
+  //         .post("/auth")
+  //         .then((result) => {
+  //           //   console.log(result);
+  //           const token = result.data?.token;
+  //           const userId = result.data?.id;
+  //           localStorage.setItem("token", token);
 
-//   useEffect(() => {
-//     checkToken();
-//   });
+  //           setUser(userId);
+  //           setToken(token);
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //           logout();
+  //         });
+  //       //   let decodedToken = jwt_decode(token);
+  //       //   console.log("Decoded: ", decodedToken);
+  //       //   let currentDate = new Date();
 
-//   const checkToken = () => {
-//     console.log("check token", token);
-//     if (token != null) {
-//       axiosConfig
-//         .post("/auth")
-//         .then((result) => {
-//           //   console.log(result);
-//           const token = result.data?.token;
-//           const userId = result.data?.id;
-//           localStorage.setItem("token", token);
+  //       //   if (decodedToken.exp * 1000 < currentDate.getTime()) {
+  //       //     console.log("Token expired");
+  //       //     logout();
+  //       //     return true;
+  //       //   } else {
+  //       //     console.log("Token valid");
+  //       //     return false;
+  //       //   }
+  //     }
+  //     // return true;
+  //   };
 
-//           setUser(userId);
-//           setToken(token);
-//         })
-//         .catch((err) => {
-//           console.log(err);
-//           logout();
-//         });
-//       //   let decodedToken = jwt_decode(token);
-//       //   console.log("Decoded: ", decodedToken);
-//       //   let currentDate = new Date();
-
-//       //   if (decodedToken.exp * 1000 < currentDate.getTime()) {
-//       //     console.log("Token expired");
-//       //     logout();
-//       //     return true;
-//       //   } else {
-//       //     console.log("Token valid");
-//       //     return false;
-//       //   }
-//     }
-//     // return true;
-//   };
+  //   useEffect(() => {
+  //     checkToken();
+  //   });
 
   const clear = () => {
     setUser(null);

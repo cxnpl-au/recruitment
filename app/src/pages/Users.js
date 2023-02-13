@@ -1,9 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
-// import SignOutButton from "../components/SignOutButton";
 import axiosConfig from "../services/axiosConfig";
 // import { Link } from "react-router-dom";
-import UserCard from "../components/UserCard";
 import Header from "../components/Header";
 import useAuth from "../services/useAuth";
 import { useNavigate } from "react-router";
@@ -12,7 +10,7 @@ import UserTable from "../components/UserTable";
 export default function Users() {
   const navigate = useNavigate();
 
-  const [userList, setuserList] = useState(null);
+  const [userList, setUserList] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
 
@@ -27,8 +25,8 @@ export default function Users() {
         headers: { Authorization: "Bearer " + auth.token },
       })
       .then((result) => {
-        console.log(result);
-        setuserList(result.data);
+        console.log("userlist", result);
+        setUserList(result.data);
         setLoading(false);
         setError(false);
       })
@@ -58,11 +56,6 @@ export default function Users() {
           {userList?.length > 0 ? (
             <UserTable users={userList} />
           ) : (
-            // <div class="grid gap-4 grid-cols-3">
-            //   {userList.map((user) => {
-            //     return <UserCard user={user} />;
-            //   })}
-            // </div>
             "No users found."
           )}
         </div>
