@@ -2,9 +2,9 @@ const express = require("express");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const auth = require("../auth");
 
 exports.getUsers = async (req, response) => {
+  console.log(req);
   const resp = await User.find({})
     .then((users) => {
       console.log("getting users");
@@ -31,10 +31,16 @@ exports.createUser = async (req, response) => {
       user
         .save()
         .then((res) => {
-          // todo check for duplicate emails and return error
+          const payload = {
+            userId: user._id,
+            userEmail: user.email,
+          };
+          const token = jwt.sign(payload, "TOKEN", { expiresIn: "1h" });
           response.status(201).send({
             message: "User created successfully",
-            res,
+            id: user._id,
+            email: user.email,
+            token: token,
           });
         })
         .catch((error) => {
@@ -81,27 +87,24 @@ exports.login = async (req, response) => {
       bcrypt
         .compare(password, user.password)
         .then((res) => {
-          console.log("comparing password", res);
+          const payload = {
+            userId: user._id,
+            userEmail: user.email,
+          };
+          console.log("Comparing password", res);
           if (!res) {
             return response.status(401).send({
               message: "Invalid password",
               error: error,
             });
           }
-          const token = jwt.sign(
-            {
-              userId: user._id,
-              userEmail: user.email,
-            },
-            "TOKEN",
-            { expiresIn: "8h" }
-          );
+          const token = jwt.sign(payload, "TOKEN", { expiresIn: "1h" });
           console.log(token);
           response.status(200).send({
             message: "Login successful",
             id: user._id,
             email: user.email,
-            token,
+            token: token,
           });
         })
         .catch((error) => {
@@ -115,4 +118,19 @@ exports.login = async (req, response) => {
     });
 
   return resp;
+};
+
+exports.auth = async (req, response, next) => {
+  try {
+    const token = await req.headers.authorization.split(" ")[1];
+    const decodedToken = jwt.verify(token, "TOKEN");
+    const user = decodedToken;
+    req.user = user;
+    next();
+  } catch (error) {
+    response.status(401).json({
+      message: "Request not authorised",
+      error: error,
+    });
+  }
 };

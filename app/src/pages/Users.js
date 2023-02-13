@@ -54,7 +54,7 @@ export default function Users() {
       ) : (
         // todo check permissions/team
         <div class="sm:container mx-auto">
-          <div>Your team</div>
+          <div>Your Organisation</div>
           {userList?.length > 0 ? (
             <UserTable users={userList} />
           ) : (

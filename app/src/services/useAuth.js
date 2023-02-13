@@ -2,7 +2,6 @@ import { createContext, useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import axiosConfig from "./axiosConfig";
 import jwt_decode from "jwt-decode";
-// import { useNavigate } from "react-router-dom";
 
 const authContext = createContext();
 
@@ -19,29 +18,24 @@ function useProvideAuth() {
   const tokenStorage = localStorage.getItem("token")
     ? localStorage.getItem("token")
     : "";
-  const refreshStorage = localStorage.getItem("refresh")
-    ? localStorage.getItem("refresh")
-    : "";
 
   let currentUser = "";
+
   if (tokenStorage) {
     currentUser = jwt_decode(tokenStorage).userId;
   }
 
   const [user, setUser] = useState(currentUser || null);
   const [token, setToken] = useState(tokenStorage || null);
-  const [refresh, setRefresh] = useState(refreshStorage || null);
 
-  const checkJWT = () => {
+  const checkToken = () => {
     if (token != null) {
       let decodedToken = jwt_decode(token);
-      let decodedRefresh = jwt_decode(refresh);
       console.log("Decoded: ", decodedToken);
       let currentDate = new Date();
 
       if (
-        decodedToken.exp * 1000 < currentDate.getTime() &&
-        decodedRefresh.exp * 1000 < currentDate.getTime()
+        decodedToken.exp * 1000 < currentDate.getTime()
       ) {
         console.log("Token expired");
         logout();
@@ -54,12 +48,49 @@ function useProvideAuth() {
     return true;
   };
 
+
+//   useEffect(() => {
+//     checkToken();
+//   });
+
+//   const checkToken = () => {
+//     console.log("check token", token);
+//     if (token != null) {
+//       axiosConfig
+//         .post("/auth")
+//         .then((result) => {
+//           //   console.log(result);
+//           const token = result.data?.token;
+//           const userId = result.data?.id;
+//           localStorage.setItem("token", token);
+
+//           setUser(userId);
+//           setToken(token);
+//         })
+//         .catch((err) => {
+//           console.log(err);
+//           logout();
+//         });
+//       //   let decodedToken = jwt_decode(token);
+//       //   console.log("Decoded: ", decodedToken);
+//       //   let currentDate = new Date();
+
+//       //   if (decodedToken.exp * 1000 < currentDate.getTime()) {
+//       //     console.log("Token expired");
+//       //     logout();
+//       //     return true;
+//       //   } else {
+//       //     console.log("Token valid");
+//       //     return false;
+//       //   }
+//     }
+//     // return true;
+//   };
+
   const clear = () => {
     setUser(null);
     setToken(null);
-    setRefresh(null);
     localStorage.removeItem("token");
-    localStorage.removeItem("refresh");
   };
 
   const login = (email, password) => {
@@ -74,10 +105,8 @@ function useProvideAuth() {
         const token = result.data?.token;
         const userId = result.data?.id;
         localStorage.setItem("token", token);
-        localStorage.setItem("refresh", result.data.refresh);
         setUser(userId);
         setToken(token);
-        setRefresh(result.data.refresh);
 
         // success();
         return result;
@@ -96,9 +125,7 @@ function useProvideAuth() {
 
     setUser(null);
     setToken(null);
-    setRefresh(null);
     localStorage.removeItem("token");
-    localStorage.removeItem("refresh");
     console.log("signup", role, name);
     axiosConfig
       .post("/users", {
@@ -112,10 +139,8 @@ function useProvideAuth() {
         const token = result.data?.token;
         const userId = result.data?.id;
         localStorage.setItem("token", token);
-        localStorage.setItem("refresh", result.data.refresh);
         setUser(userId);
         setToken(token);
-        setRefresh(result.data.refresh);
 
         // success();
         return result;
@@ -139,5 +164,5 @@ function useProvideAuth() {
     // cb();
   };
 
-  return { user, login, signup, logout, token, checkJWT };
+  return { user, login, signup, logout, token, checkToken };
 }
