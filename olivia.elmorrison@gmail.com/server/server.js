@@ -15,4 +15,4 @@ const userRouter = require('./routes/UserRoutes');
 app.use('/users', userRouter)
 
 
-app.listen(3000, () => console.log('Server Started'))
+app.listen(7000, () => console.log('Server Started'))
