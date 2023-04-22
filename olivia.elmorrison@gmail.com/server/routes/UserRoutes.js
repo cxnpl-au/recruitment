@@ -22,18 +22,35 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Creating new user
-router.post('/', async (req, res) => {
+// Sign up
+router.post('/signup', async (req, res) => {
     try {
         const user = new User({
-            username: req.body.username,
+            name: req.body.name,
             password: req.body.password,
             email: req.body.email,
-            permissions: req.body.permissions
+            permissions: "SUBSCRIBER"
         });
         const newUser = await user.save();
-
+        
         res.status(201).json({ newUser });
+    } catch (error) {
+        res.status(500).json({ message: error.message})
+    }
+});
+
+// Login user
+router.post('/login', async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) throw new error("Email not found");
+
+        if (user.password != req.body.password) throw new error("Incorrect password");
+
+        // const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+        // res.header("auth-token", token).send({ token, userId: user._id });
+        res.status(200).json({userId: user.id})
+        
     } catch (error) {
         res.status(500).json({ message: error.message})
     }
@@ -62,6 +79,19 @@ router.delete('/', async (req, res) => {
     const user = await User.findOneAndDelete({
         _id: params.userId,
     });
+
+    if (!user) {
+        return res.status(400).json({ message: "Unable to delete user." });
+    }
+
+    res.status(200).json({ message: "User deleted." });
+});
+
+
+//TODO: Remove this, purely for testing purposes
+//Delete all users
+router.delete('/all', async (req, res) => {
+    const user = await User.deleteMany();
 
     if (!user) {
         return res.status(400).json({ message: "Unable to delete user." });
