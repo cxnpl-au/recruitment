@@ -32,7 +32,8 @@ export const LoginRoute = () => {
   }
 
   return (
-      <div className="auth-form-container">
+    <div className="forms">
+      <div className="form-container">
         <form className="login-form" onSubmit={handleSubmit}>
           <h2>Login</h2>
           <label htmlFor="email">Email</label>
@@ -42,9 +43,10 @@ export const LoginRoute = () => {
           <label htmlFor="password">Password</label>
           <input value={password} onChange={(e)=> setPassword(e.target.value)}type="password" placeholder="*******" id="password" name="password"/>
 
-          <button type="submit">login</button>
+          <button className="form-button" type="submit">login</button>
         </form>
         <button className="link-button" onClick={() => navigate('/signup')}>Don't have an account? Sign up here.</button>
+      </div>
       </div>
   );
 }

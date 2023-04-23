@@ -1,0 +1,49 @@
+.application {
+    min-width: 100vw;
+    display: flex;
+    flex-direction:row
+}
+
+.current-tab {
+    background-color: #A5A5Af;
+    opacity: 0.6;
+    min-width: 75vw;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.tab-content {
+    background-color: white;
+    min-width: 800px;
+    min-height: 600px;
+    border-radius: 20px;
+}
+
+.nav-bar {
+    min-width: 25vw;
+    min-height: 100vh;
+    background-image: linear-gradient(90deg, #77C9D4, #57bc90);
+    color: white;
+    float: left;
+}
+
+.nav-buttons {
+    padding-top: 10vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-button {
+    background-color: transparent;
+    padding: 20px 30px;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    text-align: left;
+}
+
+.nav-label {
+    padding: 0 20px;
+    font-size: 12px;
+}

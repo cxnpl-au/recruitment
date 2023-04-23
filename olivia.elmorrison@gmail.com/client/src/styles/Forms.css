@@ -1,10 +1,19 @@
-.auth-form-container, .signup-form, .login-form {
+.forms {
+    background-image: linear-gradient(90deg, #77C9D4, #57bc90);
+    text-align: center;
     display: flex;
-    flex-direction: column;
-    
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }
 
-.auth-form-container {
+.form-container, .signup-form, .login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container {
     padding: 5rem;
     border: 1px solid white;
     border-radius: 20px;
@@ -22,16 +31,17 @@ input {
     border: none;
 }
 
-button {
-    border: none;
+.form-button {
     background-color: white;
     padding: 20px;
+    margin: 20px 0;
     border-radius: 10px;
     cursor: pointer;
-    color: #7439db;
+    color: #5c5c5f;
 }
 
 .link-button {
+    padding: 20px;
     background: none;
     color: white;
     text-decoration: underline;
