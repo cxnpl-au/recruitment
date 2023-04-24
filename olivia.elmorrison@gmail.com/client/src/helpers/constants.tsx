@@ -3,3 +3,10 @@ export enum TAB {
   TEAM,
   PROJECTS
 }
+
+export enum PERMISSION {
+  ADMIN= "Admin",
+  APPROVER= "Approver",
+  SUBMITTER= "Submitter",
+  NONE="None"
+}

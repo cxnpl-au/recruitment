@@ -20,12 +20,12 @@ export const LoginRoute = () => {
 
     try {
       const response = await userRoutes.loginUser(loginRequest);
-
-        if(response.status === 200) {
-          navigate("/application")
-        } else {
-          //TODO: Alert
-        }
+      
+      if(response.status === 200) {
+        navigate("/application")
+      } else {
+        //TODO: Alert
+      }
     } catch (error) {
       console.log(error)
     }

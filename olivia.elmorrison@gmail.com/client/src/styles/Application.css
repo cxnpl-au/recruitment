@@ -4,6 +4,8 @@
     flex-direction:row
 }
 
+/* TAB styles */
+
 .current-tab {
     background-color: #A5A5Af;
     opacity: 0.6;
@@ -14,11 +16,38 @@
 }
 
 .tab-content {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.6);
     min-width: 800px;
     min-height: 600px;
     border-radius: 20px;
 }
+
+/* TEAM LIST styles */
+
+.team-row {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    background-color: rgba(255, 255, 255, 0.759);
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.team-col {
+    padding: 0 50px;
+}
+
+.team-name {
+    font-weight: bold;
+    padding: 0 30px;
+}
+
+.team-button {
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* NAV styles */
 
 .nav-bar {
     min-width: 25vw;
