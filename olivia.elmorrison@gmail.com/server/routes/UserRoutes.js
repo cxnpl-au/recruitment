@@ -57,7 +57,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Updating one user
-router.patch('/:id', async (req, res) => {
+router.patch('/update/permissions/:id', async (req, res) => {
     try {
         const user = await User.findOneAndUpdate(
             { _id: req.params.id },

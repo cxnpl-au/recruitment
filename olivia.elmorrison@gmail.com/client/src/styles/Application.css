@@ -1,7 +1,8 @@
 .application {
     min-width: 100vw;
     display: flex;
-    flex-direction:row
+    flex-direction:row;
+    position: relative;
 }
 
 /* TAB styles */
@@ -45,6 +46,37 @@
 .team-button {
     cursor: pointer;
     border-radius: 5px;
+}
+
+.team-update-modal {
+    position: absolute;
+    top: 45vh;
+    background-color: white;
+    min-width: 400px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    justify-content: space-around;
+    align-items: center;
+    font-weight: bold;
+}
+
+select {
+    background-image: linear-gradient(90deg, #77C9D4, #57bc90);;
+    border: none;
+    padding: 10px 150px;
+    font-size: medium;
+    border-radius: 10px;
+    direction: ltr;
+    /* font-weight: bold; */
+    /* color: white; */
+}
+
+.team-update-button {
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
 }
 
 /* NAV styles */
