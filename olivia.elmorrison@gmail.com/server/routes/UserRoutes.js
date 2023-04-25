@@ -1,16 +1,6 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const User = require('../models/User');
-
-// Get all users
-router.get('/', async (req, res) => {
-    try {
-        const users = await User.find();
-        res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: error.message})
-    }
-});
+const Business = require('../models/Business');
 
 // Get one user
 router.get('/:id', async (req, res) => {
@@ -29,9 +19,22 @@ router.post('/signup', async (req, res) => {
             name: req.body.name,
             password: req.body.password,
             email: req.body.email,
-            permissions: "SUBSCRIBER"
+            //TODO: update
+            permissions: "ADMIN",
+            businessId: req.body.businessId
         });
         const newUser = await user.save();
+
+        // Add user to list of those registered under the business
+        const business = await Business.findOneAndUpdate(
+            { _id: user.businessId },
+            { $addToSet: { team: user._id } },
+            { new: true }
+        );
+
+        if (!business) {
+            throw new error({ message: `Error adding created user to business ${user.businessId}` })
+        }
         
         res.status(201).json({ newUser });
     } catch (error) {

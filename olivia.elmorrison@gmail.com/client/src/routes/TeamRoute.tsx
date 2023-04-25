@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUsers, updateUserPermissions } from "../api/routes/businessRoutes"
+import { getTeam, updateUserPermissions } from "../api/routes/businessRoutes"
 import "../styles/Application.css"
 import { Nav } from "../components/Nav";
 
@@ -21,7 +21,7 @@ export const TeamRoute = () => {
     const fetchUsers = async () => {
       try {
         //TODO: Replace id
-        const response = await getUsers("id");
+        const response = await getTeam("64478784aec6a10b6ca1e129");
 
         if (!response.ok) {
           throw new Error(

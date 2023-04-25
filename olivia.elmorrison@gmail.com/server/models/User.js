@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
     name: {
 		type: String,
 		required: true,
@@ -20,7 +20,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["ADMIN", "APPROVER", "SUBSCRIBER", "NONE"],
         default: "NONE"
-    }
+    },
+	businessId: {
+		type: Schema.Types.ObjectId,
+		ref: "Business",
+	}
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = model('User', userSchema);
