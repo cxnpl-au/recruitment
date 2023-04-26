@@ -3,6 +3,8 @@ import { Nav } from "../components/Nav";
 import "../styles/Application.css"
 import { getProjects, updateProject } from "../api/routes/businessRoutes";
 import { AddProjectForm } from "../components/AddProjectForm";
+import { getSavedBusinessId } from "../authorisation/session";
+import AuthService from "../authorisation/auth"
 
 export interface Project {
   _id?: string | undefined,
@@ -22,12 +24,14 @@ export const ProjectsRoute = () => {
     expense: undefined,
     estimatedProfit: undefined
   });
+  const token = AuthService.getToken();
+  const businessId = getSavedBusinessId();
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        //TODO: Replace id
-        const response = await getProjects("6448cf3ab93ab700ad54981f");
+        
+        const response = await getProjects(businessId, token!);
 
         if (!response.ok) {
           throw new Error(
@@ -49,7 +53,7 @@ export const ProjectsRoute = () => {
       }
     };
     fetchProjects();
-  }, [projectsData.length]);
+  }, [businessId, projectsData.length, token]);
 
   const sendUpdateProject = async () => {
     try {
@@ -57,9 +61,8 @@ export const ProjectsRoute = () => {
         estimate: projectToUpdate.estimate,
         expense: projectToUpdate.expense
       }
-      const response = await updateProject("6448cf3ab93ab700ad54981f", projectToUpdate._id!, request);
-  
-      console.log(response);
+      const response = await updateProject(businessId, projectToUpdate._id!, request, token!);
+
       if (!response.ok) {
         throw new Error(
           "Something went wrong while updating project"
@@ -124,7 +127,7 @@ export const ProjectsRoute = () => {
             <button className="team-update-button" type="submit" onClick={() => sendUpdateProject()}>Update</button>
           </form>
         )}
-        {(showCreateProject &&<AddProjectForm businessId={"6448cf3ab93ab700ad54981f"} setShowCreateProject={setShowCreateProject} />)}
+        {(showCreateProject &&<AddProjectForm setShowCreateProject={setShowCreateProject} />)}
         </div>
       </div>
     );

@@ -1,14 +1,16 @@
 import { createProject } from "../api/routes/businessRoutes";
-import "../styles/Application.css"
 import { ChangeEvent, useState } from "react";
+import "../styles/Application.css"
+import { getSavedBusinessId } from "../authorisation/session";
+import AuthService from "../authorisation/auth";
 
 interface props {
-	businessId: string
-    setShowCreateProject: any
+  setShowCreateProject: any
 }
 
 export const AddProjectForm = (props: props) => {
-
+  const token = AuthService.getToken();
+  const businessId = getSavedBusinessId();
     const [newProject, setNewProject] = useState({
         name: '',
         estimate: 0
@@ -20,7 +22,7 @@ export const AddProjectForm = (props: props) => {
                 name: newProject.name,
                 estimate: newProject.estimate
             }
-            const response = await createProject(props.businessId, createProjectRequest);
+            const response = await createProject(businessId, createProjectRequest, token!);
     
             if (!response.ok) {
               throw new Error(

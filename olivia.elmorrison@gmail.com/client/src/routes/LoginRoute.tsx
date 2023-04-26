@@ -1,31 +1,36 @@
 import { useState } from "react";
 import "../styles/Forms.css"
-import * as userRoutes from "../api/routes/userRoutes"
+import { loginUser } from "../api/routes/userRoutes"
 import { useNavigate } from "react-router-dom";
+import AuthService from "../authorisation/auth.js";
+import { saveUserPermissions, saveBusinessId } from "../authorisation/session.js";
 
 export const LoginRoute = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  
-  //TODO: Validations
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     
-    const loginRequest : userRoutes.LoginUserRequest = {
+    const loginRequest = {
       email: email,
       password: password
     }
 
     try {
-      const response = await userRoutes.loginUser(loginRequest);
-      
-      if(response.status === 200) {
-        navigate("/application")
-      } else {
-        //TODO: Alert
+      const response = await loginUser(loginRequest);
+
+      if(response.status !== 200) {
+        throw new Error("Error logging in");
       }
+      const { token, user } = await response.json();
+
+      saveUserPermissions(user.permissions);
+      saveBusinessId(user.businessId);
+      AuthService.login(token);
+
+      navigate("/dashboard");
     } catch (error) {
       console.log(error)
     }

@@ -1,6 +1,6 @@
 const router = require('express').Router();
+const { authUser, authGetTeam, authUpdateProject, authCreateProject } = require('../authorisation/auth');
 const Business = require('../models/Business');
-const Project = require('../models/Project');
 
 // Get one business
 router.get('/:id', async (req, res) => {
@@ -12,25 +12,13 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Create one business
-router.post('/create', async (req, res) => {
-    try {
-        const project = new Business({
-            name: req.body.name,
-            team: [],
-            projects: []
-        });
-        const newProject = await project.save();
-        
-        res.status(201).json({ newProject });
-    } catch (error) {
-        res.status(500).json({ message: error.message})
-    }
-});
-
 // Get all users in this business
 router.get('/team/:id', async (req, res) => {
     try {
+        //Authenticate
+        authUser(req, res);
+        authGetTeam(req, res);
+
         const business = await Business.findOne({
             _id: req.params.id,
         }).populate({
@@ -38,11 +26,11 @@ router.get('/team/:id', async (req, res) => {
         });
 
         if (!business.team) {
-            throw new error({message: `Error fetching team`})
+            return res.status(404).json({message: 'Error fetching team'});
         }
 
         res.status(200).json(business.team);
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({ message: error.message})
     }
 });
@@ -50,12 +38,15 @@ router.get('/team/:id', async (req, res) => {
 // Get all projects in this business
 router.get('/projects/:id', async (req, res) => {
     try {
+        // Authenticate
+        authUser(req, res);
+
         const business = await Business.findOne({
             _id: req.params.id,
         })
 
         if (!business || !business.projects) {
-            throw new error({message: `Error fetching team`})
+            return res.status(404).json({message: 'Error fetching project'});
         }
 
         res.status(200).json(business.projects);
@@ -67,6 +58,10 @@ router.get('/projects/:id', async (req, res) => {
 // Create one project
 router.post('/projects/create/:id', async (req, res) => {
     try {
+        // Authenticate
+        authUser(req, res);
+        authCreateProject(req, res);
+
         const project = {
             name: req.body.name,
             estimate: 0,
@@ -83,28 +78,25 @@ router.post('/projects/create/:id', async (req, res) => {
         }
 
         res.status(200).json(business);
-    } catch (err) {
-        console.error(err);
-        res.status(500);
+    } catch (error) {
+        res.status(500).json({ message: error.message})
     }
 });
 
-// Updating one user
+// Updating one project
 router.patch('/update/:businessId/projects/:projectId', async (req, res) => {
     try {
-        console.log("HEREEE");
-        // console.log(req);
+        // Authenticate
+        authUser(req, res);
+        authUpdateProject(req, res);
+
         const business = await Business.findOne({
             _id: req.params.businessId,
         })
-        console.log(req.params);
+        
         const project = business.projects.id(req.params.projectId);
-        console.log(project);
-
-        // Rewrite account data with changes applied
         const updatedProject = { ...project.toJSON(), ...req.body };
 
-        // Save updated account data to business
         business = await Business.findOneAndUpdate(
             { _id: req.params.businessId, "projects._id": req.params.projectId },
             { $set: { "projects.$": updatedProject } },
@@ -112,7 +104,7 @@ router.patch('/update/:businessId/projects/:projectId', async (req, res) => {
         );
 
         if (!business) {
-            throw new error({ message: "Error updating project" });
+            return res.status(404).json({message: 'Error updating project'});
         }
 
         res.status(200).json(business);

@@ -3,6 +3,8 @@ import { getTeam } from "../api/routes/businessRoutes"
 import { updateUserPermissions } from "../api/routes/userRoutes";
 import "../styles/Application.css"
 import { Nav } from "../components/Nav";
+import { getSavedBusinessId } from "../authorisation/session.js";
+import AuthService from "../authorisation/auth"
 
 interface User {
   _id: string | undefined,
@@ -17,16 +19,17 @@ export const TeamRoute = () => {
     name: undefined,
     permissions: undefined
   });
+  const token = AuthService.getToken();
+  const businessId = getSavedBusinessId();
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        //TODO: Replace id
-        const response = await getTeam("6448cf3ab93ab700ad54981f");
+        const response = await getTeam(businessId, token!);
 
         if (!response.ok) {
           throw new Error(
-            "Something went wrong while getting team information."
+            "Error when getting team information."
           );
         }
 
@@ -37,18 +40,18 @@ export const TeamRoute = () => {
       }
       };
       fetchUsers();
-  }, [userData.length]);
+  }, [businessId, token, userData.length]);
 
 const updateUser = async () => {
   try {
     const permissions = {
       permissions: userToUpdate.permissions
     }
-    const response = await updateUserPermissions(userToUpdate._id!, permissions)
+    const response = await updateUserPermissions(userToUpdate._id!, permissions, token!)
 
     if (!response.ok) {
       throw new Error(
-        "Something went wrong while updating user permissions"
+        "Error when updating user permissions"
       );
     }
 

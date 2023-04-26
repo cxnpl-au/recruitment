@@ -2,14 +2,14 @@ import { useState } from "react";
 import "../styles/Forms.css"
 import * as userRoutes from "../api/routes/userRoutes"
 import { useNavigate } from "react-router-dom";
+import AuthService from "../authorisation/auth.js";
+import { saveUserPermissions, saveBusinessId } from "../authorisation/session.js";
 
 export const SignupRoute = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const navigate = useNavigate();
-
-    //TODO: Validations
   
     const handleSubmit = async (e : any) => {
       e.preventDefault();
@@ -20,17 +20,20 @@ export const SignupRoute = () => {
         password: password
       }
 
-      console.log(signUpRequest)
       try {
         const response = await userRoutes.signupUser(signUpRequest);
 
-        if(response.status === 201) {
-          navigate("/application")
-        } else {
-          //TODO: Error
+        if(response.status !== 200) {
+          throw new Error("Error logging in");
         }
+        const { token, user } = await response.json();
+  
+        saveUserPermissions(user.permissions);
+        saveBusinessId(user.businessId);
+        AuthService.login(token);
+  
+        navigate("/dashboard");
       } catch (error) {
-        console.log("error here")
         console.log(error);
       }
     }

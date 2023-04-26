@@ -1,12 +1,46 @@
 const router = require('express').Router();
 const User = require('../models/User');
 const Business = require('../models/Business');
+const { signToken, authUser, authUpdateUserPermissions } = require('../authorisation/auth');
 
-// Get one user
-router.get('/:id', async (req, res) => {
+// Create business with user as admin
+router.post('/create/business', async (req, res) => {
     try {
-        const user = await User.findById(req.params.id)
-        res.json(user);
+        const business = new Business({
+            name: req.body.businessName,
+            team: [],
+            projects: []
+        });
+        
+        let newBusiness = await business.save();
+        
+        if (!newBusiness) {
+            throw new Error({ message: "Error creating new business" })
+        }
+
+        //Creater gets admin permissions
+        const user = new User({
+            name: req.body.name,
+            password: req.body.password,
+            email: req.body.email,
+            permissions: "ADMIN",
+            businessId: newBusiness._id
+        });
+        const newUser = await user.save();
+
+        if (!newUser) {
+            return res.status(500).json({message: 'Error creating user'});
+        }
+
+        //Add admin to the team
+        newBusiness = await Business.findOneAndUpdate(
+            { _id: user.businessId },
+            { $addToSet: { team: user._id } },
+            { new: true }
+        );
+
+        const token = signToken(user);
+        res.status(201).json({token, newUser});
     } catch (error) {
         res.status(500).json({ message: error.message})
     }
@@ -15,12 +49,12 @@ router.get('/:id', async (req, res) => {
 // Sign up
 router.post('/signup', async (req, res) => {
     try {
+        //Default no authorisation
         const user = new User({
             name: req.body.name,
             password: req.body.password,
             email: req.body.email,
-            //TODO: update
-            permissions: "ADMIN",
+            permissions: "NONE",
             businessId: req.body.businessId
         });
         const newUser = await user.save();
@@ -32,10 +66,11 @@ router.post('/signup', async (req, res) => {
         );
 
         if (!business) {
-            throw new error({ message: `Error adding created user to business ${user.businessId}` })
+            return res.status(404).json({message: 'Error adding user to business'});
         }
-        
-        res.status(201).json({ newUser });
+
+        const token = signToken(user);
+        res.status(201).json({token, newUser});
     } catch (error) {
         res.status(500).json({ message: error.message})
     }
@@ -44,23 +79,29 @@ router.post('/signup', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
     try {
+        
         const user = await User.findOne({ email: req.body.email });
-        if (!user) throw new error("Email not found");
+        if (!user) return res.status(404).json({message: 'Email not found'});
 
-        if (user.password != req.body.password) throw new error("Incorrect password");
+        if (user.password != req.body.password) return res.status(404).json({message: 'Error fetching project'});
 
-        // const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
-        // res.header("auth-token", token).send({ token, userId: user._id });
-        res.status(200).json({userId: user.id})
+
+		const token = signToken(user);
+        
+        res.status(200).json({token, user})
         
     } catch (error) {
         res.status(500).json({ message: error.message})
     }
 });
 
-// Updating one user
+// Updating user permissions
 router.patch('/update/permissions/:id', async (req, res) => {
     try {
+        // Authenticate
+        authUser(req, res);
+        authUpdateUserPermissions(req, res);
+
         const user = await User.findOneAndUpdate(
             { _id: req.params.id },
 			{ $set: req.body }
@@ -75,6 +116,7 @@ router.patch('/update/permissions/:id', async (req, res) => {
     }
 });
 
+//TODO: Remove this, purely for testing purposes
 // Deleting one user
 router.delete('/', async (req, res) => {
     const user = await User.findOneAndDelete({
