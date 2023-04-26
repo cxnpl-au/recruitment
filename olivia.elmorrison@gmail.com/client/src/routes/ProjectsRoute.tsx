@@ -123,6 +123,7 @@ export const ProjectsRoute = () => {
                     <div className="team-col" style={{display: "flex"}}>
                       <p className="team-name">{(project.name).toUpperCase()}</p>
                     </div>
+                    <p>{project.estimatedProfit}</p>
                     {AuthService.isAdminOrApprover() && <button className="team-col team-button" onClick={() => setProjectToUpdate(project)}>Update Project</button>}
                   </div>
                 )

@@ -64,7 +64,7 @@ router.post('/projects/create/:id', async (req, res) => {
 
         const project = {
             name: req.body.name,
-            estimate: 0,
+            estimate: req.body.estimate,
             expense: 0
         }
         const business = await Business.findOneAndUpdate(
