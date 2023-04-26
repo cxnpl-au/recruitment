@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getTeam, updateUserPermissions } from "../api/routes/businessRoutes"
+import { getTeam } from "../api/routes/businessRoutes"
+import { updateUserPermissions } from "../api/routes/userRoutes";
 import "../styles/Application.css"
 import { Nav } from "../components/Nav";
 
@@ -21,7 +22,7 @@ export const TeamRoute = () => {
     const fetchUsers = async () => {
       try {
         //TODO: Replace id
-        const response = await getTeam("64478784aec6a10b6ca1e129");
+        const response = await getTeam("6448cf3ab93ab700ad54981f");
 
         if (!response.ok) {
           throw new Error(
@@ -34,10 +35,9 @@ export const TeamRoute = () => {
       } catch (err) {
         console.error(err);
       }
-    };
-    fetchUsers();
-    console.log(userToUpdate)
-}, [userData.length, userToUpdate]);
+      };
+      fetchUsers();
+  }, [userData.length]);
 
 const updateUser = async () => {
   try {
@@ -52,6 +52,7 @@ const updateUser = async () => {
       );
     }
 
+    //reset user
     setUserToUpdate({
       _id: undefined,
       name: undefined,
@@ -81,7 +82,7 @@ const updateUser = async () => {
               })}
           </div>
         {
-          userToUpdate.permissions !== undefined && (
+          userToUpdate._id !== undefined && (
               <form className="team-update-modal">
                 <label htmlFor={userToUpdate.permissions} style={{padding: "10px"}}>Choose permission:</label>
                   <select 

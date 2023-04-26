@@ -25,7 +25,6 @@ router.post('/signup', async (req, res) => {
         });
         const newUser = await user.save();
 
-        // Add user to list of those registered under the business
         const business = await Business.findOneAndUpdate(
             { _id: user.businessId },
             { $addToSet: { team: user._id } },
@@ -70,7 +69,6 @@ router.patch('/update/permissions/:id', async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "Unable to update user." });
         }
-
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: error.message})
