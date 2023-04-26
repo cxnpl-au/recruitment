@@ -1,6 +1,6 @@
 import decode from "jwt-decode";
 
-import { getSavedUserPermissions } from "./session";
+import { getUserPermissions } from "./session";
 
 class AuthService {
   
@@ -18,7 +18,8 @@ class AuthService {
 
       if (decoded.exp < Date.now() / 1000) {
         localStorage.removeItem("id_token");
-        localStorage.removeItem("saved_user_role");
+        localStorage.removeItem("saved_user_permissions");
+        localStorage.removeItem("saved_user_name");
         localStorage.removeItem("saved_user_businessId");
         return true;
       } else return false;
@@ -33,23 +34,29 @@ class AuthService {
   }
 
   isAdmin() {
-    const permissions = getSavedUserPermissions();
+    const permissions = getUserPermissions();
     return permissions === "ADMIN";
   }
 
   isAdminOrApprover() {
-    const permissions = getSavedUserPermissions();
+    const permissions = getUserPermissions();
     return permissions === "ADMIN" || permissions === "APPROVER";
   }
 
   isSubmitter() {
-    const permissions = getSavedUserPermissions();
+    const permissions = getUserPermissions();
     return permissions === "ADMIN" || permissions === "APPROVER";
+  }
+
+  hasNoPermissions() {
+    const permissions = getUserPermissions();
+    return permissions === "NONE";
   }
 
   logout() {
     localStorage.removeItem("id_token");
     localStorage.removeItem("saved_user_role");
+    localStorage.removeItem("saved_user_name");
     localStorage.removeItem("saved_user_businessId");
 
     window.location.assign("/");

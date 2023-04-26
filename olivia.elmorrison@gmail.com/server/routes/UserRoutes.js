@@ -19,16 +19,16 @@ router.post('/create/business', async (req, res) => {
         }
 
         //Creater gets admin permissions
-        const user = new User({
+        let user = new User({
             name: req.body.name,
             password: req.body.password,
             email: req.body.email,
             permissions: "ADMIN",
             businessId: newBusiness._id
         });
-        const newUser = await user.save();
+        user = await user.save();
 
-        if (!newUser) {
+        if (!user) {
             return res.status(500).json({message: 'Error creating user'});
         }
 
@@ -40,7 +40,7 @@ router.post('/create/business', async (req, res) => {
         );
 
         const token = signToken(user);
-        res.status(201).json({token, newUser});
+        res.status(201).json({token, user});
     } catch (error) {
         res.status(500).json({ message: error.message})
     }
@@ -50,14 +50,14 @@ router.post('/create/business', async (req, res) => {
 router.post('/signup', async (req, res) => {
     try {
         //Default no authorisation
-        const user = new User({
+        let user = new User({
             name: req.body.name,
             password: req.body.password,
             email: req.body.email,
             permissions: "NONE",
             businessId: req.body.businessId
         });
-        const newUser = await user.save();
+        user = await user.save();
 
         const business = await Business.findOneAndUpdate(
             { _id: user.businessId },
@@ -70,7 +70,7 @@ router.post('/signup', async (req, res) => {
         }
 
         const token = signToken(user);
-        res.status(201).json({token, newUser});
+        res.status(201).json({token, user});
     } catch (error) {
         res.status(500).json({ message: error.message})
     }

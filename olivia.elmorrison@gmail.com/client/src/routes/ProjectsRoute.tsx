@@ -3,8 +3,9 @@ import { Nav } from "../components/Nav";
 import "../styles/Application.css"
 import { getProjects, updateProject } from "../api/routes/businessRoutes";
 import { AddProjectForm } from "../components/AddProjectForm";
-import { getSavedBusinessId } from "../authorisation/session";
+import { getBusinessId } from "../authorisation/session";
 import AuthService from "../authorisation/auth"
+import { useNavigate } from "react-router-dom";
 
 export interface Project {
   _id?: string | undefined,
@@ -25,7 +26,8 @@ export const ProjectsRoute = () => {
     estimatedProfit: undefined
   });
   const token = AuthService.getToken();
-  const businessId = getSavedBusinessId();
+  const businessId = getBusinessId();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -94,6 +96,18 @@ export const ProjectsRoute = () => {
     });
   };
   
+  if(!AuthService.loggedIn()) {
+    return (
+      <div className="application">
+        <div>
+        <div className="current-tab" style={{minWidth: "100vw"}}>
+          <h2>You need to log in to view this page.</h2>
+          <button className="form-button" onClick={() => navigate('/')}>Please log in</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
     return (
       <div className="application">
         <Nav/>
@@ -101,7 +115,7 @@ export const ProjectsRoute = () => {
         <div className="tab-content">
               <div className="team-row" style={{backgroundColor: "transparent"}}>
                 <h1>Projects</h1>
-                <button className="team-button" style={{minHeight: "40px"}} onClick={() => setShowCreateProject(true)}>Add project</button>
+                {AuthService.isAdminOrApprover() && <button className="team-button" style={{minHeight: "40px"}} onClick={() => setShowCreateProject(true)}>Add project</button>}
               </div>
               { projectsData.map((project: any) => {
                 return (
@@ -109,7 +123,7 @@ export const ProjectsRoute = () => {
                     <div className="team-col" style={{display: "flex"}}>
                       <p className="team-name">{(project.name).toUpperCase()}</p>
                     </div>
-                    <button className="team-col team-button" onClick={() => setProjectToUpdate(project)}>Update Project</button>
+                    {AuthService.isAdminOrApprover() && <button className="team-col team-button" onClick={() => setProjectToUpdate(project)}>Update Project</button>}
                   </div>
                 )
               })};

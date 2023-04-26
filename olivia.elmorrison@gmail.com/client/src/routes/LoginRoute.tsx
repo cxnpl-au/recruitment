@@ -3,7 +3,7 @@ import "../styles/Forms.css"
 import { loginUser } from "../api/routes/userRoutes"
 import { useNavigate } from "react-router-dom";
 import AuthService from "../authorisation/auth.js";
-import { saveUserPermissions, saveBusinessId } from "../authorisation/session.js";
+import { setUserPermissions, setBusinessId, setUserName } from "../authorisation/session.js";
 
 export const LoginRoute = () => {
   const [email, setEmail] = useState('');
@@ -26,8 +26,9 @@ export const LoginRoute = () => {
       }
       const { token, user } = await response.json();
 
-      saveUserPermissions(user.permissions);
-      saveBusinessId(user.businessId);
+      setUserPermissions(user.permissions);
+      setUserName(user.name);
+      setBusinessId(user.businessId);
       AuthService.login(token);
 
       navigate("/dashboard");
@@ -51,6 +52,7 @@ export const LoginRoute = () => {
           <button className="form-button" type="submit">login</button>
         </form>
         <button className="link-button" onClick={() => navigate('/signup')}>Don't have an account? Sign up here.</button>
+        <button className="link-button" onClick={() => navigate('/')}>Want to add a business?</button>
       </div>
       </div>
   );

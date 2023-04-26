@@ -113,12 +113,17 @@ router.patch('/update/:businessId/projects/:projectId', async (req, res) => {
     }
 });
 
-//TODO: remove - only for testing purposes
-// Get all business
+// Get all business names and ids
 router.get('/', async (req, res) => {
     try {
         const business = await Business.find();
-        res.json(business);
+        const result = business.map((x) => {
+            return {
+                _id: x._id,
+                name: x.name
+            }
+        })
+        res.json(result);
     } catch (error) {
         res.status(500).json({ message: error.message})
     }

@@ -1,8 +1,8 @@
 import { createProject } from "../api/routes/businessRoutes";
 import { ChangeEvent, useState } from "react";
-import "../styles/Application.css"
-import { getSavedBusinessId } from "../authorisation/session";
+import { getBusinessId } from "../authorisation/session";
 import AuthService from "../authorisation/auth";
+import "../styles/Application.css"
 
 interface props {
   setShowCreateProject: any
@@ -10,7 +10,7 @@ interface props {
 
 export const AddProjectForm = (props: props) => {
   const token = AuthService.getToken();
-  const businessId = getSavedBusinessId();
+  const businessId = getBusinessId();
     const [newProject, setNewProject] = useState({
         name: '',
         estimate: 0
