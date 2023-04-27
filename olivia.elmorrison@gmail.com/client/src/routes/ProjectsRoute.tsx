@@ -50,8 +50,8 @@ export const ProjectsRoute = () => {
         })
 
         setProjectsData(projects);
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        alert(error);
       }
     };
     fetchProjects();
@@ -79,8 +79,8 @@ export const ProjectsRoute = () => {
         expense: undefined,
         estimatedProfit: undefined
       })
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      alert(error);
     }
   }
 

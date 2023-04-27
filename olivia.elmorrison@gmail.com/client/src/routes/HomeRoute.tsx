@@ -11,9 +11,40 @@ export const HomeRoute = () => {
     const [name, setName] = useState('');
     const [businessName, setBusinessName] = useState('');
     const navigate = useNavigate();
+
+    const validateEmail = () => {
+      return email.match(
+        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+    };
+  
+    const validForm = () => {
+      //all fields required
+      if(email === ''){
+        alert("Email is required");
+        return false;
+      }
+      if(password === ''){
+        alert("Password is required");
+        return false;
+      }
+      if(businessName ===''){
+        alert("Please select a business");
+        return false;
+      }
+  
+      if(!validateEmail()){
+        alert("Incorect email format");
+        return false;
+      }
+  
+      return true;
+    }
   
     const handleSubmit = async (e : any) => {
       e.preventDefault();
+
+      if(!validForm()) return;
 
       const signUpRequest = {
         name: name,
@@ -37,7 +68,7 @@ export const HomeRoute = () => {
   
         navigate("/dashboard");
       } catch (error) {
-        console.log(error);
+        alert(error);
       }
     }
   

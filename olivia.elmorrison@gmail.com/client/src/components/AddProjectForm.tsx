@@ -25,14 +25,15 @@ export const AddProjectForm = (props: props) => {
             const response = await createProject(businessId, createProjectRequest, token!);
     
             if (!response.ok) {
+              
               throw new Error(
                 "Something went wrong while creating projecy"
               );
             }
 
             props.setShowCreateProject(false);
-          } catch (err) {
-            console.error(err);
+          } catch (error) {
+            alert(error)
           }
     }
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {

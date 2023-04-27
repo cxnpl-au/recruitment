@@ -69,6 +69,12 @@ For an application of this size the performance is negligable however as a syste
 
 Examples of ways to do this would be to use caching in the front and backend. In the front end this can minimise the number of HTTP requests the application sends. Implement caching mechanisms for the system stores frequently used data in memory, reducing the need for the application to query the database.
 
+**Handle/mitigate risk of distributed transation** 
+
+A distributed transaction is a type of transaction that involves multiple systems or components that are not located in the same place. The systems need to work together to complete one transation. Issues often arrise when if one part of the transation is successful and the other is not. This then poses the question whether to roll back the successful transation or continue with half of the transation being incomplete and surfacing this error
+
+There are a few distributed transations which are not properly handled in this system. In the database there can be updates made in different places, for example using the bussiness model compared to the user model. Ideally we would either surface this failure to the user or roll back however this system currently does neither, this can lead to a confusing user experience. For example if they are creating a business and a user at the same time and the business is successfully created but the user is not; this is surfaced to them as an error which would cause them to assume the entire transation failed which is not the case.
+
 **Functionality** 
 
 - The dashboard would ideally allows users to create a business, view their team members, and project based on their permissions. Users can create a new business by providing information such as the business name, industry, and location. Once a business is created, users can invite team members by providing their email addresses. The team members will receive an email inviting them to join the business.
