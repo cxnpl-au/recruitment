@@ -15,7 +15,7 @@ export const SignupRoute = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-      const fetchUsers = async () => {
+      const fetchBusinesses = async () => {
         try {
           const response = await getAllBusinesses();
   
@@ -27,11 +27,14 @@ export const SignupRoute = () => {
   
           const businesses = await response.json();
           setAllBusinesses(businesses);
+          if(businesses.length > 1){
+            setSelectedBusinessName(businesses[0].name);
+          }
         } catch (error) {
           alert(error);
         }
         };
-        fetchUsers();
+        fetchBusinesses();
     }, [allBusinesses.length]);
 
     const validateEmail = () => {
