@@ -1,9 +1,11 @@
 from enum import Enum
-
-# import boto3
-from custom_encoder import CustomEncoder
 import json
+
+from custom_encoder import CustomEncoder
 from organisations import Organisations
+
+# Create a dummy item to track the next organisation ID to generate
+# aws dynamodb put-item --table-name organisations --item '{"org_id": { "N": "4" }, "next_org_id": { "N": "5" }}'
 
 # Schema Specification
 # METADATA
@@ -12,10 +14,12 @@ from organisations import Organisations
 #   id: 0,
 #   next_org_id: number
 # }
+
 # ORGANISATION
 # ------------
 # {
 #   id: number,
+#   alias: string,
 #   name: string,
 #   account_limit: number, (default 20)
 #   user_limit: number, (default 2000)
@@ -26,22 +30,25 @@ from organisations import Organisations
 #     {
 #       id: number,
 #       name: string,
+#       amount: number,
 #       admins: [number], <user_id>
-#       depositors: [number], <user_id>,
-#       viewers: [number], <user_id>,
+#       depositors: [number], <user_id>
+#       viewers: [number] <user_id>
 #     },
 #     ...
 #   ],
 #   users: [
 #     {
-#       id: number,
-#       name: string,
-#       password: string, <hashed-value>
+#       alias: string, <user-name>
 #       authenticated: {
 #         ip_address: string, <hashed-value>
+#         logged_out: boolean,
 #         token: string, <base64-encoded-key>
 #         time: number <seconds from UNIX epoch>
-#       }
+#       },
+#       name: string,
+#       password: string, <hashed-value>
+#       role: string, <one of 'admin', 'acc_manager', 'normal'> # Root will be a special admin account
 #     },
 #     ...
 #   ]
@@ -53,8 +60,8 @@ from organisations import Organisations
 #   - POST
 #     - Request
 #       {
-#         requestor_ip: string,
-#         name: string, <Full name of the organisation>
+#         alias: string,
+#         name: string, <Full name>
 #         password: string
 #       }
 #     - Response
@@ -66,8 +73,7 @@ from organisations import Organisations
 #   - GET
 #     - Request
 #       {
-#         requestor_ip: string,
-#         name: string, <must be 'root' otherwise access-denied>
+#         name: string, <must be 'root'>
 #         password: string
 #       }
 #     - Response
@@ -79,9 +85,131 @@ from organisations import Organisations
 #         user_limit: number,
 #         auth_timeout_secs: number
 #       }
+#   - PATCH
+#     - Request
+#       {
+#         token: string,
+#         id: number,
+#         alias: string,
+#         password: string,
+#         key: string, <check if key exists>
+#         value: any
+#       }
+#     - Response: HTTP codes only and update authenticated.time
+#   - DELETE
+#     - Request
+#       {
+#         id: number,
+#         alias: string,
+#         password: string,
+#         token: string
+#       }
+#     - Response: HTTP codes only
+#
 # - /accounts
+#   - POST
+#     - Request
+#       {
+#         token: string,
+#         org_id: number,
+#         requestor_alias: number,
+#         requestor_password: string,
+#         user_alias: string,
+#         user_password: string
+#       }
+#     - Response: HTTP codes only
+#   - GET
+#     - Request
+#       {
+#         org_id: number,
+#         token: string,
+#         requestor_alias: string,
+#       }
+#     - Response
+#       {
+#         accounts: [
+#           {
+#             id: number,
+#             name: string,
+#             amount: number
+#           },
+#           ...
+#         ]
+#       }
+#   - PATCH
+#     - Request
+#       {
+#         org_id: number,
+#         token: string,
+#         requestor_alias: string,
+#         requestor_password: string,
+#         account_id: number,
+#         operation: string, <One of DEPOSIT, RENAME, or WITHDRAW>
+#         value: string | number, <Depends on value of `operation`>
+#       }
+#     - Response: HTTP codes only
+#   - DELETE
+#     - Request
+#       {
+#         org_id: number,
+#         token: string,
+#         requestor_alias: string,
+#         requestor_password: string,
+#         account_id: number,
+#       }
+#     - Response: HTTP codes only
+#
 # - /users
+#   - POST
+#     - Request
+#       {
+#         token: string,
+#         org_id: number,
+#         requestor_alias: number,
+#         requestor_password: string,
+#         user_alias: string,
+#         user_password: string
+#       }
+#     - Response: HTTP codes only
+#   - GET
+#     - Request
+#       {
+#         alias: string,
+#         user_alias: string,
+#         user_password: string
+#       }
+#     - Response
+#       {
+#         org_id: number,
+#         token: string
+#       }
+#   - PATCH
+#     - Request
+#       {
+#         org_id: number,
+#         token: string,
+#         requestor_alias: string,
+#         requestor_password: string,
+#         user_alias: string,
+#         key: string,
+#         value: string,
+#       }
+#     - Response: HTTP codes only
+#   - DELETE
+#     - Request
+#       {
+#         org_id: number,
+#         token: string,
+#         requestor_alias: string,
+#         requestor_password: string,
+#         user_alias: string,
+#       }
+#     - Response: HTTP codes only
 
+# NOTE: Currently we require a password on every patch, could be improved to have some sort of
+#       cache for multiple updates or we could let the frontend handle this issue
+# NOTE: Currently we only take IDs, should have a second set of requests that can take in
+#       user names as well
 # NOTE: Talk about choice between making ID variables a number rather than a string due to better
 # performance in DynamoDB
 # NOTE: Talk about choice of single table structure for agility instead of ideal multi-table setup
