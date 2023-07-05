@@ -8,32 +8,21 @@ from organisations import Organisations
 # aws dynamodb put-item --table-name organisations --item '{"org_id": { "N": "4" }, "next_org_id": { "N": "5" }}'
 
 # Schema Specification
-# METADATA
-# --------
-# {
-#   id: 0,
-#   next_org_id: number
-# }
-
 # ORGANISATION
 # ------------
 # {
-#   id: number,
 #   alias: string,
 #   name: string,
 #   account_limit: number, (default 20)
 #   user_limit: number, (default 2000)
 #   auth_timeout_secs: number, (default 600)
-#   next_account_id: number,
-#   next_user_id: number,
 #   accounts: [
 #     {
-#       id: number,
 #       name: string,
 #       amount: number,
-#       admins: [number], <user_id>
-#       depositors: [number], <user_id>
-#       viewers: [number] <user_id>
+#       admins: [string], <user_alias>
+#       modifiers: [string], <user_alias>
+#       viewers: [number] <user_alias>
 #     },
 #     ...
 #   ],
@@ -92,7 +81,7 @@ from organisations import Organisations
 #         id: number,
 #         alias: string,
 #         password: string,
-#         key: string, <check if key exists>
+#         operation: string, <one of UPDATE_NAME or UPDATE_PASSWORD>
 #         value: any
 #       }
 #     - Response: HTTP codes only and update authenticated.time
@@ -144,8 +133,8 @@ from organisations import Organisations
 #         requestor_alias: string,
 #         requestor_password: string,
 #         account_id: number,
-#         operation: string, <One of DEPOSIT, RENAME, or WITHDRAW>
-#         value: string | number, <Depends on value of `operation`>
+#         operation: string, <One of DEPOSIT, LOGOUT, RENAME, or WITHDRAW>
+#         value: string | number | None, <Depends on value of `operation`>
 #       }
 #     - Response: HTTP codes only
 #   - DELETE
@@ -191,7 +180,7 @@ from organisations import Organisations
 #         requestor_alias: string,
 #         requestor_password: string,
 #         user_alias: string,
-#         key: string,
+#         operation: string, <one of UPDATE_NAME, UPDATE_PASSWORD, or UPDATE_ROLE>
 #         value: string,
 #       }
 #     - Response: HTTP codes only
@@ -241,195 +230,15 @@ from organisations import Organisations
 # TABLE = DYNAMODB.Table(TABLE_NAME)
 
 
-class QueryType(Enum):
-    ORGANISATIONS = 0
-    SUB_ORGANISATION = 1
-    ACCOUNTS = 2
-    SUB_ACCOUNT = 3
-    USERS = 4
-    SUB_USER = 5
-    UNKNOWN = 6
-
-
-class Query:
-    query_type: QueryType = QueryType.UNKNOWN
-    org_id: int | None = None
-    sub_id: int | None = None
-
-    def __init__(self, path: str) -> None:
-        split = path.split("/")[1:]
-        path_length = len(split)
-
-        if path_length > 0 and path[0] == "organisations":
-            self.query_type = QueryType.ORGANISATIONS
-            if path_length > 1:
-                self.query_type = QueryType.SUB_ORGANISATION
-                try:
-                    self.org_id = int(path[1])
-                except ValueError:
-                    return
-
-                if path_length > 2:
-                    if path[2] == "accounts":
-                        self.query_type = QueryType.ACCOUNTS
-                    elif path[2] == "users":
-                        self.query_type = QueryType.USERS
-                    else:
-                        self.query_type = QueryType.UNKNOWN
-                        return
-
-                    if path_length > 3:
-                        if path[2] == "accounts":
-                            self.query_type = QueryType.SUB_ACCOUNT
-                        else:
-                            self.query_type = QueryType.SUB_USER
-
-                        try:
-                            self.sub_id = int(path[3])
-                        except ValueError:
-                            return
-
-    def is_valid(self) -> bool:
-        if self.query_type == QueryType.UNKNOWN:
-            return False
-        elif self.query_type == QueryType.SUB_ORGANISATION and self.org_id is None:
-            return False
-        elif (
-            self.query_type == QueryType.SUB_ACCOUNT
-            or self.query_type == QueryType.SUB_USER
-        ) and self.sub_id is None:
-            return False
-        else:
-            return True
-
-
 def lambda_handler(event, context) -> dict[str, any]:
-    orgs = Organisations()
+    code = 400
+    body = None
 
-    response = {
-        "Operation": "Unknown",
-        "Status": "Rejected",
-        "HTTP Method": "%s" % http_method,
-        "Path": "%s" % path,
-    }
-    code = 500
+    match event["path"]:
+        case "/organisations":
+            (code, body) = organisations(event, context)
 
-    http_method = event["httpMethod"]
-    query = Query(event["path"])
-
-    if query.is_valid():
-        match query.query_type:
-            case QueryType.ORGANISATIONS:
-                pass
-            case QueryType.ACCOUNTS:
-                pass
-            case QueryType.USERS:
-                pass
-            case QueryType.SUB_ORGANISATION:
-                pass
-            case QueryType.SUB_ACCOUNT:
-                pass
-            case QueryType.SUB_USER:
-                pass
-
-    http_method = event["httpMethod"]
-    path = event["path"].split("/")[1:]
-
-    if len(path) == 1 and path[0] == "organisations":
-        if http_method == "POST":
-            body = json.loads(event["body"])
-
-            alias = body["alias"]
-            name = body["name"]
-            root_password = body["root_password"]
-
-            org = orgs.create_organisation(alias, name, root_password)
-            response = {
-                "Operation": "Create Organisation",
-                "Status": "Success",
-                "Organisation": org,
-            }
-            code = 200
-        elif http_method == "GET":
-            body = json.loads(event["body"])
-
-            alias = body["alias"]
-            root_password = body["root_password"]
-
-            org_id = orgs.auth_organisation(alias, root_password)
-            (code, response) = Organisations.auth_org_response(org_id, alias)
-    elif len(path) == 2 and path[0] == "organisations":
-        try:
-            org_id = int(path[1])
-        except ValueError:
-            response = {
-                "Operation": "Unknown",
-                "Status": "Failed",
-                "Message": "Could not convert `%s` to an integer for `org_id`"
-                % path[1],
-            }
-            return create_response(code, response)
-
-        match http_method:
-            case "DELETE":
-                response = orgs.delete_organisation(org_id)
-                code = 200
-            case "GET":
-                org = orgs.read_organisation(org_id)
-
-                code = 200
-                response = {
-                    "Operation": "Organisation READ",
-                    "Status": "Success",
-                    "Organisation": org,
-                }
-            case "PATCH":
-                body = json.loads(event["body"])
-
-                key = body["key"]
-                value = body["value"]
-
-                (code, response) = orgs.update_organisation(org_id, key, value)
-    elif len(path) == 3 and path[0] == "organisations":
-        try:
-            org_id = int(path[1])
-        except ValueError:
-            response = {
-                "Operation": "Unknown",
-                "Status": "Failed",
-                "Message": f"Could not convert `{path[1]}` to an integer for `org_id`",
-            }
-            return create_response(code, response)
-
-        if path[2] == "users":
-            match http_method:
-                # TODO: Check if the request is authorised to create new users
-                #       Only root and admins are allowed to create new users
-                case "POST":
-                    body = json.loads(event["body"])
-
-                    alias = body["alias"]
-                    name = body["name"]
-                    password = body["password"]
-
-                    user = orgs.create_user(org_id, alias, name, password)
-
-                    code = 200
-                    response = {
-                        "Operation": "User CREATE",
-                        "Status": "Success",
-                        "User": user,
-                    }
-                case "GET":
-                    body = json.loads(event["body"])
-
-                    alias = body["alias"]
-                    password = body["password"]
-
-                    user_id = orgs.auth_user(org_id, alias, password)
-                    (code, response) = Organisations.auth_user_response(user_id)
-
-    return create_response(code, response)
+    return create_response(code, body)
 
 
 def create_response(status: int, body=None) -> dict[str, any]:
@@ -445,6 +254,201 @@ def create_response(status: int, body=None) -> dict[str, any]:
         response["body"] = json.dumps(body, cls=CustomEncoder)
 
     return response
+
+
+def organisations(event, context) -> tuple[int, dict[str, any]]:
+    pass
+
+
+# class QueryType(Enum):
+#     ORGANISATIONS = 0
+#     SUB_ORGANISATION = 1
+#     ACCOUNTS = 2
+#     SUB_ACCOUNT = 3
+#     USERS = 4
+#     SUB_USER = 5
+#     UNKNOWN = 6
+
+
+# class Query:
+#     query_type: QueryType = QueryType.UNKNOWN
+#     org_id: int | None = None
+#     sub_id: int | None = None
+
+#     def __init__(self, path: str) -> None:
+#         split = path.split("/")[1:]
+#         path_length = len(split)
+
+#         if path_length > 0 and path[0] == "organisations":
+#             self.query_type = QueryType.ORGANISATIONS
+#             if path_length > 1:
+#                 self.query_type = QueryType.SUB_ORGANISATION
+#                 try:
+#                     self.org_id = int(path[1])
+#                 except ValueError:
+#                     return
+
+#                 if path_length > 2:
+#                     if path[2] == "accounts":
+#                         self.query_type = QueryType.ACCOUNTS
+#                     elif path[2] == "users":
+#                         self.query_type = QueryType.USERS
+#                     else:
+#                         self.query_type = QueryType.UNKNOWN
+#                         return
+
+#                     if path_length > 3:
+#                         if path[2] == "accounts":
+#                             self.query_type = QueryType.SUB_ACCOUNT
+#                         else:
+#                             self.query_type = QueryType.SUB_USER
+
+#                         try:
+#                             self.sub_id = int(path[3])
+#                         except ValueError:
+#                             return
+
+#     def is_valid(self) -> bool:
+#         if self.query_type == QueryType.UNKNOWN:
+#             return False
+#         elif self.query_type == QueryType.SUB_ORGANISATION and self.org_id is None:
+#             return False
+#         elif (
+#             self.query_type == QueryType.SUB_ACCOUNT
+#             or self.query_type == QueryType.SUB_USER
+#         ) and self.sub_id is None:
+#             return False
+#         else:
+#             return True
+
+
+# def lambda_handler(event, context) -> dict[str, any]:
+#     orgs = Organisations()
+
+#     response = {
+#         "Operation": "Unknown",
+#         "Status": "Rejected",
+#         "HTTP Method": "%s" % http_method,
+#         "Path": "%s" % path,
+#     }
+#     code = 500
+
+#     http_method = event["httpMethod"]
+#     query = Query(event["path"])
+
+#     if query.is_valid():
+#         match query.query_type:
+#             case QueryType.ORGANISATIONS:
+#                 pass
+#             case QueryType.ACCOUNTS:
+#                 pass
+#             case QueryType.USERS:
+#                 pass
+#             case QueryType.SUB_ORGANISATION:
+#                 pass
+#             case QueryType.SUB_ACCOUNT:
+#                 pass
+#             case QueryType.SUB_USER:
+#                 pass
+
+#     http_method = event["httpMethod"]
+#     path = event["path"].split("/")[1:]
+
+#     if len(path) == 1 and path[0] == "organisations":
+#         if http_method == "POST":
+#             body = json.loads(event["body"])
+
+#             alias = body["alias"]
+#             name = body["name"]
+#             root_password = body["root_password"]
+
+#             org = orgs.create_organisation(alias, name, root_password)
+#             response = {
+#                 "Operation": "Create Organisation",
+#                 "Status": "Success",
+#                 "Organisation": org,
+#             }
+#             code = 200
+#         elif http_method == "GET":
+#             body = json.loads(event["body"])
+
+#             alias = body["alias"]
+#             root_password = body["root_password"]
+
+#             org_id = orgs.auth_organisation(alias, root_password)
+#             (code, response) = Organisations.auth_org_response(org_id, alias)
+#     elif len(path) == 2 and path[0] == "organisations":
+#         try:
+#             org_id = int(path[1])
+#         except ValueError:
+#             response = {
+#                 "Operation": "Unknown",
+#                 "Status": "Failed",
+#                 "Message": "Could not convert `%s` to an integer for `org_id`"
+#                 % path[1],
+#             }
+#             return create_response(code, response)
+
+#         match http_method:
+#             case "DELETE":
+#                 response = orgs.delete_organisation(org_id)
+#                 code = 200
+#             case "GET":
+#                 org = orgs.read_organisation(org_id)
+
+#                 code = 200
+#                 response = {
+#                     "Operation": "Organisation READ",
+#                     "Status": "Success",
+#                     "Organisation": org,
+#                 }
+#             case "PATCH":
+#                 body = json.loads(event["body"])
+
+#                 key = body["key"]
+#                 value = body["value"]
+
+#                 (code, response) = orgs.update_organisation(org_id, key, value)
+#     elif len(path) == 3 and path[0] == "organisations":
+#         try:
+#             org_id = int(path[1])
+#         except ValueError:
+#             response = {
+#                 "Operation": "Unknown",
+#                 "Status": "Failed",
+#                 "Message": f"Could not convert `{path[1]}` to an integer for `org_id`",
+#             }
+#             return create_response(code, response)
+
+#         if path[2] == "users":
+#             match http_method:
+#                 # TODO: Check if the request is authorised to create new users
+#                 #       Only root and admins are allowed to create new users
+#                 case "POST":
+#                     body = json.loads(event["body"])
+
+#                     alias = body["alias"]
+#                     name = body["name"]
+#                     password = body["password"]
+
+#                     user = orgs.create_user(org_id, alias, name, password)
+
+#                     code = 200
+#                     response = {
+#                         "Operation": "User CREATE",
+#                         "Status": "Success",
+#                         "User": user,
+#                     }
+#                 case "GET":
+#                     body = json.loads(event["body"])
+
+#                     alias = body["alias"]
+#                     password = body["password"]
+
+#                     user_id = orgs.auth_user(org_id, alias, password)
+#                     (code, response) = Organisations.auth_user_response(user_id)
+
+#     return create_response(code, response)
 
 
 # def organisation(method: str, event) -> dict[str, any]:
