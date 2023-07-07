@@ -10,6 +10,7 @@ DYNAMODB = boto3.resource("dynamodb")
 ORGS = tables.OrgsTable()
 USERS = tables.UsersTable()
 
+
 class DefaultLimits(Enum):
     ACCOUNTS = 20
     AUTH_TIMEOUT_SECS = 600
@@ -22,7 +23,7 @@ class Roles(Enum):
     NORMAL = 2
 
 
-def create_response(status: int, body=None) -> dict[str, any]:
+def create_response(status: int, body: dict[str, any] | None = None) -> dict[str, any]:
     response = {
         "statusCode": status,
         "headers": {

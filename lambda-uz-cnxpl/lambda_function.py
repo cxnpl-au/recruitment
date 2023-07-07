@@ -135,9 +135,10 @@
 #     - Request
 #       {
 #         alias: string,
-#         requestor_alias: number,
+#         requestor_name: number,
 #         requestor_password: string,
-#         user_alias: string,
+#         user_name: string,
+#         user_full_name: string,
 #         user_password: string,
 #         user_role: string
 #       }
@@ -146,32 +147,33 @@
 #     - Request
 #       {
 #         alias: string,
-#         user_alias: string,
-#         user_password: string
+#         user_name: string,
+#         token: string | user_password: string
 #       }
 #     - Response
 #       {
-#         token: string
+#         name: string,
+#         role: string,
+#         token: string <if password authentication succeeded>
 #       }
 #   - PATCH
 #     - Request
 #       {
 #         alias: string,
-#         requestor_alias: string,
-#         requestor_password: string,
-#         user_alias: string,
 #         operation: string, <one of UPDATE_NAME, UPDATE_PASSWORD, or UPDATE_ROLE>
+#         requestor_name: string,
+#         requestor_password: string,
+#         user_name: string,
 #         value: string,
 #       }
 #     - Response: HTTP codes only
 #   - DELETE
 #     - Request
 #       {
-#         org_id: number,
-#         token: string,
-#         requestor_alias: string,
+#         alias: string,
+#         requestor_name: string,
 #         requestor_password: string,
-#         user_alias: string,
+#         user_name: string,
 #       }
 #     - Response: HTTP codes only
 
