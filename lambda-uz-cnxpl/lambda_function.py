@@ -1,13 +1,3 @@
-import boto3
-from enum import Enum
-import hashlib
-import json
-import random
-import time
-
-from custom_encoder import CustomEncoder
-from organisations import Organisations
-
 # Create a dummy item to track the next organisation ID to generate
 # aws dynamodb put-item --table-name organisations --item '{"org_id": { "N": "4" }, "next_org_id": { "N": "5" }}'
 
@@ -63,8 +53,8 @@ from organisations import Organisations
 #     - Request
 #       {
 #         alias: string,
-#         name: string,
-#         password: string
+#         user_name: string,
+#         password: string | token: string
 #       }
 #     - Response
 #       {
@@ -76,21 +66,19 @@ from organisations import Organisations
 #   - PATCH
 #     - Request
 #       {
-#         token: string,
-#         id: number,
 #         alias: string,
+#         user_name: string,
 #         password: string,
-#         operation: string, <one of UPDATE_NAME or UPDATE_PASSWORD>
+#         operation: string, <one of UPDATE_NAME, UPDATE_PASSWORD, CHANGE_ACCOUNT_LIMIT, CHANGE_AUTH_TIMEOUT, CHANGE_USER_LIMIT>
 #         value: any
 #       }
 #     - Response: HTTP codes only and update authenticated.time
 #   - DELETE
 #     - Request
 #       {
-#         id: number,
 #         alias: string,
+#         user_name: string,
 #         password: string,
-#         token: string
 #       }
 #     - Response: HTTP codes only
 #
@@ -98,26 +86,22 @@ from organisations import Organisations
 #   - POST
 #     - Request
 #       {
-#         token: string,
-#         org_id: number,
-#         requestor_alias: number,
-#         requestor_password: string,
-#         user_alias: string,
-#         user_password: string
+#         alias: number,
+#         user_name: number,
+#         password: string,
 #       }
 #     - Response: HTTP codes only
 #   - GET
 #     - Request
 #       {
-#         org_id: number,
-#         token: string,
-#         requestor_alias: string,
+#         alias: number,
+#         password: string | token: string,
+#         user_name: string,
 #       }
 #     - Response
 #       {
 #         accounts: [
 #           {
-#             id: number,
 #             name: string,
 #             amount: number
 #           },
@@ -127,23 +111,21 @@ from organisations import Organisations
 #   - PATCH
 #     - Request
 #       {
-#         org_id: number,
-#         token: string,
-#         requestor_alias: string,
-#         requestor_password: string,
 #         account_id: number,
-#         operation: string, <One of DEPOSIT, LOGOUT, RENAME, or WITHDRAW>
+#         alias: number,
+#         operation: string, <One of DEPOSIT, RENAME, or WITHDRAW>
+#         password: string,
+#         user_name: string,
 #         value: string | number | None, <Depends on value of `operation`>
 #       }
 #     - Response: HTTP codes only
 #   - DELETE
 #     - Request
 #       {
-#         org_id: number,
-#         token: string,
-#         requestor_alias: string,
-#         requestor_password: string,
-#         account_id: number,
+#         account_name: number,
+#         alias: number,
+#         user_name: string,
+#         password: string,
 #       }
 #     - Response: HTTP codes only
 #
@@ -203,7 +185,6 @@ from organisations import Organisations
 # NOTE: Talk about choice of single table structure for agility instead of ideal multi-table setup
 # for scalability
 
-# TODO: Look into authentication tokens
 # TODO: Look up HTTP codes
 
 # API Requirements for Authentication and Authorisation
@@ -228,226 +209,18 @@ from organisations import Organisations
 # DYNAMODB = boto3.resource("dynamodb")
 # TABLE = DYNAMODB.Table(TABLE_NAME)
 
-DYNAMODB = boto3.resource("dynamodb")
-
-
-class DefaultLimits(Enum):
-    ACCOUNTS = 20
-    AUTH_TIMEOUT_SECS = 600
-    USERS = 2000
-
-
-class Roles(Enum):
-    ADMIN = 0
-    ACCOUNT_MANAGER = 1
-    NORMAL = 2
-
-
-class Authentication:
-    ip: str
-    logged_out: bool
-    token: str
-    time: float
-
-    def __init__(self, ip: str) -> None:
-        self.ip = hashlib.sha256(ip.encode("utf-8")).hexdigest()
-        self.logged_out = False
-        self.token = f"{random.randrange(2 ** 256):#064x}"
-        self.time = time.time()
-
-    @classmethod
-    def from_existing(
-        cls, ip: str, logged_out: bool, token: str, time: float
-    ) -> "Authentication":
-        cls.ip = ip
-        cls.logged_out = logged_out
-        cls.token = token
-        cls.time = time
-
-        return cls
-
-
-class Organisation:
-    account_limit: int = DefaultLimits.ACCOUNTS
-    accounts = []
-    alias: str
-    auth_timeout_secs: int = DefaultLimits.AUTH_TIMEOUT_SECS
-    name: str
-    user_limit: int = DefaultLimits.USERS
-
-    def __init__(self, alias: str, name: str) -> None:
-        self.alias = alias
-        self.name = name
-
-
-class User:
-    alias: str
-    auth: Authentication
-    name: str
-    org: str
-    password: str
-    role: Roles
-
-    def __init__(
-        self, alias: str, ip: str, name: str, org: str, password: str, role: Roles
-    ) -> None:
-        self.alias = alias
-        self.auth = Authentication(ip)
-        self.name = name
-        self.org = org
-        self.password = hash_password(org, alias, password)
-        self.role = role
-
-    @classmethod
-    def from_existing(
-        cls,
-        alias: str,
-        auth: Authentication,
-        name: str,
-        org: str,
-        password: str,
-        role: Roles,
-    ) -> "User":
-        cls.alias = alias
-        cls.auth = auth
-        cls.name = name
-        cls.org = org
-        cls.password = password
-        cls.role = role
-
-
-# TODO: Orgs Table
-class OrgsTable:
-    # TABLE = DYNAMODB.Table("organisations")
-
-    def insert(self, org: Organisation) -> bool:
-        return False
-
-
-# TODO: Users Table
-class UsersTable:
-    # TABLE = DYNAMODB.Table("users")
-
-    def insert(self, user: User) -> bool:
-        return False
-
-
-ORGS = OrgsTable()
-USERS = UsersTable()
+from common import create_response
+import organisation
 
 
 def lambda_handler(event, context) -> dict[str, any]:
     match event["path"]:
         case "/organisations":
-            (code, body) = organisations(event, context)
+            response = organisation.handler(event, context)
         case _:
-            (code, body) = (400, None)
-
-    return create_response(code, body)
-
-
-# TODO: Implement remaining stubs
-def organisations(event, context) -> tuple[int, dict[str, any]]:
-    method = event["httpMethod"]
-    ip = context["identity"]["sourceIp"]
-
-    match method:
-        case "POST":
-            body = json.loads(event["body"])
-
-            alias = body["alias"]
-            name = body["name"]
-            password = body["password"]
-
-            response = create_organisation(alias, name, password, ip)
-        case "GET":
-            body = json.loads(event["body"])
-
-            alias = body["alias"]
-            name = body["name"]
-            password = body["password"]
-
-            response = get_organisation(alias, name, password)
-        case "PATCH":
-            body = json.loads(event["body"])
-
-            pass
-        case "DELETE":
-            pass
+            response = create_response(400, None)
 
     return response
-
-
-def create_organisation(
-    alias: str, name: str, password: str, ip: str
-) -> dict[str, any]:
-    org = Organisation(alias, name)
-
-    if OrgsTable().insert(org):
-        user = User("root", ip, "root", alias, password, Roles.ADMIN)
-        UsersTable.insert(user)
-
-        code = 200
-        body = {"token": user.authentication.token}
-    else:
-        code = 400
-        body = None
-
-    return create_response(code, body)
-
-
-# TODO: Finish table functions
-def get_organisation(alias: str, name: str, password: str, ip: str) -> dict[str, any]:
-    code = 400
-    body = None
-
-    if ORGS.exists(alias):
-        if USERS.authenticate(name, password, ip):
-            if alias == "root":
-                org = ORGS.get(alias)
-                body = {
-                    "account_limit": org.account_limit,
-                    "auth_timeout_secs": org.auth_timeout_secs,
-                    "name": org.name,
-                    "user_limit": org.user_limit,
-                }
-            else:
-                body = {"name": ORGS.name(alias)}
-
-            code = 200
-
-    return create_response(code, body)
-
-
-def create_response(status: int, body=None) -> dict[str, any]:
-    response = {
-        "statusCode": status,
-        "headers": {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-        },
-    }
-
-    if body is not None:
-        response["body"] = json.dumps(body, cls=CustomEncoder)
-
-    return response
-
-
-def hash_password(org: str, alias: str, password: str) -> str:
-    # TODO: Use multiple rounds of hashing with pre-generated random numbers to extend the key
-
-    # org + alias is guaranteed to be unique for each user
-    # We apply a two-layer salt to the passwords
-    first = hashlib.sha256(org.encode("utf-8")).hexdigest().encode("utf-8")
-    second = hashlib.sha256(first)
-    second.update(alias.encode("utf-8"))
-
-    salt = second.hexdigest().encode("utf-8")
-    h = hashlib.sha256(salt)
-    h.update(password.encode("utf-8"))
-
-    return h.hexdigest()
 
 
 # class QueryType(Enum):
