@@ -1,6 +1,8 @@
 from account import Account
-from common import ORGS, USERS, DefaultLimits, create_response
+from common import ORGS, USERS, DefaultLimits, Roles, create_response, hash_password
+from user import User
 import json
+
 
 class Organisation:
     account_limit: int = DefaultLimits.ACCOUNTS
@@ -44,44 +46,30 @@ def handler(event, context) -> dict[str, any]:
             name = body["name"]
             password = body["password"]
 
-            response = create_organisation(alias, name, password, ip)
+            response = create(alias, name, password, ip)
         case "GET":
             user_name = body["user_name"]
             password = body.get("password")
             token = body.get("token")
 
-            response = get_organisation(alias, user_name, password, token, ip)
+            response = read(alias, user_name, password, token, ip)
         case "PATCH":
             operation = body["operation"]
             password = body["password"]
             user_name = body["user_name"]
             value = body["value"]
 
-            response = modify_organisation(alias, user_name, password, operation, value)
+            response = update(alias, user_name, password, operation, value)
         case "DELETE":
             password = body["password"]
             user_name = body["user_name"]
 
-            response = delete_organisation(alias, user_name, password)
+            response = delete(alias, user_name, password)
 
     return response
 
 
-def delete_organisation(alias: str, user_name: str, password: str) -> dict[str, any]:
-    if (
-        user_name == "root"
-        and ORGS.exists(alias)
-        and USERS.authenticate(user_name, password, None, None)
-    ):
-        ORGS.delete(alias)
-        code = 200
-    else:
-        code = 400
-
-    return create_response(code, None)
-
-
-def create_organisation(
+def create(
     alias: str, name: str, password: str, ip: str
 ) -> dict[str, any]:
     org = Organisation(alias, name)
@@ -99,8 +87,21 @@ def create_organisation(
     return create_response(code, body)
 
 
-# TODO: Finish table functions
-def get_organisation(
+def delete(alias: str, user_name: str, password: str) -> dict[str, any]:
+    if (
+        user_name == "root"
+        and ORGS.exists(alias)
+        and USERS.authenticate(user_name, password, None, None)
+    ):
+        ORGS.delete(alias)
+        code = 200
+    else:
+        code = 400
+
+    return create_response(code, None)
+
+
+def read(
     alias: str, user_name: str, password: str | None, token: str | None, ip: str
 ) -> dict[str, any]:
     code = 400
@@ -123,8 +124,7 @@ def get_organisation(
     return create_response(code, body)
 
 
-# NOTE: Parameter validation would be a good thing
-def modify_organisation(
+def update(
     alias: str,
     user_name: str,
     password: str,

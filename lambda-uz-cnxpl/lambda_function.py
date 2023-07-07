@@ -86,9 +86,10 @@
 #   - POST
 #     - Request
 #       {
+#         account_name: string,
 #         alias: number,
 #         user_name: number,
-#         password: string,
+#         password: string
 #       }
 #     - Response: HTTP codes only
 #   - GET
@@ -111,8 +112,8 @@
 #   - PATCH
 #     - Request
 #       {
-#         account_id: number,
-#         alias: number,
+#         account_name: string,
+#         alias: string,
 #         operation: string, <One of DEPOSIT, RENAME, or WITHDRAW>
 #         password: string,
 #         user_name: string,
@@ -133,12 +134,12 @@
 #   - POST
 #     - Request
 #       {
-#         token: string,
-#         org_id: number,
+#         alias: string,
 #         requestor_alias: number,
 #         requestor_password: string,
 #         user_alias: string,
-#         user_password: string
+#         user_password: string,
+#         user_role: string
 #       }
 #     - Response: HTTP codes only
 #   - GET
@@ -150,14 +151,12 @@
 #       }
 #     - Response
 #       {
-#         org_id: number,
 #         token: string
 #       }
 #   - PATCH
 #     - Request
 #       {
-#         org_id: number,
-#         token: string,
+#         alias: string,
 #         requestor_alias: string,
 #         requestor_password: string,
 #         user_alias: string,
@@ -178,45 +177,29 @@
 
 # NOTE: Currently we require a password on every patch, could be improved to have some sort of
 #       cache for multiple updates or we could let the frontend handle this issue
-# NOTE: Currently we only take IDs, should have a second set of requests that can take in
-#       user names as well
-# NOTE: Talk about choice between making ID variables a number rather than a string due to better
+# NOTE: Talk about choice between making ID variables a string rather than a number and impact on
 # performance in DynamoDB
 # NOTE: Talk about choice of single table structure for agility instead of ideal multi-table setup
 # for scalability
+# NOTE: Parameter validation would be a good thing
 
-# TODO: Look up HTTP codes
-
-# API Requirements for Authentication and Authorisation
-# Authentication
-# 1. Check if a provided user name and password combination exist in the system
-# Authorisation
-# 1. No one can "GET" a list of all organisations. The GET method on organisations exists only for
-#    the frontend to be able to check if an organisation and its password exist and are valid
-#    If the organisation exists and we authenticate successfully, we will return the `org_id`
-# 2. "PATCH" method will only take the alias, name, and root password of the organisation
-#
-# /organisations/{org_id}
-# 1. DELETE: Only the root account can delete the organisation, will be enforced at backend-level
-# 2. GET: Will return all values other then the root password
-# 3. PATCH: Can update name or root password (maybe alias if unique)
-
-# For agility we will employ a single table methodology, there are a few drawbacks
-# 1. Replicated data
-# 2. A large organisation will likely hit the 400KB document limit
-
-# TABLE_NAME = "organisations"
-# DYNAMODB = boto3.resource("dynamodb")
-# TABLE = DYNAMODB.Table(TABLE_NAME)
-
+import account
 from common import create_response
 import organisation
+import user
 
 
+# TODO: Finish table functions
+# TODO: Look up HTTP codes
+# TODO: Extract IP address from `context` and pass only that to the handlers
 def lambda_handler(event, context) -> dict[str, any]:
     match event["path"]:
+        case "/accounts":
+            response = account.handler(event, context)
         case "/organisations":
             response = organisation.handler(event, context)
+        case "/users":
+            response = user.handler(event, context)
         case _:
             response = create_response(400, None)
 

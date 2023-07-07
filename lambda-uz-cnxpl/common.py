@@ -1,6 +1,7 @@
 import boto3
 from custom_encoder import CustomEncoder
 from enum import Enum
+import hashlib
 import json
 import tables
 
