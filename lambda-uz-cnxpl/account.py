@@ -58,52 +58,6 @@ def handler(event, context) -> dict[str, any]:
     return response
 
 
-def update(
-    account_name: str,
-    alias: str,
-    user_name: str,
-    password: str,
-    operation: str,
-    value: str,
-    ip: str,
-):
-    ALLOWED_OPERATIONS = ["DEPOSIT", "RENAME", "WITHDRAW"]
-
-    if (
-        ORGS.exists(alias)
-        and USERS.authenticate(user_name, password, None, ip)
-        and (
-            USERS.has_role(alias, user_name, Roles.ADMIN)
-            or USERS.has_role(alias, user_name, Roles.ACCOUNT_MANAGER)
-        )
-        and operation in ALLOWED_OPERATIONS
-    ):
-        account: Account = ORGS.account(alias, account_name)
-        if operation == "RENAME":
-            account.name = value
-            ORGS.update_account(alias, account)
-            
-            code = 200
-        else:
-            try:
-                amount = float(value)
-
-                if operation == "DEPOSIT":
-                    account.amount += amount
-                else:
-                    account.amount -= amount
-                
-                ORGS.update_account(alias, account)
-
-                code = 200
-            except ValueError:
-                code = 400
-    else:
-        code = 400
-
-    return create_response(code, None)
-
-
 def create(
     account_name: str, alias: str, user_name: str, password: str, ip: str
 ) -> dict[str, any]:
@@ -145,3 +99,42 @@ def read(
         code = 400
 
     return create_response(code, body)
+
+
+def update(
+    account_name: str,
+    alias: str,
+    user_name: str,
+    password: str,
+    operation: str,
+    value: str,
+    ip: str,
+):
+    ALLOWED_OPERATIONS = ["DEPOSIT", "RENAME", "WITHDRAW"]
+
+    if (
+        ORGS.exists(alias)
+        and USERS.authenticate(user_name, password, None, ip)
+        and (
+            USERS.has_role(alias, user_name, Roles.ADMIN)
+            or USERS.has_role(alias, user_name, Roles.ACCOUNT_MANAGER)
+        )
+        and operation in ALLOWED_OPERATIONS
+    ):
+        if operation == "RENAME":
+            ORGS.update_account(alias, account_name, "name", value)
+            code = 200
+        else:
+            try:
+                amount = float(value)
+                if operation == "WITHDRAW":
+                    amount = -amount
+
+                ORGS.update_account(alias, account_name, "amount", amount)
+                code = 200
+            except ValueError:
+                code = 400
+    else:
+        code = 400
+
+    return create_response(code, None)

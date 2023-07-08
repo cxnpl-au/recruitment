@@ -18,9 +18,17 @@ class DefaultLimits(Enum):
 
 
 class Roles(Enum):
-    ADMIN = 0
     ACCOUNT_MANAGER = 1
+    ADMIN = 0
     NORMAL = 2
+
+    @classmethod
+    def valid(cls, name: str) -> bool:
+        return (
+            name == cls.ACCOUNT_MANAGER.name
+            or name == cls.ADMIN
+            or name == cls.NORMAL.name
+        )
 
 
 def create_response(status: int, body: dict[str, any] | None = None) -> dict[str, any]:
@@ -39,8 +47,6 @@ def create_response(status: int, body: dict[str, any] | None = None) -> dict[str
 
 
 def hash_password(org: str, alias: str, password: str) -> str:
-    # TODO: Use multiple rounds of hashing with pre-generated random numbers to extend the key
-
     # org + alias is guaranteed to be unique for each user
     # We apply a two-layer salt to the passwords
     first = hashlib.sha256(org.encode("utf-8")).hexdigest().encode("utf-8")

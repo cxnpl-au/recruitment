@@ -72,10 +72,9 @@ def handler(event, context) -> dict[str, any]:
 def create(
     alias: str, name: str, password: str, ip: str
 ) -> dict[str, any]:
-    org = Organisation(alias, name)
-
-    if ORGS.insert(org):
-        user = User("root", ip, "root", alias, password, Roles.ADMIN)
+    if not ORGS.exists(alias):
+        ORGS.insert(Organisation(alias, name))
+        user = User("root", "root", alias, password, Roles.ADMIN)
         USERS.insert(user)
 
         code = 200
@@ -145,23 +144,33 @@ def update(
         and USERS.authenticate(user_name, password, None, None)
     ):
         if operation == "UPDATE_PASSWORD":
-            root: User = USERS.get(user_name)
-            root.password = hash_password(alias, user_name, value)
-            USERS.update(root)
+            new_password = hash_password(alias, user_name, value)
+            USERS.update(alias, "password", new_password)
         else:
-            org: Organisation = ORGS.get(alias)
+            code = 200
+
             match operation:
                 case "UPDATE_NAME":
-                    org.name = value
+                    ORGS.update(alias, "name", value)
                 case "CHANGE_ACCOUNT_LIMIT":
-                    org.account_limit = value
+                    try:
+                        new_account_limit = int(value)
+                        ORGS.update(alias, "account_limit", new_account_limit)
+                    except ValueError:
+                        code = 400
                 case "CHANGE_AUTH_TIMEOUT":
-                    org.auth_timeout_secs = value
+                    try:
+                        new_auth_timeout_secs = int(value)
+                        ORGS.update(alias, "auth_timeout_secs", new_auth_timeout_secs)
+                    except ValueError:
+                        code = 400
                 case "CHANGE_USER_LIMIT":
-                    org.user_limit = value
-            ORGS.update(org)
+                    try:
+                        new_user_limit = int(value)
+                        ORGS.update_user_limit(alias, new_user_limit)
+                    except ValueError:
+                        code = 400
 
-        code = 200
     else:
         code = 400
 
