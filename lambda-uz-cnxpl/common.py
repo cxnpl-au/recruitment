@@ -1,14 +1,7 @@
-import boto3
 from custom_encoder import CustomEncoder
 from enum import Enum
 import hashlib
 import json
-import tables
-
-DYNAMODB = boto3.resource("dynamodb")
-
-ORGS = tables.OrgsTable()
-USERS = tables.UsersTable()
 
 
 class DefaultLimits(Enum):

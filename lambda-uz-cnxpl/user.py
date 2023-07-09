@@ -1,12 +1,12 @@
-from common import ORGS, USERS
 from authentication import Authentication
 from common import Roles, create_response, hash_password
 import json
+from tables import ORGS, USERS
 
 
 class User:
     alias: str
-    auth: Authentication | None = None
+    auth: Authentication
     name: str
     org: str
     password: str
@@ -15,12 +15,14 @@ class User:
     def __init__(
         self,
         alias: str,
+        ip: str,
         name: str,
         org: str,
         password: str,
         role: Roles,
     ) -> None:
         self.alias = alias
+        self.auth = Authentication(ip)
         self.name = name
         self.org = org
         self.password = hash_password(org, alias, password)
@@ -132,9 +134,21 @@ def create(
         and USERS.authenticate(alias, requestor_name, requestor_password, None, ip)
         and Roles.valid(user_role)
     ):
-        user = User(user_name, user_full_name, alias, user_password, user_role)
+        auth = Authentication(ip)
+        user = {
+            "alias": "root",
+            "auth": {
+                "ip": auth.ip,
+                "logged_out": auth.logged_out,
+                "token": auth.token,
+                "time": auth.time,
+            },
+            "name": "root",
+            "org": alias,
+            "password": hash_password(alias, "root", user_password),
+            "role": Roles.ADMIN.name,
+        }
         USERS.insert(alias, user)
-
         code = 200
     else:
         code = 400

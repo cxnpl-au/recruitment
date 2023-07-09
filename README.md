@@ -1,60 +1,27 @@
 # Identity Management (IM) Service - BE
-Given the increased scrutiny on cyber-security, and upcoming regulatory crackdown, we’d rather not leak our user’s data.
-
-SME (small-medium enterprise) banking has business’ sign up for accounts (not just individuals). Depending on SME size they may need different levels of access control, such as:
-* Small SMEs (e.g. sole traders) may just need one user
-* Moderate size may need 2-5 users
-* The largest may need features such as SSO, MFA, password policies, external identity provider, integration, etc.
-
-Design and implement an IM system & API to manage users and their permissions. The system should allow a user to login and access some resource based on their permissions.
-
-### What we Expect
-The task is purposely left open-ended. You are **not** expected to built a fully functional IM service that caters for the variety of requirements in SME banking. Define your own scope to best showcase your abilities - determine which requirements can be built/fulfilled in the time you are given to complete this assignment. Include this scope and reasoning behind it in your submission in the README file.
-
-Below are some requirements and recommendations:
-* Requirements:
-	* **must** - you are obliged to satisfy this requirement
-	* **should** - recommended, but not critical
-	* **may** - optional brownie points
-* The system **must** allow:
-	* CRUD of users
-* The system **should** allow some of:
-	* Restrict actions by permissions (e.g. restrict access to a bank account to certain individuals)
-	* Check if user can perform a given action
-	* User login
-	* CRUD permissions
-* The API **should** be used by some form of UI. This could be:
-	* Basic functional API documentation e.g. Swagger/Readme.io
-	* Custom UI (preferable)
-* The solution **should** be readily accessed. This could be through either:
-	* Containerisation for local deployment, with strong documentation on how to setup
-	* Deployable to public cloud with instructions
-	* Self hosted with a link included
-* The solution **may** include a test suite
-* The submissions **must** include a written summary as a `README.md`, that **should** cover
-	* Instructions on how to deploy and run
-	* Included scope and justification
-	* Key decisions and tradeoffs you made in build
-	* Areas of improvement in system
-
-### Getting Started
-To get started, please clone the repo [here](https://github.com/cxnpl-au/recruitment).
-
-### Submitting
-* Make your submission as a PR to the main branch
-	* Under a new branch called  `submission/<your-email>`
-* Ensure you have included the written summary `README` that covers the above points
-
-Feel free to ask any questions, good luck!
-
-# Introduction
+## Introduction
 This is an Identity Management (IM) system designed as a project task for Constantinople recruitment
 process.
 
-# Usage and Deployment Instructions
-## TODO
+## Usage and Deployment Instructions
+An OpenAPI 3.0 compliant file `openapi.yaml` contains the documentation for the API. This can be
+imported into either SwaggerUI, ReadMe, Postman, or Insomnia for ease of viewing.
 
-# Scope
+The current version of the API is hosted [here](https://bvtrmgoisi.execute-api.ap-southeast-2.amazonaws.com/prod) with the below endpoints:
+- `/accounts`,
+- `/organisations`, and
+- `/users`
+
+To redeploy the API for local use, four AWS resources are required:
+- Two DynamoDB tables called `organisations` and `users` with string partition key `alias` and
+  composite primary key consisting of string partition key `org` and string sort key `alias`
+  respectivel,
+- API Gateway integration, the OpenAPI specification can be imported or it can be manually created,
+  and
+- A Lambda function to bridge the API and DynamoDB, the folder `lambda` can be uploaded to the
+  lambda function directly
+
+## Scope
 The scope of the API was constrained to allow CRUD of three types of resources:
 - Organisations,
 - Users, and
@@ -107,8 +74,8 @@ In summary, the API allows CRUD of organisations, users, and accounts while also
 authentication/authorisation paradigm with users given increasingly priviliged actions based on
 their assigned role.
 
-# Decisions and Tradeoffs
-## Technology stack
+## Decisions and Tradeoffs
+### Technology stack
 The API is serverless, built using AWS's API Gateway, DynamoDB, and Lambda services. This was chosen
 as it allows flexible scaling of the API to any number of users as well as showing skills in working
 with a serverless stack on AWS.
@@ -120,13 +87,13 @@ development.
 DynamoDB was chosed instead of a traditional relational database due to its flexibility with its
 schema as well as its ability to scale in tandem with the Lambda function.
 
-## API Design
+### API Design
 A majority of time was spent in exploration of the API design as it has the most significant impact
 on the schema of and data access patterns in DynamoDB. It is also the most user-exposed part of the
 system and major changes in the API can cause large knock-on effects on any users of the API as well
 as end-users.
 
-### ID-centered approach
+#### ID-centered approach
 The first version of the API worked with numeric IDs for organisations, users, and account. A unique
 ID would be generated for each created organisation, user, and account. This was done in order to
 facilitate better data distribution in DynamoDB as non-repeated numeric IDs would be partitioned
@@ -142,7 +109,7 @@ This approach lost favour due to two issues:
   numeric IDs as primary keys for better distribution and scalability and could potentially cost a
   lot as a scan would be done on every request
 
-### Nested resources with path parameters
+#### Nested resources with path parameters
 This was a modification of the ID-centered API where IDs would be required in path parameters to
 access resources. The resources would also be nested like
 ```
@@ -155,7 +122,7 @@ ID-centered approach albiet at a reduced scale as, once a resource ID would be r
 need to be scanned for again at every API call as it would be provided in the URI path. However, an
 initial scan was still required to find the ID from the table given an alias of a resource.
 
-### Flat architecture with string IDs
+#### Flat architecture with string IDs
 The flat architecture was designed with all payload data (including resource aliases) being provided
 in the body of the request.
 
@@ -169,8 +136,8 @@ the primary key for each table. This solved the user-unfriendliness and complexi
 iterations at the cost of potentially reduced distributability of the work in DynamoDB if aliases
 are concentrated around any specific substring prefixes in the tables.
 
-## DynamoDB
-### Access Patterns
+### DynamoDB
+#### Access Patterns
 As mentioned previously, access patterns for DynamoDB as well as user-convenience were one of the
 main concerns when designing the system. For the current architecture of organisations, users, and
 accounts there was an issue of whether to use numeric IDs or string IDs in the main organisation
@@ -187,7 +154,7 @@ table was made to be the string alias instead of a numeric ID. This solves the i
 costly scans in the table, reducing costs, and simplifies the overall schema at the cost of less
 scalability in 'hot' partitions.
 
-### Schema Design
+#### Schema Design
 There are three relationships that must be considered when designing the schema for the
 organisation, user, and account resources:
 - An organisation can have many users (one-to-many),
@@ -223,7 +190,7 @@ account and each user which would necessitate the creation of an intermediate ta
 the granular access permissions for each user and each account they can create, read, update, or
 delete.
 
-## Security and Access Tokens
+### Security and Access Tokens
 The current API uses SHA-256 hashes with a salt to provide a layer of security for sensitive data
 such as passwords and IP addresses which are used for authentication. To improve upon the current
 scheme, Multi-Factor Authentication (MFA) would be required to reduce the risk of an attacker
@@ -238,7 +205,7 @@ Create, update, and delete requests always require the user to authenticate with
 a provided token is not considered. Changes in passwords for a user automatically log them out of
 the system and the new password is required for any further request.
 
-# Areas of improvement
+## Areas of improvement
 - Python as a language is a good choice for developing prototypes and proof-of-concepts quickly,
   however, its dynamic typing causes a lot of issues and makes writing code error-prone and risky
   to deploy in production scenarios

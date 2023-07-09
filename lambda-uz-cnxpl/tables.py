@@ -1,11 +1,13 @@
-import hashlib
-from account import Account
-from authentication import Authentication
+from decimal import Decimal
+import boto3
 from boto3.dynamodb.conditions import Key
-from common import DYNAMODB, ORGS, USERS, Roles, hash_password
-from organisation import Organisation
+import hashlib
 import time
-from user import User
+
+from authentication import Authentication
+from common import Roles, hash_password
+
+DYNAMODB = boto3.resource("dynamodb")
 
 
 class OrgsTable:
@@ -61,36 +63,12 @@ class OrgsTable:
         result = self.TABLE.get_item(Key={"alias": alias})
         return "Item" in result
 
-    def get(self, alias: str) -> Organisation:
+    def get(self, alias: str) -> dict[str, any]:
         result = self.TABLE.get_item(Key={"alias": alias})
-        item = result["Item"]
+        return result["Item"]
 
-        accounts = []
-        for i in item["accounts"]:
-            acc = Account.from_existing(i["name"], i["amount"])
-            accounts.append(acc)
-
-        org = Organisation.from_existing(
-            item["account_limit"],
-            accounts,
-            item["alias"],
-            item["auth_timeout_secs"],
-            item["name"],
-            item["user_limit"],
-        )
-        return org
-
-    def insert(self, org: Organisation):
-        item = {
-            "account_limit": org.account_limit,
-            "accounts": org.accounts,
-            "alias": org.alias,
-            "auth_timeout_secs": org.auth_timeout_secs,
-            "name": org.name,
-            "user_limit": org.user_limit,
-        }
-
-        self.TABLE.put_item(item)
+    def insert(self, org: dict[str, any]):
+        self.TABLE.put_item(Item=org)
 
     def name(self, alias: str) -> str:
         result = self.TABLE.get_item(Key={"alias": alias})
@@ -163,7 +141,9 @@ class UsersTable:
         ip_match = auth["ip"] == hashlib.sha256(ip.encode("utf-8")).hexdigest()
         token_match = auth["token"] == token
         logged_out = auth["logged_out"]
-        timed_out = time.time() - auth["time"] > ORGS.get(alias).auth_timeout_secs
+        timed_out = (
+            Decimal(time.time()) - auth["time"] > ORGS.get(alias)["auth_timeout_secs"]
+        )
 
         authenticated = False
         if password is not None:
@@ -177,26 +157,26 @@ class UsersTable:
                         "time": a.time,
                     }
                     self.TABLE.update_item(
-                        KEY={"org": alias, "alias": user_name},
+                        Key={"org": alias, "alias": user_name},
                         UpdateExpression="SET authentication = :auth",
                         ExpressionAttributeValues={":auth", auth},
                         ReturnValues="NONE",
                     )
                 else:
                     self.TABLE.update_item(
-                        KEY={"org": alias, "alias": user_name},
+                        Key={"org": alias, "alias": user_name},
                         UpdateExpression="SET authentication.#t = :now",
                         ExpressionAttributeNames={"#t": "time"},
-                        ExpressionAttributeValues={":now": time.time()},
+                        ExpressionAttributeValues={":now": Decimal(time.time())},
                         ReturnValues="NONE",
                     )
                 authenticated = True
         elif not (logged_out or timed_out) and token_match and ip_match:
             self.TABLE.update_item(
-                KEY={"org": alias, "alias": user_name},
+                Key={"org": alias, "alias": user_name},
                 UpdateExpression="SET authentication.#t = :now",
                 ExpressionAttributeNames={"#t": "time"},
-                ExpressionAttributeValues={":now": time.time()},
+                ExpressionAttributeValues={":now": Decimal(time.time())},
                 ReturnValues="NONE",
             )
             authenticated = True
@@ -207,29 +187,9 @@ class UsersTable:
         get = self.TABLE.get_item(Key={"org": alias, "alias": user_name})
         return "Item" in get
 
-    def get(self, alias: str, user_name: str) -> User:
+    def get(self, alias: str, user_name: str) -> dict[str, any]:
         get = self.TABLE.get_item(Key={"org": alias, "alias": user_name})
-        item = get["Item"]
-
-        a = item["authentication"]
-        auth = Authentication.from_existing(
-            a["ip"], a["logged_out"], a["token"], a["time"]
-        )
-
-        match item["role"]:
-            case "ADMIN":
-                role = Roles.ADMIN
-            case "ACCOUNT_MANAGER":
-                role = Roles.ACCOUNT_MANAGER
-            case "NORMAL":
-                role = Roles.NORMAL
-            case _:
-                role = None
-
-        user = User.from_existing(
-            user_name, auth, item["name"], alias, item["password"], role
-        )
-        return user
+        return get["Item"]
 
     def has_role(self, org: str, user_name: str, role: Roles) -> bool:
         has_role = False
@@ -240,42 +200,21 @@ class UsersTable:
 
         return has_role
 
-    def insert(self, user: User):
+    def insert(self, user: dict[str, any]):
+        alias = user["org"]
         response = ORGS.TABLE.get_item(
-            Key={"alias": user.org}, ProjectionExpression="user_limit"
+            Key={"alias": alias}, ProjectionExpression="user_limit"
         )
-        limit = response["Item"]
+        limit = response["Item"]["user_limit"]
 
         response = self.TABLE.query(
-            Select="COUNT", KeyConditionExpression=Key("org").eq(user.org)
+            Select="COUNT", KeyConditionExpression=Key("org").eq(alias)
         )
         count = response["Count"]
+        print(count, limit)
 
         if count < limit:
-            item = {
-                "org": user.org,
-                "alias": user.alias,
-                "name": user.name,
-                "password": user.password,
-                "role": user.role.name,
-            }
-
-            if user.auth is None:
-                item["authentication"] = {
-                    "ip": "",
-                    "logged_out": True,
-                    "token": "",
-                    "time": 0.0,
-                }
-            else:
-                item["authentication"] = {
-                    "ip": user.auth.ip,
-                    "logged_out": user.auth.logged_out,
-                    "token": user.auth.token,
-                    "time": user.auth.time,
-                }
-
-            self.TABLE.put_item(Item=item)
+            self.TABLE.put_item(Item=user)
 
     def log_out(self, org: str, user_name: str):
         self.TABLE.update_item(
@@ -296,7 +235,9 @@ class UsersTable:
         )
 
         for alias in response["Items"]:
-            self.TABLE.delete_item(Key={"org": org, "alias": alias}, ReturnValues="NONE")
+            self.TABLE.delete_item(
+                Key={"org": org, "alias": alias}, ReturnValues="NONE"
+            )
 
     def update(self, org: str, user_name: str, field: str, value: str):
         self.TABLE.update_item(
@@ -309,3 +250,7 @@ class UsersTable:
 
         if field == "password":
             self.log_out(org, user_name)
+
+
+ORGS = OrgsTable()
+USERS = UsersTable()

@@ -1,0 +1,512 @@
+openapi: 3.0.3
+info:
+  contact:
+    name: Usman Zahid
+    email: usmanzahid1998@gmail.com
+  description: Take home project API for Constantinople
+  title: CRUD IM API
+  version: 0.1.0
+servers:
+  - url: https://bvtrmgoisi.execute-api.ap-southeast-2.amazonaws.com/prod
+    description: AWS API Gateway
+paths:
+  "/accounts":
+    post:
+      tags: ["accounts"]
+      summary: Create account
+      description: Create an account in a given organisation
+      operationId: CreateAccount
+      requestBody:
+        description: Organisation alias, user alias, password, and account name
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Account creation details
+              type: "object"
+              properties:
+                account_name:
+                  type: string
+                  description: Name of account to be created
+                alias:
+                  type: string
+                  description: Alias of the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: User name of the user requesting account creation
+                  example: root
+                password:
+                  type: string
+                  description: Password of the user requesting account creation
+      responses:
+        "200":
+          description: Successfully created account
+        "400":
+          description: "Org/Requestor doesn't exist, or requestor failed auth"
+    get:
+      tags: ["accounts"]
+      summary: Get account details
+      description: Get all account details such as name and amount
+      operationId: ReadAccount
+      requestBody:
+        description: Organisation alias as well as username and password **or** token to authenticate with
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Either the password or token can be supplied to authenticate, if the password successfully authenticates a token is returned for future use
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                password:
+                  type: string
+                  description: Password -- can be omitted if token supplied
+                token:
+                  type: string
+                  description: Auth token -- can be omitted if password supplied
+      responses:
+        "200":
+          description: Successfully retrieved account details
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  accounts:
+                    type: array
+                    description: Array of all created accounts in the organisation
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Full name of the account
+                        amount:
+                          type: number
+                          description: Amount held in the account
+        "400":
+          description: "Organisation doesn't exist or user failed authentication"
+    patch:
+      tags: ["accounts"]
+      summary: Update account details
+      description: Update account details such as name and amount
+      operationId: UpdateAccount
+      requestBody:
+        description: Organisation, requestor, target account name, operation and new value
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Update account details in a controlled manner
+              type: "object"
+              properties:
+                account_name:
+                  type: string
+                  description: Full account name for target
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                password:
+                  type: string
+                  description: Password of the requesting account
+                operation:
+                  type: string
+                  description: Type of operation to perform
+                  enum:
+                    - DEPOSIT
+                    - RENAME
+                    - WITHDRAW
+                value:
+                  type: string
+                  description: New value -- will be parsed depending on the operation
+      responses:
+        "200":
+          description: Successfully updated account details
+        "400":
+          description: "Org/User/Account doesn't exist, user auth failed, invalid operation, or invalid value"
+    delete:
+      tags: ["accounts"]
+      summary: Delete account
+      description: Delete an account
+      operationId: DeleteAccount
+      requestBody:
+        description: Organisation, account, and requestor details
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Either the password or token can be supplied to authenticate
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                requestor_name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                requestor_password:
+                  type: string
+                  description: Password of the requesting account
+      responses:
+        "200":
+          description: Successfully deleted account
+        "400":
+          description: "Org/User/Account doesn't exist or user auth failed"
+  "/organisations":
+    post:
+      tags: ["organisations"]
+      summary: Create organisation
+      description: Create an organisation and its root account
+      operationId: CreateOrganisation
+      requestBody:
+        description: Organisation alias, full name, and root account password
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Organisation details
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias of the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: Full name of the organisation
+                  example: Constantinople
+                password:
+                  type: string
+                  description: Organisation root account password
+      responses:
+        "200":
+          description: Successfully created organisation
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: string
+                    description: Temporary authentication token for the root account
+        "400":
+          description: Organisation already exists
+    get:
+      tags: ["organisations"]
+      summary: Get organisation details
+      description: Get organisation details such as its name
+      operationId: ReadOrganisation
+      requestBody:
+        description: Organisation alias as well as username and password **or** token to authenticate with
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Either the password or token can be supplied to authenticate
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                password:
+                  type: string
+                  description: Password -- can be omitted if token supplied
+                token:
+                  type: string
+                  description: Auth token -- can be omitted if password supplied
+      responses:
+        "200":
+          description: Successfully retrieved organisation details
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  name:
+                    type: string
+                    description: Organisation full name
+                    example: "Constantinople"
+                  account_limit:
+                    type: integer
+                    description: Only returned to root account (Default 20)
+                    example: 20
+                  user_limit:
+                    type: integer
+                    description: Only returned to root account (Default 2000)
+                    example: 2000
+                  auth_timeout_secs:
+                    type: integer
+                    description: Only returned to root account (Default 600)
+                    example: 600
+        "400":
+          description: "Organisation doesn't exist or user failed authentication"
+    patch:
+      tags: ["organisations"]
+      summary: Update organisation details
+      description: Update organisation details such as its name
+      operationId: UpdateOrganisation
+      requestBody:
+        description: Organisation alias as well as username and password **or** token to authenticate with
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Update organisation details in a controlled manner
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                user_name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                password:
+                  type: string
+                  description: Password of the requesting account
+                operation:
+                  type: string
+                  description: Type of operation to perform
+                  enum:
+                    - UPDATE_NAME
+                    - UPDATE_PASSWORD
+                    - CHANGE_ACCOUNT_LIMIT
+                    - CHANGE_AUTH_TIMEOUT
+                    - CHANGE_USER_LIMIT
+                value:
+                  type: string
+                  description: New value -- will be parsed depending on the operation
+      responses:
+        "200":
+          description: Successfully updated organisation details
+        "400":
+          description: "Org/User doesn't exist, user auth failed, invalid operation, or invalid value"
+    delete:
+      tags: ["organisations"]
+      summary: Delete organisation
+      description: Delete organisation and all its associated users and accounts
+      operationId: DeleteOrganisation
+      requestBody:
+        description: Organisation alias as well as its root account username and password
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Organisation and root account details
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: Username of the root account (Default root)
+                  example: root
+                password:
+                  type: string
+                  description: Password of the root account
+      responses:
+        "200":
+          description: Successfully deleted organisation
+        "400":
+          description: "Org/User doesn't exist or user auth failed"
+  "/users":
+    post:
+      tags: ["users"]
+      summary: Create user
+      description: Create a user in a given organisation
+      operationId: CreateUser
+      requestBody:
+        description: User alias, full name, password, and role
+        required: true
+        content:
+          application/json:
+            schema:
+              description: User creation details
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias of the organisation
+                  example: cxnpl
+                requestor_name:
+                  type: string
+                  description: User name of the user requesting new user creation
+                  example: root
+                requestor_password:
+                  type: string
+                  description: Password of the user requesting new user creation
+                user_name:
+                  type: string
+                  description: User name of user to be created
+                user_full_name:
+                  type: string
+                  description: Full name of the user to be created
+                user_password:
+                  type: string
+                  description: Password of user to be created
+                user_role:
+                  type: string
+                  description: Role of the user to be created
+                  enum:
+                    - ACCOUNT_MANAGER
+                    - ADMIN
+                    - NORMAL
+      responses:
+        "200":
+          description: Successfully created user
+        "400":
+          description: "Org/Requestor doesn't exist, requestor failed auth, user already exists"
+    get:
+      tags: ["users"]
+      summary: Get user details
+      description: Get user details such as name and role
+      operationId: ReadUser
+      requestBody:
+        description: Organisation alias as well as username and password **or** token to authenticate with
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Either the password or token can be supplied to authenticate, if the password successfully authenticates a token is returned for future use
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                password:
+                  type: string
+                  description: Password -- can be omitted if token supplied
+                token:
+                  type: string
+                  description: Auth token -- can be omitted if password supplied
+      responses:
+        "200":
+          description: Successfully retrieved organisation details
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  name:
+                    type: string
+                    description: Organisation full name
+                    example: "Constantinople"
+                  role:
+                    type: string
+                    description: Role of the account
+                    enum:
+                      - ACCOUNT_MANAGER
+                      - ADMIN
+                      - NORMAL
+                  token:
+                    type: string
+                    description: Token is returned if password authentication was successful
+        "400":
+          description: "Organisation doesn't exist or user failed authentication"
+    patch:
+      tags: ["users"]
+      summary: Update user details
+      description: Update user details such as password
+      operationId: UpdateUser
+      requestBody:
+        description: Organisation alias as well as requestors username and password and target account user name
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Update organisation details in a controlled manner
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                user_name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                password:
+                  type: string
+                  description: Password of the requesting account
+                operation:
+                  type: string
+                  description: Type of operation to perform
+                  enum:
+                    - UPDATE_NAME
+                    - UPDATE_PASSWORD
+                    - CHANGE_ACCOUNT_LIMIT
+                    - CHANGE_AUTH_TIMEOUT
+                    - CHANGE_USER_LIMIT
+                value:
+                  type: string
+                  description: New value -- will be parsed depending on the operation
+      responses:
+        "200":
+          description: Successfully updated organisation details
+        "400":
+          description: "Org/User doesn't exist, user auth failed, invalid operation, or invalid value"
+    delete:
+      tags: ["users"]
+      summary: Delete user
+      description: Delete an user
+      operationId: DeleteUser
+      requestBody:
+        description: Organisation alias as well as its root account username and password
+        required: true
+        content:
+          application/json:
+            schema:
+              description: Either the password or token can be supplied to authenticate
+              type: "object"
+              properties:
+                alias:
+                  type: string
+                  description: Alias for the organisation
+                  example: cxnpl
+                requestor_name:
+                  type: string
+                  description: Username of the requesting account
+                  example: root
+                requestor_password:
+                  type: string
+                  description: Password of the requesting account
+      responses:
+        "200":
+          description: Successfully updated organisation details
+        "400":
+          description: "Org/User doesn't exist or user auth failed"
+tags:
+- name: "accounts"
+  description: "CRUD actions for an account"
+- name: "organisations"
+  description: "CRUD actions for an organisation"
+- name: "users"
+  description: "CRUD actions for an user"

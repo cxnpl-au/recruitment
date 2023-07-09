@@ -1,6 +1,6 @@
-# NOTE: Better to have amount as int due to floating point rounding errors
-from common import Roles, ORGS, USERS, create_response
+from common import Roles, create_response
 import json
+from tables import ORGS, USERS
 
 
 class Account:

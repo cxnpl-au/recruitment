@@ -1,3 +1,4 @@
+from decimal import Decimal
 import hashlib
 import random
 import time
@@ -6,13 +7,13 @@ class Authentication:
     ip: str
     logged_out: bool
     token: str
-    time: float
+    time: Decimal
 
     def __init__(self, ip: str) -> None:
         self.ip = hashlib.sha256(ip.encode("utf-8")).hexdigest()
         self.logged_out = False
-        self.token = f"{random.randrange(2 ** 256):#064x}"
-        self.time = time.time()
+        self.token = f"{random.randrange(2 ** 256):064x}"
+        self.time = Decimal(time.time())
 
     @classmethod
     def from_existing(

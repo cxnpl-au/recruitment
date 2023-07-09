@@ -1,5 +1,7 @@
 from account import Account
-from common import ORGS, USERS, DefaultLimits, Roles, create_response, hash_password
+from authentication import Authentication
+from common import DefaultLimits, Roles, create_response, hash_password
+from tables import ORGS, USERS
 from user import User
 import json
 
@@ -69,16 +71,37 @@ def handler(event, context) -> dict[str, any]:
     return response
 
 
-def create(
-    alias: str, name: str, password: str, ip: str
-) -> dict[str, any]:
+def create(alias: str, name: str, password: str, ip: str) -> dict[str, any]:
     if not ORGS.exists(alias):
-        ORGS.insert(Organisation(alias, name))
-        user = User("root", "root", alias, password, Roles.ADMIN)
+        org = {
+            "account_limit": DefaultLimits.ACCOUNTS.value,
+            "accounts": [],
+            "alias": alias,
+            "auth_timeout_secs": DefaultLimits.AUTH_TIMEOUT_SECS.value,
+            "name": name,
+            "user_limit": DefaultLimits.USERS.value,
+        }
+        ORGS.insert(org)
+        user = User("root", ip, "root", alias, password, Roles.ADMIN)
+
+        auth = Authentication(ip)
+        user = {
+            "alias": "root",
+            "authentication": {
+                "ip": auth.ip,
+                "logged_out": auth.logged_out,
+                "token": auth.token,
+                "time": auth.time,
+            },
+            "name": "root",
+            "org": alias,
+            "password": hash_password(alias, "root", password),
+            "role": Roles.ADMIN.name,
+        }
         USERS.insert(user)
 
         code = 200
-        body = {"token": user.authentication.token}
+        body = {"token": auth.token}
     else:
         code = 400
         body = None
@@ -106,15 +129,9 @@ def read(
     code = 400
     body = None
 
-    if ORGS.exists(alias) and USERS.authenticate(user_name, password, token, ip):
-        if alias == "root":
-            org = ORGS.get(alias)
-            body = {
-                "account_limit": org.account_limit,
-                "auth_timeout_secs": org.auth_timeout_secs,
-                "name": org.name,
-                "user_limit": org.user_limit,
-            }
+    if ORGS.exists(alias) and USERS.authenticate(alias, user_name, password, token, ip):
+        if user_name == "root":
+            body = ORGS.get(alias)
         else:
             body = {"name": ORGS.name(alias)}
 

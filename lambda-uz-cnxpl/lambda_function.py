@@ -1,6 +1,3 @@
-# Create a dummy item to track the next organisation ID to generate
-# aws dynamodb put-item --table-name organisations --item '{"org_id": { "N": "4" }, "next_org_id": { "N": "5" }}'
-
 # Schema Specification
 # ORGANISATION
 # ------------
@@ -30,7 +27,7 @@
 #   authentication: {
 #     ip_address: string, <hashed-value>,
 #     logged_out: boolean,
-#     token: string, <hashed-random-base64-key>
+#     token: string, <hashed-random-hex-key>
 #     time: number <seconds from UNIX epoch>
 #   }
 # }
@@ -72,7 +69,7 @@
 #         operation: string, <one of UPDATE_NAME, UPDATE_PASSWORD, CHANGE_ACCOUNT_LIMIT, CHANGE_AUTH_TIMEOUT, CHANGE_USER_LIMIT>
 #         value: any
 #       }
-#     - Response: HTTP codes only and update authenticated.time
+#     - Response: HTTP codes only
 #   - DELETE
 #     - Request
 #       {
@@ -88,7 +85,7 @@
 #       {
 #         account_name: string,
 #         alias: number,
-#         user_name: number,
+#         name: number,
 #         password: string
 #       }
 #     - Response: HTTP codes only
@@ -96,8 +93,8 @@
 #     - Request
 #       {
 #         alias: number,
+#         name: string,
 #         password: string | token: string,
-#         user_name: string,
 #       }
 #     - Response
 #       {
@@ -116,8 +113,8 @@
 #         alias: string,
 #         operation: string, <One of DEPOSIT, RENAME, or WITHDRAW>
 #         password: string,
-#         user_name: string,
-#         value: string | number | None, <Depends on value of `operation`>
+#         name: string,
+#         value: string | number, <Depends on value of `operation`>
 #       }
 #     - Response: HTTP codes only
 #   - DELETE
@@ -147,8 +144,8 @@
 #     - Request
 #       {
 #         alias: string,
-#         user_name: string,
-#         token: string | user_password: string
+#         name: string,
+#         token: string | password: string
 #       }
 #     - Response
 #       {
@@ -177,21 +174,12 @@
 #       }
 #     - Response: HTTP codes only
 
-# NOTE: Currently we require a password on every patch, could be improved to have some sort of
-#       cache for multiple updates or we could let the frontend handle this issue
-# NOTE: Talk about choice between making ID variables a string rather than a number and impact on
-# performance in DynamoDB
-# NOTE: Talk about choice of single table structure for agility instead of ideal multi-table setup
-# for scalability
-# NOTE: Parameter validation would be a good thing
-
 import account
 from common import create_response
 import organisation
 import user
 
 
-# TODO: Look up HTTP codes
 def lambda_handler(event, context) -> dict[str, any]:
     match event["path"]:
         case "/accounts":
@@ -204,3 +192,16 @@ def lambda_handler(event, context) -> dict[str, any]:
             response = create_response(400, None)
 
     return response
+
+context = {
+    "identity": {
+        "sourceIp": "192.168.1.100",
+    }
+}
+
+event = {
+    "body": '{ "alias": "cxnpl", "user_name": "root", "token": "51be4192641be6c728513db49a8964a426d57861e29d2e1d2ab126b44ae4f356" }',
+    "httpMethod": "GET",
+    "path": "/organisations",
+}
+print(lambda_handler(event, context))
