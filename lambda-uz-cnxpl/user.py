@@ -83,7 +83,7 @@ def handler(event, context) -> dict[str, any]:
             requestor_name = body["requestor_name"]
             requestor_password = body["requestor_password"]
             user_name = body["user_name"]
-            value = body["value"]
+            value = None if operation == "LOG_OUT" else body["value"]
 
             response = update(
                 alias,
@@ -104,21 +104,6 @@ def handler(event, context) -> dict[str, any]:
     return response
 
 
-def delete(alias: str, req_name: str, req_password: str, user_name: str, ip: str):
-    if (
-        ORGS.exists(alias)
-        and user_name != "root"
-        and USERS.authenticate(alias, req_name, req_password, None, ip)
-        and USERS.has_role(alias, req_name, Roles.ADMIN)
-    ):
-        USERS.remove(alias, user_name)
-        code = 200
-    else:
-        code = 400
-
-    return create_response(code, None)
-
-
 def create(
     alias: str,
     requestor_name: str,
@@ -132,23 +117,24 @@ def create(
     if (
         ORGS.exists(alias)
         and USERS.authenticate(alias, requestor_name, requestor_password, None, ip)
+        and not USERS.exists(alias, user_name)
         and Roles.valid(user_role)
     ):
         auth = Authentication(ip)
         user = {
-            "alias": "root",
-            "auth": {
+            "alias": user_name,
+            "authentication": {
                 "ip": auth.ip,
                 "logged_out": auth.logged_out,
                 "token": auth.token,
                 "time": auth.time,
             },
-            "name": "root",
+            "name": user_full_name,
             "org": alias,
-            "password": hash_password(alias, "root", user_password),
-            "role": Roles.ADMIN.name,
+            "password": hash_password(alias, user_name, user_password),
+            "role": user_role,
         }
-        USERS.insert(alias, user)
+        USERS.insert(user)
         code = 200
     else:
         code = 400
@@ -159,15 +145,19 @@ def create(
 def read(
     alias: str, user_name: str, password: str | None, token: str | None, ip: str
 ) -> dict[str, any]:
-    if ORGS.exists(alias) and USERS.authenticate(alias, user_name, password, token, ip):
+    if (
+        ORGS.exists(alias)
+        and USERS.exists(alias, user_name)
+        and USERS.authenticate(alias, user_name, password, token, ip)
+    ):
         user: User = USERS.get(alias, user_name)
         code = 200
         body = {
-            "name": user.name,
-            "role": str(user.role.name),
+            "name": user["name"],
+            "role": str(user["role"]),
         }
         if token is None:
-            body["token"] = user.auth.token
+            body["token"] = user["authentication"]["token"]
     else:
         code = 400
         body = None
@@ -181,7 +171,7 @@ def update(
     requestor_password: str,
     user_name: str,
     operation: str,
-    value: str,
+    value: str | None,
     ip: str,
 ) -> dict[str, any]:
     ALLOWED_OPERATIONS = ["LOG_OUT", "UPDATE_NAME", "UPDATE_PASSWORD"]
@@ -189,8 +179,8 @@ def update(
 
     if (
         ORGS.exists(alias)
-        and USERS.authenticate(alias, requestor_name, requestor_password, None, ip)
         and USERS.exists(alias, user_name)
+        and USERS.authenticate(alias, requestor_name, requestor_password, None, ip)
     ):
         is_admin = USERS.has_role(alias, requestor_name, Roles.ADMIN)
 
@@ -215,5 +205,21 @@ def update(
                     if Roles.valid(value):
                         USERS.update(alias, user_name, "role", value)
                         code = 200
+
+    return create_response(code, None)
+
+
+def delete(alias: str, req_name: str, req_password: str, user_name: str, ip: str):
+    if (
+        ORGS.exists(alias)
+        and USERS.exists(alias, req_name)
+        and USERS.exists(alias, user_name)
+        and USERS.authenticate(alias, req_name, req_password, None, ip)
+        and USERS.has_role(alias, req_name, Roles.ADMIN)
+    ):
+        USERS.remove(alias, user_name)
+        code = 200
+    else:
+        code = 400
 
     return create_response(code, None)

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from common import Roles, create_response
 import json
 from tables import ORGS, USERS
@@ -63,24 +64,15 @@ def create(
 ) -> dict[str, any]:
     if (
         ORGS.exists(alias)
-        and USERS.authenticate(user_name, password, None, ip)
-        and (USERS.has_role(Roles.ADMIN) or USERS.has_role(Roles.ACCOUNT_MANAGER))
+        and USERS.exists(alias, user_name)
+        and USERS.authenticate(alias, user_name, password, None, ip)
+        and (
+            USERS.has_role(alias, user_name, Roles.ADMIN)
+            or USERS.has_role(alias, user_name, Roles.ACCOUNT_MANAGER)
+        )
+        and not ORGS.account_exists(alias, account_name)
     ):
         ORGS.create_account(alias, account_name)
-        code = 200
-    else:
-        code = 400
-
-    return create_response(code, None)
-
-
-def delete(
-    account_name: str, alias: str, user_name: str, password: str, ip: str
-) -> dict[str, any]:
-    if USERS.authenticate(alias, user_name, password, None, ip) and (
-        USERS.has_role(Roles.ADMIN) or USERS.has_role(Roles.ACCOUNT_MANAGER)
-    ):
-        ORGS.delete_account(alias, account_name)
         code = 200
     else:
         code = 400
@@ -91,7 +83,7 @@ def delete(
 def read(
     alias: str, user_name: str, password: str | None, token: str | None, ip: str
 ) -> dict[str, any]:
-    if ORGS.exists(alias) and USERS.authenticate(user_name, password, token, ip):
+    if ORGS.exists(alias) and USERS.authenticate(alias, user_name, password, token, ip):
         body = ORGS.accounts(alias)
         code = 200
     else:
@@ -114,7 +106,7 @@ def update(
 
     if (
         ORGS.exists(alias)
-        and USERS.authenticate(user_name, password, None, ip)
+        and USERS.authenticate(alias, user_name, password, None, ip)
         and (
             USERS.has_role(alias, user_name, Roles.ADMIN)
             or USERS.has_role(alias, user_name, Roles.ACCOUNT_MANAGER)
@@ -122,11 +114,14 @@ def update(
         and operation in ALLOWED_OPERATIONS
     ):
         if operation == "RENAME":
-            ORGS.update_account(alias, account_name, "name", value)
-            code = 200
+            if ORGS.account_exists(alias, value):
+                code = 400
+            else:
+                ORGS.update_account(alias, account_name, "name", value)
+                code = 200
         else:
             try:
-                amount = float(value)
+                amount = Decimal(value)
                 if operation == "WITHDRAW":
                     amount = -amount
 
@@ -134,6 +129,25 @@ def update(
                 code = 200
             except ValueError:
                 code = 400
+    else:
+        code = 400
+
+    return create_response(code, None)
+
+
+def delete(
+    account_name: str, alias: str, user_name: str, password: str, ip: str
+) -> dict[str, any]:
+    if (
+        USERS.authenticate(alias, user_name, password, None, ip)
+        and (
+            USERS.has_role(alias, user_name, Roles.ADMIN)
+            or USERS.has_role(alias, user_name, Roles.ACCOUNT_MANAGER)
+        )
+        and ORGS.account_exists(alias, account_name)
+    ):
+        ORGS.delete_account(alias, account_name)
+        code = 200
     else:
         code = 400
 

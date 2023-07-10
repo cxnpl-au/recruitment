@@ -1,0 +1,194 @@
+{
+    "tests": [
+        {
+            "name": "Create an organisation",
+            "body": {
+                "alias": "cxnpl",
+                "name": "Constantinople",
+                "password": "cxnpl"
+            },
+            "httpMethod": "POST",
+            "path": "/organisations"
+        },
+        {
+            "name": "Getting an organisation",
+            "body": {
+                "alias": "cxnpl",
+                "user_name": "root",
+                "password": "cxnpl"
+            },
+            "httpMethod": "GET",
+            "path": "/organisations"
+        },
+        {
+            "name": "Update an organisation",
+            "body": {
+                "alias": "cxnpl",
+                "user_name": "root",
+                "password": "cxnpl",
+                "operation": "CHANGE_AUTH_TIMEOUT",
+                "value": "300"
+            },
+            "httpMethod": "PATCH",
+            "path": "/organisations"
+        },
+        {
+            "name": "Add new user 1",
+            "body": {
+                "alias": "cxnpl",
+                "requestor_name": "root",
+                "requestor_password": "cxnpl",
+                "user_name": "user1",
+                "user_full_name": "User 1",
+                "user_password": "1234",
+                "user_role": "ADMIN"
+            },
+            "httpMethod": "POST",
+            "path": "/users"
+        },
+        {
+            "name": "Add new user 2",
+            "body": {
+                "alias": "cxnpl",
+                "requestor_name": "root",
+                "requestor_password": "cxnpl",
+                "user_name": "user2",
+                "user_full_name": "User 2",
+                "user_password": "abcd",
+                "user_role": "ACCOUNT_MANAGER"
+            },
+            "httpMethod": "POST",
+            "path": "/users"
+        },
+        {
+            "name": "Update new user 1",
+            "body": {
+                "alias": "cxnpl",
+                "requestor_name": "user1",
+                "requestor_password": "1234",
+                "user_name": "user1",
+                "operation": "UPDATE_NAME",
+                "value": "Full User Name 1"
+            },
+            "httpMethod": "PATCH",
+            "path": "/users"
+        },
+        {
+            "name": "Add new Root Savings Account",
+            "body": {
+                "account_name": "Root Savings",
+                "alias": "cxnpl",
+                "user_name": "root",
+                "password": "cxnpl"
+            },
+            "httpMethod": "POST",
+            "path": "/accounts"
+        },
+        {
+            "name": "Add new User 1 Savings Account",
+            "body": {
+                "account_name": "User 1 Savings",
+                "alias": "cxnpl",
+                "user_name": "user1",
+                "password": "1234"
+            },
+            "httpMethod": "POST",
+            "path": "/accounts"
+        },
+        {
+            "name": "Add new User 2 Savings Account",
+            "body": {
+                "account_name": "User 2 Savings Savings",
+                "alias": "cxnpl",
+                "user_name": "user2",
+                "password": "abcd"
+            },
+            "httpMethod": "POST",
+            "path": "/accounts"
+        },
+        {
+            "name": "Rename User 1 Savings to Root Savings",
+            "body": {
+                "account_name": "User 1 Savings",
+                "alias": "cxnpl",
+                "user_name": "user1",
+                "password": "1234",
+                "operation": "RENAME",
+                "value": "Root Savings"
+            },
+            "httpMethod": "PATCH",
+            "path": "/accounts"
+        },
+        {
+            "name": "Rename User 1 Savings to User 1 Access",
+            "body": {
+                "account_name": "User 1 Savings",
+                "alias": "cxnpl",
+                "user_name": "user1",
+                "password": "1234",
+                "operation": "RENAME",
+                "value": "User 1 Access"
+            },
+            "httpMethod": "PATCH",
+            "path": "/accounts"
+        },
+        {
+            "name": "Deposit into User 1 Access",
+            "body": {
+                "account_name": "User 1 Access",
+                "alias": "cxnpl",
+                "user_name": "user1",
+                "password": "1234",
+                "operation": "DEPOSIT",
+                "value": "12.34"
+            },
+            "httpMethod": "PATCH",
+            "path": "/accounts"
+        },
+        {
+            "name": "Withdraw from User 1 Access",
+            "body": {
+                "account_name": "User 1 Access",
+                "alias": "cxnpl",
+                "user_name": "user1",
+                "password": "1234",
+                "operation": "WITHDRAW",
+                "value": "200"
+            },
+            "httpMethod": "PATCH",
+            "path": "/accounts"
+        },
+        {
+            "name": "Delete User 1 Access Account",
+            "body": {
+                "account_name": "User 1 Access",
+                "alias": "cxnpl",
+                "user_name": "user1",
+                "password": "1234"
+            },
+            "httpMethod": "DELETE",
+            "path": "/accounts"
+        },
+        {
+            "name": "Delete user",
+            "body": {
+                "alias": "cxnpl",
+                "requestor_name": "user1",
+                "requestor_password": "1234",
+                "user_name": "user2"
+            },
+            "httpMethod": "DELETE",
+            "path": "/users"
+        },
+        {
+            "name": "Delete organisation",
+            "body": {
+                "alias": "cxnpl",
+                "user_name": "root",
+                "password": "cxnpl"
+            },
+            "httpMethod": "DELETE",
+            "path": "/organisations"
+        }
+    ]
+}

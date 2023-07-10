@@ -61,12 +61,12 @@ def handler(event, context) -> dict[str, any]:
             user_name = body["user_name"]
             value = body["value"]
 
-            response = update(alias, user_name, password, operation, value)
+            response = update(alias, user_name, password, operation, value, ip)
         case "DELETE":
             password = body["password"]
             user_name = body["user_name"]
 
-            response = delete(alias, user_name, password)
+            response = delete(alias, user_name, password, ip)
 
     return response
 
@@ -109,20 +109,6 @@ def create(alias: str, name: str, password: str, ip: str) -> dict[str, any]:
     return create_response(code, body)
 
 
-def delete(alias: str, user_name: str, password: str) -> dict[str, any]:
-    if (
-        user_name == "root"
-        and ORGS.exists(alias)
-        and USERS.authenticate(user_name, password, None, None)
-    ):
-        ORGS.delete(alias)
-        code = 200
-    else:
-        code = 400
-
-    return create_response(code, None)
-
-
 def read(
     alias: str, user_name: str, password: str | None, token: str | None, ip: str
 ) -> dict[str, any]:
@@ -137,6 +123,9 @@ def read(
 
         code = 200
 
+        if password is not None:
+            body["token"] = USERS.get_token(alias, user_name)
+
     return create_response(code, body)
 
 
@@ -146,6 +135,7 @@ def update(
     password: str,
     operation: str,
     value,
+    ip: str,
 ) -> dict[str, any]:
     ALLOWED_OPERATIONS = [
         "UPDATE_NAME",
@@ -158,7 +148,7 @@ def update(
         user_name == "root"
         and operation in ALLOWED_OPERATIONS
         and ORGS.exists(alias)
-        and USERS.authenticate(user_name, password, None, None)
+        and USERS.authenticate(alias, user_name, password, None, ip)
     ):
         if operation == "UPDATE_PASSWORD":
             new_password = hash_password(alias, user_name, value)
@@ -184,10 +174,24 @@ def update(
                 case "CHANGE_USER_LIMIT":
                     try:
                         new_user_limit = int(value)
-                        ORGS.update_user_limit(alias, new_user_limit)
+                        ORGS.update(alias, "user_limit", new_user_limit)
                     except ValueError:
                         code = 400
 
+    else:
+        code = 400
+
+    return create_response(code, None)
+
+
+def delete(alias: str, user_name: str, password: str, ip: str) -> dict[str, any]:
+    if (
+        ORGS.exists(alias)
+        and user_name == "root"
+        and USERS.authenticate(alias, user_name, password, None, ip)
+    ):
+        ORGS.delete(alias)
+        code = 200
     else:
         code = 400
 

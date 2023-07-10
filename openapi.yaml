@@ -32,7 +32,7 @@ paths:
                   type: string
                   description: Alias of the organisation
                   example: cxnpl
-                name:
+                user_name:
                   type: string
                   description: User name of the user requesting account creation
                   example: root
@@ -62,7 +62,7 @@ paths:
                   type: string
                   description: Alias for the organisation
                   example: cxnpl
-                name:
+                user_name:
                   type: string
                   description: Username of the requesting account
                   example: root
@@ -115,7 +115,7 @@ paths:
                   type: string
                   description: Alias for the organisation
                   example: cxnpl
-                name:
+                user_name:
                   type: string
                   description: Username of the requesting account
                   example: root
@@ -151,15 +151,19 @@ paths:
               description: Either the password or token can be supplied to authenticate
               type: "object"
               properties:
+                account_name:
+                  type: string
+                  description: Account name for target
+                  example: Savings
                 alias:
                   type: string
                   description: Alias for the organisation
                   example: cxnpl
-                requestor_name:
+                user_name:
                   type: string
                   description: Username of the requesting account
                   example: root
-                requestor_password:
+                password:
                   type: string
                   description: Password of the requesting account
       responses:
@@ -258,6 +262,9 @@ paths:
                     type: integer
                     description: Only returned to root account (Default 600)
                     example: 600
+                  token:
+                    type: string
+                    description: Only returned when password authentication was used
         "400":
           description: "Organisation doesn't exist or user failed authentication"
     patch:
@@ -449,22 +456,23 @@ paths:
                   type: string
                   description: Alias for the organisation
                   example: cxnpl
-                user_name:
+                requestor_name:
                   type: string
                   description: Username of the requesting account
                   example: root
-                password:
+                requestor_password:
                   type: string
                   description: Password of the requesting account
+                user_name:
+                  type: string
+                  description: Username of the target account
                 operation:
                   type: string
                   description: Type of operation to perform
                   enum:
+                    - LOG_OUT
                     - UPDATE_NAME
                     - UPDATE_PASSWORD
-                    - CHANGE_ACCOUNT_LIMIT
-                    - CHANGE_AUTH_TIMEOUT
-                    - CHANGE_USER_LIMIT
                 value:
                   type: string
                   description: New value -- will be parsed depending on the operation

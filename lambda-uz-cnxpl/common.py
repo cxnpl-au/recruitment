@@ -19,7 +19,7 @@ class Roles(Enum):
     def valid(cls, name: str) -> bool:
         return (
             name == cls.ACCOUNT_MANAGER.name
-            or name == cls.ADMIN
+            or name == cls.ADMIN.name
             or name == cls.NORMAL.name
         )
 

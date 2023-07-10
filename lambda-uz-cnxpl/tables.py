@@ -15,9 +15,19 @@ class OrgsTable:
 
     def accounts(self, alias: str) -> list[dict[str, any]]:
         response = self.TABLE.get_item(
-            Key={"alias": alias}, ProjectionExpression={"accounts"}
+            Key={"alias": alias}, ProjectionExpression="accounts"
         )
-        return response["Item"]
+
+        return response["Item"]["accounts"]
+
+    def account_exists(self, alias: str, account_name: str) -> bool:
+        accounts = ORGS.accounts(alias)
+
+        for account in accounts:
+            if account["account_name"] == account_name:
+                return True
+
+        return False
 
     def create_account(self, alias: str, account_name: str):
         response = self.TABLE.get_item(
@@ -32,7 +42,7 @@ class OrgsTable:
                 Key={"alias": alias},
                 UpdateExpression="SET accounts = list_append(accounts, :new)",
                 ExpressionAttributeValues={
-                    ":new": {"account_name": account_name, "amount": 0.0}
+                    ":new": [{"account_name": account_name, "amount": Decimal(0.0)}]
                 },
                 ReturnValues="NONE",
             )
@@ -43,9 +53,9 @@ class OrgsTable:
 
     def delete_account(self, alias: str, account_name: str):
         result = self.TABLE.get_item(
-            Key={"alias", alias}, ProjectionExpression="accounts"
+            Key={"alias": alias}, ProjectionExpression="accounts"
         )
-        accounts: list[dict[str, any]] = result["Item"]
+        accounts: list[dict[str, any]] = result["Item"]["accounts"]
 
         for idx, d in enumerate(accounts):
             if d["account_name"] == account_name:
@@ -53,7 +63,7 @@ class OrgsTable:
                 break
 
         self.TABLE.update_item(
-            Key={"alias", alias},
+            Key={"alias": alias},
             UpdateExpression="SET accounts = :accounts",
             ExpressionAttributeValues={":accounts": accounts},
             ReturnValues="NONE",
@@ -85,26 +95,26 @@ class OrgsTable:
 
     def update_account(self, alias: str, account_name: str, field: str, value):
         response = self.TABLE.get_item(
-            Key={"alias", alias}, ProjectionExpression="accounts"
+            Key={"alias": alias}, ProjectionExpression="accounts"
         )
-        accounts = response["Item"]
+        accounts = response["Item"]["accounts"]
 
         updated = False
         if field == "name":
             idx = -1
             for i, acc in enumerate(accounts):
-                if acc["name"] == value:
+                if acc["account_name"] == value:
                     return
-                elif acc["name"] == account_name:
+                elif acc["account_name"] == account_name:
                     idx = i
 
             if idx != -1:
-                accounts[idx]["name"] = value
+                accounts[idx]["account_name"] = value
                 updated = True
         else:
             idx = -1
             for i, acc in enumerate(accounts):
-                if acc["name"] == account_name:
+                if acc["account_name"] == account_name:
                     idx = i
 
             if idx != -1:
@@ -113,9 +123,9 @@ class OrgsTable:
 
         if updated:
             self.TABLE.update_item(
-                Key={"alias", alias},
+                Key={"alias": alias},
                 UpdateExpression="SET accounts = :acc",
-                ExpressionAttributeValues={":acc", accounts},
+                ExpressionAttributeValues={":acc": accounts},
                 ReturnValues="NONE",
             )
 
@@ -150,16 +160,21 @@ class UsersTable:
             if hash_password(alias, user_name, password) == item["password"]:
                 if logged_out or timed_out or not ip_match:
                     a = Authentication(ip)
-                    auth = {
-                        "ip": a.ip,
-                        "logged_out": a.logged_out,
-                        "token": a.token,
-                        "time": a.time,
-                    }
                     self.TABLE.update_item(
                         Key={"org": alias, "alias": user_name},
-                        UpdateExpression="SET authentication = :auth",
-                        ExpressionAttributeValues={":auth", auth},
+                        UpdateExpression="SET #a.ip = :ip, #a.#l = :l, #a.#to = :t, #a.#ti = :now",
+                        ExpressionAttributeNames={
+                            "#a": "authentication",
+                            "#l": "logged_out",
+                            "#ti": "time",
+                            "#to": "token",
+                        },
+                        ExpressionAttributeValues={
+                            ":ip": a.ip,
+                            ":l": a.logged_out,
+                            ":t": a.token,
+                            ":now": a.time,
+                        },
                         ReturnValues="NONE",
                     )
                 else:
@@ -191,12 +206,20 @@ class UsersTable:
         get = self.TABLE.get_item(Key={"org": alias, "alias": user_name})
         return get["Item"]
 
+    def get_token(self, alias: str, user_name: str) -> str:
+        get = self.TABLE.get_item(
+            Key={"org": alias, "alias": user_name},
+            ProjectionExpression="authentication.#t",
+            ExpressionAttributeNames={"#t": "token"},
+        )
+        return get["Item"]["authentication"]["token"]
+
     def has_role(self, org: str, user_name: str, role: Roles) -> bool:
         has_role = False
 
         get = self.TABLE.get_item(Key={"org": org, "alias": user_name})
         if "Item" in get:
-            has_role = get["item"]["role"] == role.name
+            has_role = get["Item"]["role"] == role.name
 
         return has_role
 
@@ -211,7 +234,6 @@ class UsersTable:
             Select="COUNT", KeyConditionExpression=Key("org").eq(alias)
         )
         count = response["Count"]
-        print(count, limit)
 
         if count < limit:
             self.TABLE.put_item(Item=user)
@@ -229,12 +251,12 @@ class UsersTable:
 
     def remove_org(self, org: str):
         response = self.TABLE.query(
-            Select="ALL_PROJECTED_ATTRIBUTES",
             KeyConditionExpression=Key("org").eq(org),
             ProjectionExpression="alias",
         )
 
-        for alias in response["Items"]:
+        for item in response["Items"]:
+            alias = item["alias"]
             self.TABLE.delete_item(
                 Key={"org": org, "alias": alias}, ReturnValues="NONE"
             )
